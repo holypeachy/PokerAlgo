@@ -1,9 +1,12 @@
 ﻿namespace PokerAlgo
+// TODO: Turn suits to enums
+// TODO: Unit testing (JSON)
 {
     class Program
     {
         static void Main()
         {
+            Console.Clear();
             Deck deck = new();
             List<Card> communityCards = new List<Card>();
 
@@ -63,10 +66,10 @@
         public HandType Type;
         public List<Card> Cards;
 
-        public WinningHand(HandType type)
+        public WinningHand(HandType type, List<Card> cards)
         {
             this.Type = type;
-            Cards = new();
+            this.Cards = cards;
         }
     }
 

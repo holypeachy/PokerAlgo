@@ -18,7 +18,7 @@ namespace PokerAlgo
             {
                 for (int value = 1; value <= 13; value++)
                 {
-                    Cards.Add(new Card(value, suit));
+                    Cards.Add(new Card(value, suit, false));
                 }
             }
         }

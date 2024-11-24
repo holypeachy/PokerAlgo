@@ -9,15 +9,15 @@ namespace PokerAlgo
             // Lot of fancy code stuff
             // DeterminePlayerHands(players[0], community);
             Player testPlayer = new Player("Test",
-            new Card(1, _suits[3]),
-            new Card(10, _suits[3]));
+            new Card(2, _suits[2], true),
+            new Card(11, _suits[2], true));
 
             List<Card> testCom = new List<Card>(){
-            new Card(5, _suits[2]),
-            new Card(11, _suits[3]),
-            new Card(12, _suits[3]),
-            new Card(13, _suits[3]),
-            new Card(7, _suits[2])};
+            new Card(2, _suits[3], false),
+            new Card(5, _suits[2], false),
+            new Card(7, _suits[2], false),
+            new Card(8, _suits[0], false),
+            new Card(10, _suits[2], false)};
 
             DeterminePlayerHands(testPlayer, testCom);
         }
@@ -82,7 +82,7 @@ namespace PokerAlgo
             foreach (Card c in cards)
             {
                 if(c.Suit == flushSuit){
-                    flushCards.Add(c);
+                    flushCards.Add(new Card(c.Value, c.Suit, c.IsPlayerCard));
                     Console.WriteLine(c);
                 }
             }
@@ -129,50 +129,94 @@ namespace PokerAlgo
                 }
             }
 
-            bool isInHand = false;
-            foreach (Card c in currentWinnerHand)
+            if (isRoyalFlush && ContainsPlayerCard(currentWinnerHand))
             {
-                if (c.IsPlayerCard)
-                {
-                    isInHand = true;
-                    break;
-                }
-            }
-
-            bool isStraightFlush = false;
-
-            if (isRoyalFlush && isInHand)
-            {
-                player.HighestScore = 9;
-                WinningHand tempWinning = new(HandType.RoyalFlush);
-                tempWinning.Cards = currentWinnerHand;
+                WinningHand tempWinning = new(HandType.RoyalFlush, currentWinnerHand);
                 player.WinningHands.Add(tempWinning);
                 Console.Write("\nROYAL FLUSH: ");
                 foreach (Card c in currentWinnerHand)
                 {
                     Console.Write($"{c} ");
                 }
+                return; // Return if Royal Flush
             }
             // ! Straight Flush?
-            else if(!isRoyalFlush){
-                if(flushCards.Count == 5){
-
-                }
-                else if(flushCards.Count == 6){
-
-                }
-                else if (flushCards.Count == 7){
-
+            for (int i = flushCards.Count -  5; i >= 0; i--)
+            {
+                List<Card> temp5 = flushCards.GetRange(i, 5);
+                Console.WriteLine();
+                if(HasConsecutiveValue(temp5) && ContainsPlayerCard(temp5)){
+                    WinningHand tempWinning = new(HandType.StraightFlush, temp5);
+                    player.WinningHands.Add(tempWinning);
+                    Console.Write($"\n{flushCards.Count} Card Flush - HIGHEST STRAIGHT FLUSH: ");
+                    foreach (Card c in temp5)
+                    {
+                        Console.Write($"{c} ");
+                    }
+                    return;
                 }
             }
+
             // ! If not Royal Flush or Straight Flush. It's just a regular Flush
-            else{
-
+            List<Card> flushTempCards = new List<Card>(flushCards);
+            for (int index = 0; index < flushTempCards.Count; index++)
+            {
+                if (flushTempCards[index].Value == 1)
+                {
+                    flushTempCards[index].Value = 14;
+                }
             }
+            flushTempCards = flushTempCards.OrderBy(c => c.Value).ToList();
+            for (int i = flushTempCards.Count - 5; i >= 0; i--)
+            {
+                List<Card> temp5 = flushTempCards.GetRange(i, 5);
+                if (ContainsPlayerCard(temp5))
+                {
+                    Console.WriteLine("fasdfs");
+                    WinningHand tempWinning = new(HandType.Flush, temp5);
+                    player.WinningHands.Add(tempWinning);
+                    Console.Write($"\n{flushTempCards.Count} Card Flush - HIGHEST FLUSH: ");
+                    foreach (Card c in temp5)
+                    {
+                        Console.Write($"{c} ");
+                    }
+                    return;
+                }
+            }
+
+            Console.WriteLine("-NO FLUSH------");
         }
     
+        private static bool ContainsPlayerCard(List<Card> cards){
+            foreach (Card c in cards)
+            {
+                if(c.IsPlayerCard){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static bool HasConsecutiveValue(List<Card> cards)
+        {
+            int startingValue = 0;
+            for (int i = 0; i < cards.Count; i++)
+            {
+                if (i == 0)
+                {
+                    startingValue = cards[i].Value;
+                }
+                else
+                {
+                    if (cards[i].Value != startingValue + 1)
+                    {
+                        return false;
+                    }
+                    startingValue++;
+                }
+            }
+            return true;
+        }
+
     }
 }
-
-// TODO: Cleanup
-// TODO: Add helper function to check if a list of card contains any cards from player.
