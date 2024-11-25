@@ -1,5 +1,4 @@
 ﻿namespace PokerAlgo
-// TODO: Turn suits to enums
 // TODO: Unit testing (JSON)
 {
     class Program
@@ -32,7 +31,8 @@
             // }
             // Console.WriteLine();
 
-            Algo.FindWinner(players, communityCards);
+            Algo algo = new();
+            algo.FindWinner(players, communityCards);
         }
     }
 
@@ -75,6 +75,11 @@
 
     enum HandType
     {
-        Pair = 1, TwoPair, ThreeKind, Straight, Flush, FullHouse, FourKind, StraightFlush, RoyalFlush
+        Nothing = 0, Pair = 1, TwoPair, ThreeKind, Straight, Flush, FullHouse, FourKind, StraightFlush, RoyalFlush
+    }
+
+    enum CardSuit
+    {
+        Spades, Clubs, Hearts, Diamonds
     }
 }

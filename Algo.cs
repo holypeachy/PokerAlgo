@@ -1,28 +1,26 @@
 namespace PokerAlgo
 {
-    static class Algo
+    class Algo
     {
-        private static string[] _suits = { "Spades", "Clubs", "Hearts", "Diamonds" };
-
-        public static void FindWinner(List<Player> players, List<Card> community)
+        public void FindWinner(List<Player> players, List<Card> community)
         {
             // Lot of fancy code stuff
             // DeterminePlayerHands(players[0], community);
             Player testPlayer = new Player("Test",
-            new Card(2, _suits[2], true),
-            new Card(11, _suits[2], true));
+            new Card(2, CardSuit.Hearts, true),
+            new Card(11, CardSuit.Hearts, true));
 
             List<Card> testCom = new List<Card>(){
-            new Card(2, _suits[3], false),
-            new Card(5, _suits[2], false),
-            new Card(7, _suits[2], false),
-            new Card(8, _suits[0], false),
-            new Card(10, _suits[2], false)};
+            new Card(2, CardSuit.Diamonds, false),
+            new Card(5, CardSuit.Hearts, false),
+            new Card(7, CardSuit.Hearts, false),
+            new Card(8, CardSuit.Spades, false),
+            new Card(10, CardSuit.Hearts, false)};
 
             DeterminePlayerHands(testPlayer, testCom);
         }
 
-        private static void DeterminePlayerHands(Player player, List<Card> community)
+        private void DeterminePlayerHands(Player player, List<Card> community)
         {
             List<Card> cards = new();
 
@@ -37,6 +35,7 @@ namespace PokerAlgo
 
             // Console.ReadLine();
             // Console.Clear();
+            Console.WriteLine("All Cards: ");
             foreach (Card c in cards)
             {
                 Console.WriteLine($"{c}" + (c.IsPlayerCard ? "player" : "") );
@@ -45,16 +44,16 @@ namespace PokerAlgo
             FlushFinder(cards, player);
         }
 
-        private static void FlushFinder(List<Card> cards, Player player){
+        public void FlushFinder(List<Card> cards, Player player){
             List<Card> currentWinnerHand = new();
             List<Card> flushCards = new();
 
             // ! Flush?
             bool isFlush = false;
-            string flushSuit = "";
+            CardSuit flushSuit = CardSuit.Spades;
 
             // Do we have a flush?
-            foreach (string currentSuit in _suits)
+            foreach (CardSuit currentSuit in Enum.GetValues(typeof(CardSuit)).Cast<CardSuit>())
             {
                 int count = 0;
                 foreach (Card c in cards)
@@ -172,10 +171,9 @@ namespace PokerAlgo
                 List<Card> temp5 = flushTempCards.GetRange(i, 5);
                 if (ContainsPlayerCard(temp5))
                 {
-                    Console.WriteLine("fasdfs");
                     WinningHand tempWinning = new(HandType.Flush, temp5);
                     player.WinningHands.Add(tempWinning);
-                    Console.Write($"\n{flushTempCards.Count} Card Flush - HIGHEST FLUSH: ");
+                    Console.Write($"{flushTempCards.Count} Card Flush - HIGHEST FLUSH: ");
                     foreach (Card c in temp5)
                     {
                         Console.Write($"{c} ");
@@ -184,10 +182,13 @@ namespace PokerAlgo
                 }
             }
 
+            // ! For Testing
+            WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
+            player.WinningHands.Add(tempWinningHand);
             Console.WriteLine("-NO FLUSH------");
         }
     
-        private static bool ContainsPlayerCard(List<Card> cards){
+        private bool ContainsPlayerCard(List<Card> cards){
             foreach (Card c in cards)
             {
                 if(c.IsPlayerCard){
@@ -197,7 +198,7 @@ namespace PokerAlgo
             return false;
         }
 
-        private static bool HasConsecutiveValue(List<Card> cards)
+        private bool HasConsecutiveValue(List<Card> cards)
         {
             int startingValue = 0;
             for (int i = 0; i < cards.Count; i++)

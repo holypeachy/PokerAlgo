@@ -3,7 +3,6 @@ namespace PokerAlgo
     class Deck
     {
         public List<Card> Cards = new List<Card>();
-        private string[] _suits = { "Spades", "Clubs", "Hearts", "Diamonds" };
 
         public Deck()
         {
@@ -14,7 +13,7 @@ namespace PokerAlgo
 
         public void CreateDeck()
         {
-            foreach (string suit in _suits)
+            foreach (CardSuit suit in Enum.GetValues(typeof(CardSuit)).Cast<CardSuit>() )
             {
                 for (int value = 1; value <= 13; value++)
                 {
