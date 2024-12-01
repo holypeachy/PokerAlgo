@@ -2,6 +2,9 @@ namespace PokerAlgo
 {
     static class Algo
     {
+        private static bool debugEnable = false;
+        private static bool testingEnable = true;
+
         public static void FindWinner(List<Player> players, List<Card> community)
         {
             // Lot of fancy code stuff
@@ -74,19 +77,24 @@ namespace PokerAlgo
 
             if(!isFlush){
                 // ! For Testing
-                // Console.WriteLine("-NO FLUSH------");
-                WinningHand t = new(HandType.Nothing, new List<Card>());
-                player.WinningHands.Add(t);
+                if(debugEnable){
+                    Console.WriteLine("-NO FLUSH FOUND-");
+                }
+                if(testingEnable){
+                    WinningHand t = new(HandType.Nothing, new List<Card>());
+                    player.WinningHands.Add(t);
+                }
                 return;
             }
 
             // * Extract all flush cards
-            // Console.WriteLine("\nFlush Cards:");
+            if(debugEnable) Console.WriteLine("\nFlush Cards:");
             foreach (Card c in cards)
             {
                 if(c.Suit == flushSuit){
                     flushCards.Add(new Card(c.Value, c.Suit, c.IsPlayerCard));
-                    // Console.WriteLine(c);
+                    if(debugEnable) Console.WriteLine(c);
+
                 }
             }
 
@@ -136,26 +144,30 @@ namespace PokerAlgo
             {
                 WinningHand tempWinning = new(HandType.RoyalFlush, currentWinnerHand);
                 player.WinningHands.Add(tempWinning);
-                // Console.Write("\nROYAL FLUSH: ");
-                // foreach (Card c in currentWinnerHand)
-                // {
-                //     Console.Write($"{c} ");
-                // }
+                if(debugEnable){
+                    Console.Write("\nROYAL FLUSH: ");
+                    foreach (Card c in currentWinnerHand)
+                    {
+                        Console.Write($"{c} ");
+                    }
+                }
                 return; // Return if Royal Flush
             }
             // ! Straight Flush?
             for (int i = flushCards.Count -  5; i >= 0; i--)
             {
                 List<Card> temp5 = flushCards.GetRange(i, 5);
-                //Console.WriteLine();
+                if(debugEnable)Console.WriteLine();
                 if(HasConsecutiveValue(temp5) && ContainsPlayerCard(temp5)){
                     WinningHand tempWinning = new(HandType.StraightFlush, temp5);
                     player.WinningHands.Add(tempWinning);
-                    // Console.Write($"\n{flushCards.Count} Card Flush - HIGHEST STRAIGHT FLUSH: ");
-                    // foreach (Card c in temp5)
-                    // {
-                    //     Console.Write($"{c} ");
-                    // }
+                    if(debugEnable){
+                        Console.Write($"\n{flushCards.Count} Card Flush - HIGHEST STRAIGHT FLUSH: ");
+                        foreach (Card c in temp5)
+                        {
+                            Console.Write($"{c} ");
+                        }
+                    }
                     return;
                 }
             }
@@ -179,19 +191,23 @@ namespace PokerAlgo
                 {
                     WinningHand tempWinning = new(HandType.Flush, temp5);
                     player.WinningHands.Add(tempWinning);
-                    // Console.Write($"{flushCards.Count} Card Flush - HIGHEST FLUSH: ");
-                    // foreach (Card c in temp5)
-                    // {
-                    //     Console.Write($"{c} ");
-                    // }
+                    if(debugEnable){
+                        Console.Write($"{flushCards.Count} Card Flush - HIGHEST FLUSH: ");
+                        foreach (Card c in temp5)
+                        {
+                            Console.Write($"{c} ");
+                        }
+                    }
                     return;
                 }
             }
 
             // ! For Testing
-            // Console.WriteLine("-NO FLUSH------");
-            WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
-            player.WinningHands.Add(tempWinningHand);
+            if(debugEnable) Console.WriteLine("-NO FLUSH WITH PLAYER CARDS-");
+            if(testingEnable){
+                WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
+                player.WinningHands.Add(tempWinningHand);
+            }
         }
     
         private static bool ContainsPlayerCard(List<Card> cards){

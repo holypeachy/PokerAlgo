@@ -37,11 +37,9 @@
 }
 
 /*
-* Added a Description property to the TestObject for readability.
-* Added all appropiate test cases in FlushTests.json for testing flushes.
-* Fixes issue where test would crash the program, because in the case no flush was found the function would return early and not add a
- winning hand object to the player.
-* Replaced TestFlushes with a generic function that takes in the path of the test and the method of Algo to test, for reusability.
-* Added Equals method to Card class.
-* Created files for classes and enums.
+TODO: Implement StraightFinder.
+
+* Changes
+* Added bool for debug messages and bool for testing.
+* Organized the project better by using folders.
 */

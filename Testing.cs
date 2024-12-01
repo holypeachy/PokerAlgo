@@ -5,8 +5,8 @@ namespace PokerAlgo{
     delegate void AlgoFunction(List<Card> cards, Player player);
     
     class Testing{
-        private string pathToFlush = @"./FlushTests.json";
-        private string pathToStraight = @"./StraightTests.json";
+        private string pathToFlush = @"./Tests/FlushTests.json";
+        private string pathToStraight = @"./Tests/StraightTests.json";
 
 
         public Testing(){
