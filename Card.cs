@@ -2,9 +2,9 @@ namespace PokerAlgo
 {
     class Card
     {
-        public int Value;
-        public CardSuit Suit;
-        public bool IsPlayerCard;
+        public int Value {get; set;}
+        public CardSuit Suit {get; set;}
+        public bool IsPlayerCard {get; set;}
 
         public Card(int value, CardSuit suit, bool isPlayerCard)
         {

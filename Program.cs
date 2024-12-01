@@ -31,17 +31,17 @@
             // }
             // Console.WriteLine();
 
-            Algo algo = new();
-            algo.FindWinner(players, communityCards);
+            // Algo.FindWinner(players, communityCards);
+            Testing testing = new();
         }
     }
 
     class Player
     {
-        public string Name;
-        public Tuple<Card, Card> Hand;
-        public int HighestScore;
-        public List<WinningHand> WinningHands;
+        public string Name { get; set; }
+        public Tuple<Card, Card> Hand { get; set; }
+        public int HighestScore { get; set; }
+        public List<WinningHand> WinningHands { get; set; }
 
 
         public Player(string name, Card first, Card second)
@@ -63,8 +63,8 @@
 
     class WinningHand
     {
-        public HandType Type;
-        public List<Card> Cards;
+        public HandType Type {get; set;}
+        public List<Card> Cards { get; set; }
 
         public WinningHand(HandType type, List<Card> cards)
         {

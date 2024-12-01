@@ -1,8 +1,8 @@
 namespace PokerAlgo
 {
-    class Algo
+    static class Algo
     {
-        public void FindWinner(List<Player> players, List<Card> community)
+        public static void FindWinner(List<Player> players, List<Card> community)
         {
             // Lot of fancy code stuff
             // DeterminePlayerHands(players[0], community);
@@ -20,7 +20,7 @@ namespace PokerAlgo
             DeterminePlayerHands(testPlayer, testCom);
         }
 
-        private void DeterminePlayerHands(Player player, List<Card> community)
+        private static void DeterminePlayerHands(Player player, List<Card> community)
         {
             List<Card> cards = new();
 
@@ -44,7 +44,7 @@ namespace PokerAlgo
             FlushFinder(cards, player);
         }
 
-        public void FlushFinder(List<Card> cards, Player player){
+        public static void FlushFinder(List<Card> cards, Player player){
             List<Card> currentWinnerHand = new();
             List<Card> flushCards = new();
 
@@ -188,7 +188,7 @@ namespace PokerAlgo
             Console.WriteLine("-NO FLUSH------");
         }
     
-        private bool ContainsPlayerCard(List<Card> cards){
+        private static bool ContainsPlayerCard(List<Card> cards){
             foreach (Card c in cards)
             {
                 if(c.IsPlayerCard){
@@ -198,7 +198,7 @@ namespace PokerAlgo
             return false;
         }
 
-        private bool HasConsecutiveValue(List<Card> cards)
+        private static bool HasConsecutiveValue(List<Card> cards)
         {
             int startingValue = 0;
             for (int i = 0; i < cards.Count; i++)
