@@ -40,6 +40,5 @@
 TODO: Implement StraightFinder.
 
 * Changes
-* Added bool for debug messages and bool for testing.
-* Organized the project better by using folders.
+* 
 */
