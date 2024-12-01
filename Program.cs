@@ -2,6 +2,8 @@
 {
     class Program
     {
+        private static bool debugEnable = false;
+
         static void Main()
         {
             Console.Clear();
@@ -13,22 +15,27 @@
             players.Add(new Player("Matt", deck.NextCard(), deck.NextCard()));
             players.Add(new Player("Ben", deck.NextCard(), deck.NextCard()));
 
-            // foreach (Player p in players)
-            // {
-            //     Console.WriteLine(p);
-            // }
+            if(debugEnable){
+                foreach (Player p in players)
+                {
+                    Console.WriteLine(p);
+                }
+                Console.Write("\nCommunity Cards:\n");
+            }
 
-            // Console.Write("\nCommunity Cards:\n");
             for (int i = 0; i < 5; i++)
             {
                 communityCards.Add(deck.NextCard());
             }
 
-            // foreach (Card c in communityCards)
-            // {
-            //     Console.Write($"{c} ");
-            // }
-            // Console.WriteLine();
+            if (debugEnable)
+            {
+                foreach (Card c in communityCards)
+                {
+                    Console.Write($"{c} ");
+                }
+                Console.WriteLine();
+            }
 
             // Algo.FindWinner(players, communityCards);
             Testing testing = new();
@@ -40,5 +47,8 @@
 TODO: Implement StraightFinder.
 
 * Changes
-* 
+* Added copy constructor to Card class.
+* Finished StraightFinder function.
+* Created StraightTests.json and added all tests, which have all passed.
+* I've been programming for 6h help.
 */

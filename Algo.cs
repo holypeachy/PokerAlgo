@@ -10,25 +10,26 @@ namespace PokerAlgo
             // Lot of fancy code stuff
             // DeterminePlayerHands(players[0], community);
             Player testPlayer = new Player("Test",
-            new Card(2, CardSuit.Hearts, true),
-            new Card(11, CardSuit.Hearts, true));
+            new Card(5, CardSuit.Hearts, true),
+            new Card(5, CardSuit.Spades, true));
 
             List<Card> testCom = new List<Card>(){
-            new Card(2, CardSuit.Diamonds, false),
-            new Card(5, CardSuit.Hearts, false),
-            new Card(7, CardSuit.Hearts, false),
-            new Card(8, CardSuit.Spades, false),
-            new Card(10, CardSuit.Hearts, false)};
+            new Card(6, CardSuit.Diamonds, false),
+            new Card(2, CardSuit.Clubs, false),
+            new Card(3, CardSuit.Hearts, false),
+            new Card(4, CardSuit.Spades, false),
+            new Card(4, CardSuit.Hearts, false)};
 
             DeterminePlayerHands(testPlayer, testCom);
         }
 
         private static void DeterminePlayerHands(Player player, List<Card> community)
         {
+            // ! Combine and sort cards
             List<Card> cards = new();
 
-            cards.Add(player.Hand.Item1);
-            cards.Add(player.Hand.Item2);
+            cards.Add(new Card(player.Hand.Item1));
+            cards.Add(new Card(player.Hand.Item2));
             foreach (Card c in community)
             {
                 cards.Add(c);
@@ -36,15 +37,15 @@ namespace PokerAlgo
 
             cards = cards.OrderBy(x => x.Value).ToList();
 
-            // Console.ReadLine();
-            // Console.Clear();
-            Console.WriteLine("All Cards: ");
-            foreach (Card c in cards)
-            {
-                Console.WriteLine($"{c}" + (c.IsPlayerCard ? "player" : "") );
+            if(debugEnable){
+                Console.WriteLine("All Cards: ");
+                foreach (Card c in cards)
+                {
+                    Console.WriteLine($"{c}" + (c.IsPlayerCard ? "player" : ""));
+                }
             }
 
-            FlushFinder(cards, player);
+            StraightFinder(cards, player);
         }
 
         public static void FlushFinder(List<Card> cards, Player player){
@@ -98,10 +99,10 @@ namespace PokerAlgo
                 }
             }
 
-            // Do we have a royal flush?
+            // ! Do we have a royal flush?
             bool isRoyalFlush = true;
             bool[] royalMatches = { false, false, false, false, false };
-            // ! Royal Flush?
+
             foreach (Card c in flushCards)
             {
                 switch (c.Value)
@@ -153,6 +154,7 @@ namespace PokerAlgo
                 }
                 return; // Return if Royal Flush
             }
+            
             // ! Straight Flush?
             for (int i = flushCards.Count -  5; i >= 0; i--)
             {
@@ -171,7 +173,6 @@ namespace PokerAlgo
                     return;
                 }
             }
-
 
             // ! If not Royal Flush or Straight Flush. It's just a regular Flush
             for (int index = 0; index < flushCards.Count; index++)
@@ -210,6 +211,62 @@ namespace PokerAlgo
             }
         }
     
+        public static void StraightFinder(List<Card> cards, Player player){
+            List<Card> dupAces = new();
+            foreach (Card c in cards)
+            {
+                dupAces.Add(new Card(c));
+                if(c.Value == 1){
+                    dupAces.Add(new Card(14, c.Suit, c.IsPlayerCard));
+                }
+            }
+            dupAces = dupAces.OrderBy(x => x.Value).ToList();
+
+            for (int i = dupAces.Count - 1; i > 0; i--)
+            {
+                if(dupAces[i].Value == dupAces[i-1].Value){
+                    if(dupAces[i].IsPlayerCard && dupAces[i - 1].IsPlayerCard || !dupAces[i].IsPlayerCard && !dupAces[i - 1].IsPlayerCard)
+                    {
+                        dupAces.RemoveAt(i);
+                    }
+                    else if(dupAces[i].IsPlayerCard){
+                        dupAces.RemoveAt(i - 1);
+                    }
+                    else{
+                        dupAces.RemoveAt(i);
+                    }
+                }
+            }
+
+            for (int i = dupAces.Count - 5; i >= 0; i--)
+            {
+                List<Card> temp5 = dupAces.GetRange(i, 5);
+                if (debugEnable) Console.WriteLine();
+                if (HasConsecutiveValue(temp5) && ContainsPlayerCard(temp5) && !AllSameSuit(temp5))
+                {
+                    WinningHand tempWinning = new(HandType.Straight, temp5);
+                    player.WinningHands.Add(tempWinning);
+                    if (debugEnable)
+                    {
+                        Console.Write($"Straight - HIGHEST STRAIGHT: ");
+                        foreach (Card c in temp5)
+                        {
+                            Console.Write($"{c} ");
+                        }
+                    }
+                    return;
+                }
+            }
+
+            // ! For Testing
+            if (debugEnable) Console.WriteLine("-NO STRAIGHT-");
+            if (testingEnable)
+            {
+                WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
+                player.WinningHands.Add(tempWinningHand);
+            }
+        }
+
         private static bool ContainsPlayerCard(List<Card> cards){
             foreach (Card c in cards)
             {
@@ -241,5 +298,15 @@ namespace PokerAlgo
             return true;
         }
 
+        private static bool AllSameSuit(List<Card> cards){
+            CardSuit suit = cards.ElementAt(0).Suit;
+            foreach (Card c in cards)
+            {
+                if(c.Suit != suit){
+                    return false;;
+                }
+            }
+            return true;
+        }
     }
 }

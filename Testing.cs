@@ -11,6 +11,7 @@ namespace PokerAlgo{
 
         public Testing(){
             PerformFinderTest("FlushFinder", pathToFlush, Algo.FlushFinder);
+            PerformFinderTest("StraightFinder", pathToStraight, Algo.StraightFinder);
         }
 
         public void TestFlushes(){
