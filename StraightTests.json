@@ -1,0 +1,146 @@
+[
+  {
+    "Description": "My Description",
+    "PlayerCards": {
+      "Item1": {
+        "Value": 1,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      "Item2": {
+        "Value": 3,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    },
+    "CommunityCards": [
+      {
+        "Value": 1,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 9,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 9,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 6,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 2,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedWinningHand": {
+      "Type": 0,
+      "Cards": [
+        {
+          "Value": 1,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 9,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 9,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 6,
+          "Suit": 3,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 2,
+          "Suit": 3,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  },
+  {
+    "Description": "My Description",
+    "PlayerCards": {
+      "Item1": {
+        "Value": 1,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      "Item2": {
+        "Value": 3,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    },
+    "CommunityCards": [
+      {
+        "Value": 1,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 9,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 9,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 6,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 2,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedWinningHand": {
+      "Type": 0,
+      "Cards": [
+        {
+          "Value": 1,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 9,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 9,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 6,
+          "Suit": 3,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 2,
+          "Suit": 3,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  }
+]

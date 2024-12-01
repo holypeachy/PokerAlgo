@@ -1,5 +1,4 @@
 ﻿namespace PokerAlgo
-// TODO: Unit testing (JSON)
 {
     class Program
     {
@@ -35,51 +34,14 @@
             Testing testing = new();
         }
     }
-
-    class Player
-    {
-        public string Name { get; set; }
-        public Tuple<Card, Card> Hand { get; set; }
-        public int HighestScore { get; set; }
-        public List<WinningHand> WinningHands { get; set; }
-
-
-        public Player(string name, Card first, Card second)
-        {
-            this.Name = name;
-            Hand = new Tuple<Card, Card>(first, second);
-            Hand.Item1.IsPlayerCard = true;
-            Hand.Item2.IsPlayerCard = true;
-
-            HighestScore = 0;
-            WinningHands = new();
-        }
-
-        public override string ToString()
-        {
-            return $"{Name}: {Hand.Item1} {Hand.Item2}";
-        }
-    }
-
-    class WinningHand
-    {
-        public HandType Type {get; set;}
-        public List<Card> Cards { get; set; }
-
-        public WinningHand(HandType type, List<Card> cards)
-        {
-            this.Type = type;
-            this.Cards = cards;
-        }
-    }
-
-    enum HandType
-    {
-        Nothing = 0, Pair = 1, TwoPair, ThreeKind, Straight, Flush, FullHouse, FourKind, StraightFlush, RoyalFlush
-    }
-
-    enum CardSuit
-    {
-        Spades, Clubs, Hearts, Diamonds
-    }
 }
+
+/*
+* Added a Description property to the TestObject for readability.
+* Added all appropiate test cases in FlushTests.json for testing flushes.
+* Fixes issue where test would crash the program, because in the case no flush was found the function would return early and not add a
+ winning hand object to the player.
+* Replaced TestFlushes with a generic function that takes in the path of the test and the method of Algo to test, for reusability.
+* Added Equals method to Card class.
+* Created files for classes and enums.
+*/
