@@ -13,5 +13,10 @@ namespace PokerAlgo{
             this.PlayerCards = playerCards;
             this.ExpectedWinningHands = expectedWinningHands;
         }
+
+        public override string ToString()
+        {
+            return $"TestObject: {Description} | Player Cards: {string.Join(" ", PlayerCards)} | Community Cards: {string.Join(" ", CommunityCards)} | Expected Hands: {string.Join(" ", ExpectedWinningHands)}";
+        }
     }
 }

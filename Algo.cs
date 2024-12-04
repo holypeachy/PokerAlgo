@@ -2,25 +2,26 @@ namespace PokerAlgo
 {
     static class Algo
     {
-        private static bool debugEnable = false;
-        public static bool unitTestingEnable = true;
+        private static bool debugEnable = true;
+        public static bool unitTestingEnable = false;
 
         public static void FindWinner(List<Player> players, List<Card> community)
         {
             // Lot of fancy code stuff
-            // DeterminePlayerHands(players[0], community);
-            Player testPlayer = new Player("Test",
-            new Card(1, CardSuit.Hearts, true),
-            new Card(7, CardSuit.Spades, true));
+            DeterminePlayerHands(players[0], community);
+            
+            // Player testPlayer = new Player("Test",
+            // new Card(5, CardSuit.Diamonds, true),
+            // new Card(5, CardSuit.Hearts, true));
 
-            List<Card> testCom = new List<Card>(){
-            new Card(2, CardSuit.Diamonds, false),
-            new Card(2, CardSuit.Clubs, false),
-            new Card(2, CardSuit.Hearts, false),
-            new Card(5, CardSuit.Clubs, false),
-            new Card(5, CardSuit.Diamonds, false)};
+            // List<Card> testCom = new List<Card>(){
+            // new Card(5, CardSuit.Spades, false),
+            // new Card(5, CardSuit.Clubs, false),
+            // new Card(9, CardSuit.Hearts, false),
+            // new Card(9, CardSuit.Spades, false),
+            // new Card(9, CardSuit.Clubs, false)};
 
-            DeterminePlayerHands(testPlayer, testCom);
+            // DeterminePlayerHands(testPlayer, testCom);
         }
 
         // * Main Methods
@@ -47,6 +48,8 @@ namespace PokerAlgo
                 Console.WriteLine();
             }
 
+            FlushFinder(cards, player);
+            StraightFinder(cards, player);
             MultipleFinder(cards, player);
         }
 
@@ -91,7 +94,7 @@ namespace PokerAlgo
             }
 
             // * Extract all flush cards
-            if(debugEnable) Console.WriteLine("\nFlush Cards:");
+            if(debugEnable) Console.WriteLine("Flush Cards:");
             foreach (Card c in cards)
             {
                 if(c.Suit == flushSuit){
@@ -148,11 +151,12 @@ namespace PokerAlgo
                 WinningHand tempWinning = new(HandType.RoyalFlush, currentWinnerHand);
                 player.WinningHands.Add(tempWinning);
                 if(debugEnable){
-                    Console.Write("\nROYAL FLUSH: ");
+                    Console.Write("ROYAL FLUSH: ");
                     foreach (Card c in currentWinnerHand)
                     {
                         Console.Write($"{c} ");
                     }
+                    Console.WriteLine();
                 }
                 return; // Return if Royal Flush
             }
@@ -161,12 +165,11 @@ namespace PokerAlgo
             for (int i = flushCards.Count -  5; i >= 0; i--)
             {
                 List<Card> temp5 = flushCards.GetRange(i, 5);
-                if(debugEnable)Console.WriteLine();
                 if(HasConsecutiveValue(temp5) && ContainsPlayerCard(temp5)){
                     WinningHand tempWinning = new(HandType.StraightFlush, temp5);
                     player.WinningHands.Add(tempWinning);
                     if(debugEnable){
-                        Console.Write($"\n{flushCards.Count} Card Flush - HIGHEST STRAIGHT FLUSH: ");
+                        Console.Write($"{flushCards.Count} Card Flush - HIGHEST STRAIGHT FLUSH: ");
                         foreach (Card c in temp5)
                         {
                             Console.Write($"{c} ");
@@ -206,7 +209,7 @@ namespace PokerAlgo
             }
 
             // ! For Testing
-            if(debugEnable) Console.WriteLine("-NO FLUSH WITH PLAYER CARDS-");
+            if(debugEnable) Console.WriteLine("-NO FLUSH WITH PLAYER CARDS-\n");
             if(unitTestingEnable){
                 WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
                 player.WinningHands.Add(tempWinningHand);
@@ -241,10 +244,10 @@ namespace PokerAlgo
                 }
             }
 
+            if (debugEnable) Console.WriteLine();
             for (int i = dupAces.Count - 5; i >= 0; i--)
             {
                 List<Card> temp5 = dupAces.GetRange(i, 5);
-                if (debugEnable) Console.WriteLine();
                 if (HasConsecutiveValue(temp5) && ContainsPlayerCard(temp5) && !AllSameSuit(temp5))
                 {
                     WinningHand tempWinning = new(HandType.Straight, temp5);
@@ -256,13 +259,14 @@ namespace PokerAlgo
                         {
                             Console.Write($"{c} ");
                         }
+                        Console.WriteLine("\n");
                     }
                     return;
                 }
             }
 
             // ! For Testing
-            if (debugEnable) Console.WriteLine("-NO STRAIGHT-");
+            if (debugEnable) Console.WriteLine("-NO STRAIGHT-\n");
             if (unitTestingEnable)
             {
                 WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
@@ -287,12 +291,12 @@ namespace PokerAlgo
             duplicateCards = duplicateCards.OrderBy(x => x.Value).ToList();
 
             if(debugEnable){
-                Console.WriteLine("Multiple Finder - Duplicates:");
+                if(duplicateCards.Count > 0) Console.WriteLine("Multiple Finder - Duplicates:");
                 foreach (Card c in duplicateCards)
                 {
-                    Console.WriteLine(c);
+                    Console.WriteLine($"{c}" + (c.IsPlayerCard ? "player" : ""));
                 }
-                Console.WriteLine();
+                if(duplicateCards.Count > 0)  Console.WriteLine();
             }
 
             // ! Four of a Kind
@@ -307,15 +311,20 @@ namespace PokerAlgo
                     Console.Write($"FOUR OF A KIND: ");
                     foreach (Card c in fourKind)
                     {
-                        Console.Write($"{c} ");
+                        Console.Write($"{c}");
                     }
+                    Console.WriteLine();
                 }
+                return;
             }
 
             List<Card> threeKinds = duplicateCards.GroupBy(card => card.Value)
-            .Where(group => group.Count() == 3).SelectMany(group => group).ToList();
+            .Where(group => group.Count() == 3)
+            .SelectMany(group => group).ToList();
+
             List<Card> pairs = duplicateCards.GroupBy(card => card.Value)
-            .Where(group => group.Count() == 2).SelectMany(group => group).ToList();
+            .Where(group => group.Count() == 2)
+            .SelectMany(group => group).ToList();
 
             threeKinds = threeKinds.OrderBy(x => x.Value).ToList();
             pairs = pairs.OrderBy(x => x.Value).ToList();
@@ -411,10 +420,45 @@ namespace PokerAlgo
                         Console.WriteLine();
                     }
                 }
+                else
+                {
+                    if (unitTestingEnable)
+                    {
+                        WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
+                        player.WinningHands.Add(tempWinningHand);
+                    }
+                }
             }
-           
-           // ! 3 Pairs
-            else if(pairs.Count == 6){
+
+            // ! Three of a kind
+            else if (threeKinds.Count == 3)
+            {
+                if (ContainsPlayerCard(threeKinds))
+                {
+                    WinningHand tempWinning = new(HandType.ThreeKind, threeKinds);
+                    player.WinningHands.Add(tempWinning);
+                    if (debugEnable)
+                    {
+                        Console.Write($"3K - THREE OF A KIND: ");
+                        foreach (Card c in threeKinds)
+                        {
+                            Console.Write($"{c} ");
+                        }
+                        Console.WriteLine();
+                    }
+                }
+                else
+                {
+                    if (unitTestingEnable)
+                    {
+                        WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
+                        player.WinningHands.Add(tempWinningHand);
+                    }
+                }
+            }
+
+            // ! 3 Pairs
+            else if (pairs.Count == 6){
                 List<Card> topPair = pairs.GetRange(4,2);
                 List<Card> midPair = pairs.GetRange(2,2);
                 List<Card> bottomPair = pairs.GetRange(0,2);
@@ -451,7 +495,8 @@ namespace PokerAlgo
             
             // ! 2 Pairs
             else if(pairs.Count == 4){
-                if(ContainsPlayerCard(pairs)){
+                pairs = pairs.OrderByDescending(x => x.Value).ToList();
+                if (ContainsPlayerCard(pairs)){
                     WinningHand tempWinning = new(HandType.TwoPairs, pairs);
                     player.WinningHands.Add(tempWinning);
                     if (debugEnable)
@@ -462,6 +507,14 @@ namespace PokerAlgo
                             Console.Write($"{c} ");
                         }
                         Console.WriteLine();
+                    }
+                }
+                else
+                {
+                    if (unitTestingEnable)
+                    {
+                        WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
+                        player.WinningHands.Add(tempWinningHand);
                     }
                 }
             }
@@ -479,6 +532,14 @@ namespace PokerAlgo
                             Console.Write($"{c} ");
                         }
                         Console.WriteLine();
+                    }
+                }
+                else
+                {
+                    if (unitTestingEnable)
+                    {
+                        WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
+                        player.WinningHands.Add(tempWinningHand);
                     }
                 }
             }

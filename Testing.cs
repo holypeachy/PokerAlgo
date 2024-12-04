@@ -9,10 +9,13 @@ namespace PokerAlgo{
         private string pathToStraight = @"./Tests/StraightTests.json";
         private string pathToMultiple = @"./Tests/MultipleTests.json";
 
+        private static bool debugEnable = false;
+
 
         public Testing(){
             PerformFinderTest("FlushFinder", pathToFlush, Algo.FlushFinder);
             PerformFinderTest("StraightFinder", pathToStraight, Algo.StraightFinder);
+            PerformFinderTest("MultipleFinder", pathToMultiple, Algo.MultipleFinder);
         }
 
         public void PerformFinderTest(string testName, string pathToTest, AlgoFunction function){
@@ -38,6 +41,11 @@ namespace PokerAlgo{
             bool passed = true;
             foreach (TestObject test in testObjects)
             {
+                if(debugEnable){
+                    Console.WriteLine("Current Object:");
+                    Console.WriteLine(test);
+                    Console.WriteLine();
+                }
                 WinningHand expectedHand = new(HandType.Nothing, new List<Card>());
                 WinningHand actualHand = new(HandType.Nothing, new List<Card>());
                 Player player = new("Test", test.PlayerCards.Item1, test.PlayerCards.Item2);
@@ -66,12 +74,19 @@ namespace PokerAlgo{
                         {
                             for (int cardIndex = 0; cardIndex < expectedHand.Cards.Count; cardIndex++)
                             {
-                                if (!IsSuitRelevant(expectedHand.Type) ? 
-                                !expectedHand.Cards[cardIndex].EqualsNoSuit(actualHand.Cards[cardIndex]) :
-                                !expectedHand.Cards[cardIndex].Equals(actualHand.Cards[cardIndex]))
-                                {
-                                    passed = false;
-                                    break;
+                                if(!IsSuitRelevant(expectedHand.Type)){
+                                    if (!expectedHand.Cards[cardIndex].EqualsValue(actualHand.Cards[cardIndex]))
+                                    {
+                                        passed = false;
+                                        break;
+                                    }
+                                }
+                                else{
+                                    if (!expectedHand.Cards[cardIndex].Equals(actualHand.Cards[cardIndex]))
+                                    {
+                                        passed = false;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -90,6 +105,7 @@ namespace PokerAlgo{
                 {
                     passed = false;
                 }
+
                 // Console.WriteLine(test.Description);
                 if(passed){
                     Console.ForegroundColor = ConsoleColor.Green;
@@ -137,6 +153,7 @@ namespace PokerAlgo{
         {
             return type == HandType.RoyalFlush || type == HandType.StraightFlush || type == HandType.Flush;
         }
+
 
         // * For converting the json tests from one type of test object to another
         public void ConvertJson(string pathToTest){

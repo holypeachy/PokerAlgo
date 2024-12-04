@@ -46,8 +46,8 @@ namespace PokerAlgo
             }
         }
 
-        public bool EqualsNoSuit(Card other){
-            return this.Value == other.Value && this.IsPlayerCard == other.IsPlayerCard;
+        public bool EqualsValue(Card other){
+            return this.Value == other.Value;
         }
 
         public override int GetHashCode()

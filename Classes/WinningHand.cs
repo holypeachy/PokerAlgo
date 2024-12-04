@@ -10,5 +10,10 @@ namespace PokerAlgo
             this.Type = type;
             this.Cards = cards;
         }
+
+        public override string ToString()
+        {
+            return $"Type: {Type} | Cards: {string.Join(" ", Cards)}";
+        }
     }
 }

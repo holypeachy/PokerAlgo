@@ -45,7 +45,6 @@
 
 /*
 TODO: Replace repeating code with AddWinningHand method.
-TODO: Create tests for MultipleFinder.
 TODO: Combine all methods into the first part of the algo.
 TODO: Create tests for first part of algo.
 TODO: Start the second part of the algo, comparing the hands of all players.
@@ -58,11 +57,10 @@ TODO: Start the second part of the algo, comparing the hands of all players.
 
 
 * Changes
-* Replaced winningHand field in TestObject with a listt of winningHands.
-* Added a ConvertJson function to Testing to convert the objects in the json tests to another.
-* Updated PerformFinderTest to account for multiple possible winning hands in testing; tests pass like normal with new changes.
-* Added MultipleFinder method to the Algo to recognize Four of a Kind hands.
-* Added log of expected vs actual WinnerHand object information to failed tests.
-* Finished MultipleFinder Method.
-* PerformFinderTest now checks if suit verification is necessary or not based on the expected winning hand type.
+* Added all appropriate unit tests for MultipleFinder, debugged and all tests pass now.
+* Unit tests are a god sent.
+* First time I've had to actually use a debugger.
+* Fixed annoying new line thing.
+* Decks shuffle twice upon creation; makes me feel better.
+* Card method EqualsNoSuit has been renamed to EqualsValue and no longer check is card is player card or not.
 */

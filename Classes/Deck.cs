@@ -11,6 +11,7 @@ namespace PokerAlgo
             CreateDeck();
 
             ShuffleDeck();
+            ShuffleDeck();
         }
 
         public void CreateDeck()
