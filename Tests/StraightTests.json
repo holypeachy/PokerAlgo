@@ -40,10 +40,12 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 0,
-      "Cards": []
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   },
   {
     "Description": "Straight with 1 player card",
@@ -86,36 +88,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 4,
-      "Cards": [
-        {
-          "Value": 3,
-          "Suit": 0,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 4,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 5,
-          "Suit": 1,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 6,
-          "Suit": 3,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 7,
-          "Suit": 1,
-          "IsPlayerCard": false
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 4,
+        "Cards": [
+          {
+            "Value": 3,
+            "Suit": 0,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 4,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 5,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 6,
+            "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 7,
+            "Suit": 1,
+            "IsPlayerCard": false
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "Straight with 2 player cards",
@@ -158,36 +162,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 4,
-      "Cards": [
-        {
-          "Value": 3,
-          "Suit": 0,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 4,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 5,
-          "Suit": 1,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 6,
-          "Suit": 3,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 7,
-          "Suit": 1,
-          "IsPlayerCard": false
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 4,
+        "Cards": [
+          {
+            "Value": 3,
+            "Suit": 0,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 4,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 5,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 6,
+            "Suit": 3,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 7,
+            "Suit": 1,
+            "IsPlayerCard": false
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "Straight with both player cards being the same",
@@ -230,36 +236,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 4,
-      "Cards": [
-        {
-          "Value": 3,
-          "Suit": 0,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 4,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 5,
-          "Suit": 1,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 6,
-          "Suit": 3,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 7,
-          "Suit": 1,
-          "IsPlayerCard": false
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 4,
+        "Cards": [
+          {
+            "Value": 3,
+            "Suit": 0,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 4,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 5,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 6,
+            "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 7,
+            "Suit": 1,
+            "IsPlayerCard": false
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "Straight with 1 card in player and one on community being the same",
@@ -302,36 +310,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 4,
-      "Cards": [
-        {
-          "Value": 3,
-          "Suit": 0,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 4,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 5,
-          "Suit": 1,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 6,
-          "Suit": 3,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 7,
-          "Suit": 1,
-          "IsPlayerCard": false
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 4,
+        "Cards": [
+          {
+            "Value": 3,
+            "Suit": 0,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 4,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 5,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 6,
+            "Suit": 3,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 7,
+            "Suit": 1,
+            "IsPlayerCard": false
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "Straight with 3 repeated cards",
@@ -374,36 +384,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 4,
-      "Cards": [
-        {
-          "Value": 3,
-          "Suit": 0,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 4,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 5,
-          "Suit": 1,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 6,
-          "Suit": 1,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 7,
-          "Suit": 0,
-          "IsPlayerCard": false
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 4,
+        "Cards": [
+          {
+            "Value": 3,
+            "Suit": 0,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 4,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 5,
+            "Suit": 1,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 6,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 7,
+            "Suit": 0,
+            "IsPlayerCard": false
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "1,10,11,12,13 Straight",
@@ -446,36 +458,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 4,
-      "Cards": [
-        {
-          "Value": 10,
-          "Suit": 3,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 11,
-          "Suit": 0,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 12,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 13,
-          "Suit": 3,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 14,
-          "Suit": 1,
-          "IsPlayerCard": true
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 4,
+        "Cards": [
+          {
+            "Value": 10,
+            "Suit": 3,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 11,
+            "Suit": 0,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 12,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 13,
+            "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 14,
+            "Suit": 1,
+            "IsPlayerCard": true
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "No Straight Anywhere",
@@ -518,10 +532,12 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 0,
-      "Cards": []
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   },
   {
     "Description": "Straight Flush | Player Involved",
@@ -564,10 +580,12 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 0,
-      "Cards": []
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   },
   {
     "Description": "Royal Flush | Player Involved",
@@ -610,10 +628,12 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 0,
-      "Cards": []
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   },
   {
     "Description": "Straight Flush | Player Not Involved",
@@ -656,10 +676,12 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 0,
-      "Cards": []
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   },
   {
     "Description": "Royal Flush | Player Not Involved",
@@ -702,9 +724,11 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 0,
-      "Cards": []
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   }
 ]

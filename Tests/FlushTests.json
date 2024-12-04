@@ -40,36 +40,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 9,
-      "Cards": [
-        {
-          "Value": 1,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 10,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 11,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 12,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 13,
-          "Suit": 2,
-          "IsPlayerCard": true
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 9,
+        "Cards": [
+          {
+            "Value": 1,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 10,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 11,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 12,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 13,
+            "Suit": 2,
+            "IsPlayerCard": true
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "Royal Flush | 2 Player Cards",
@@ -112,36 +114,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 9,
-      "Cards": [
-        {
-          "Value": 1,
-          "Suit": 2,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 10,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 11,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 12,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 13,
-          "Suit": 2,
-          "IsPlayerCard": true
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 9,
+        "Cards": [
+          {
+            "Value": 1,
+            "Suit": 2,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 10,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 11,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 12,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 13,
+            "Suit": 2,
+            "IsPlayerCard": true
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "Straight Flush | 1 Player Card",
@@ -184,36 +188,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 8,
-      "Cards": [
-        {
-          "Value": 5,
-          "Suit": 3,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 6,
-          "Suit": 3,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 7,
-          "Suit": 3,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 8,
-          "Suit": 3,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 9,
-          "Suit": 3,
-          "IsPlayerCard": true
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 8,
+        "Cards": [
+          {
+            "Value": 5,
+            "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 6,
+            "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 7,
+            "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 8,
+            "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 9,
+            "Suit": 3,
+            "IsPlayerCard": true
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "Straight Flush | 2 Player Cards",
@@ -256,36 +262,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 8,
-      "Cards": [
-        {
-          "Value": 4,
-          "Suit": 3,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 5,
-          "Suit": 3,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 6,
-          "Suit": 3,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 7,
-          "Suit": 3,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 8,
-          "Suit": 3,
-          "IsPlayerCard": true
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 8,
+        "Cards": [
+          {
+            "Value": 4,
+            "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 5,
+            "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 6,
+            "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 7,
+            "Suit": 3,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 8,
+            "Suit": 3,
+            "IsPlayerCard": true
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "Flush | 1 Player Card",
@@ -328,36 +336,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 5,
-      "Cards": [
-        {
-          "Value": 3,
-          "Suit": 2,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 5,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 7,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 10,
-          "Suit": 2,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 14,
-          "Suit": 2,
-          "IsPlayerCard": false
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 5,
+        "Cards": [
+          {
+            "Value": 3,
+            "Suit": 2,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 5,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 7,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 10,
+            "Suit": 2,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 14,
+            "Suit": 2,
+            "IsPlayerCard": false
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "Flush | 2 Player Cards",
@@ -400,36 +410,38 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 5,
-      "Cards": [
-        {
-          "Value": 5,
-          "Suit": 0,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 7,
-          "Suit": 0,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 9,
-          "Suit": 0,
-          "IsPlayerCard": true
-        },
-        {
-          "Value": 12,
-          "Suit": 0,
-          "IsPlayerCard": false
-        },
-        {
-          "Value": 14,
-          "Suit": 0,
-          "IsPlayerCard": true
-        }
-      ]
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 5,
+        "Cards": [
+          {
+            "Value": 5,
+            "Suit": 0,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 7,
+            "Suit": 0,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 9,
+            "Suit": 0,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 12,
+            "Suit": 0,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 14,
+            "Suit": 0,
+            "IsPlayerCard": true
+          }
+        ]
+      }
+    ]
   },
   {
     "Description": "Nothing | Royal Flush on Community No Player Cards",
@@ -472,10 +484,12 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 0,
-      "Cards": []
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   },
   {
     "Description": "Nothing | Straight Flush on Community No Player Cards",
@@ -518,10 +532,12 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 0,
-      "Cards": []
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   },
   {
     "Description": "Nothing | Flush on Community No Player Cards",
@@ -564,10 +580,12 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 0,
-      "Cards": []
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   },
   {
     "Description": "Nothing | No Poker Hands at All",
@@ -610,9 +628,11 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHand": {
-      "Type": 0,
-      "Cards": []
-    }
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   }
 ]
