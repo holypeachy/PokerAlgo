@@ -3,7 +3,7 @@
     "Description": "Straight on the community, not the player",
     "PlayerCards": {
       "Item1": {
-        "Value": 1,
+        "Value": 14,
         "Suit": 1,
         "IsPlayerCard": true
       },
@@ -418,10 +418,10 @@
     ]
   },
   {
-    "Description": "1,10,11,12,13 Straight",
+    "Description": "10,11,12,13,14 Straight",
     "PlayerCards": {
       "Item1": {
-        "Value": 1,
+        "Value": 14,
         "Suit": 1,
         "IsPlayerCard": true
       },
@@ -591,7 +591,7 @@
     "Description": "Royal Flush | Player Involved",
     "PlayerCards": {
       "Item1": {
-        "Value": 1,
+        "Value": 14,
         "Suit": 3,
         "IsPlayerCard": true
       },
@@ -699,7 +699,7 @@
     },
     "CommunityCards": [
       {
-        "Value": 1,
+        "Value": 14,
         "Suit": 3,
         "IsPlayerCard": false
       },

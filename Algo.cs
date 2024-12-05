@@ -2,24 +2,33 @@ namespace PokerAlgo
 {
     static class Algo
     {
-        private static bool debugEnable = true;
-        public static bool unitTestingEnable = true;
+        private static bool debugEnable = false;
+        public static bool unitTestingEnable = false;
 
         public static void FindWinner(List<Player> players, List<Card> community)
         {
             // Lot of fancy code stuff
-            DeterminePlayerHands2(players[0], community);
+            foreach (Player player in players)
+            {
+                DeterminePlayerHands(player, community);
+                Console.WriteLine(player.Name + ":");
+                foreach (WinningHand hand in player.WinningHands)
+                {
+                    Console.WriteLine("   " + hand);
+                }
+            }
 
+            // * Manual Testing
             // Player testPlayer = new Player("Test",
-            // new Card(5, CardSuit.Diamonds, true),
-            // new Card(5, CardSuit.Hearts, true));
+            // new Card(10, CardSuit.Diamonds, true),
+            // new Card(11, CardSuit.Diamonds, true));
 
             // List<Card> testCom = new List<Card>(){
-            // new Card(5, CardSuit.Spades, false),
-            // new Card(5, CardSuit.Clubs, false),
-            // new Card(9, CardSuit.Hearts, false),
-            // new Card(9, CardSuit.Spades, false),
-            // new Card(9, CardSuit.Clubs, false)};
+            // new Card(9, CardSuit.Diamonds, false),
+            // new Card(8, CardSuit.Diamonds, false),
+            // new Card(13, CardSuit.Diamonds, false),
+            // new Card(12, CardSuit.Diamonds, false),
+            // new Card(14, CardSuit.Diamonds, false)};
 
             // DeterminePlayerHands(testPlayer, testCom);
         }
@@ -27,47 +36,19 @@ namespace PokerAlgo
         // * Main Methods
         private static void DeterminePlayerHands(Player player, List<Card> community)
         {
-            // ! Combine and sort cards
-            List<Card> cards = new();
-
-            cards.Add(new Card(player.Hand.Item1));
-            cards.Add(new Card(player.Hand.Item2));
-            foreach (Card c in community)
-            {
-                cards.Add(c);
-            }
-
-            cards = cards.OrderBy(x => x.Value).ToList();
-
-            if(debugEnable){
-                Console.WriteLine("All Cards: ");
-                foreach (Card c in cards)
-                {
-                    Console.WriteLine($"{c}" + (c.IsPlayerCard ? "player" : ""));
-                }
-                Console.WriteLine();
-            }
-
-            FlushFinder(cards, player);
-            StraightFinder(cards, player);
-            MultipleFinder(cards, player);
-        }
-
-        private static void DeterminePlayerHands2(Player player, List<Card> community)
-        {
             // * Combine and sort cards
-            List<Card> cards = new();
-
-            cards.Add(player.Hand.Item1);
-            cards.Add(player.Hand.Item2);
-            foreach (Card c in community)
+            List<Card> cards = new()
             {
-                cards.Add(c);
-            }
+                player.Hand.Item1,
+                player.Hand.Item2
+            };
+            cards.AddRange(community);
 
             SortCardsByValue(cards);
 
-            LogCards("All Cards: ", cards);
+            DebugLogCards("All Cards", cards);
+
+            AddLowAces(cards);
 
             FlushFinder(cards, player);
             StraightFinder(cards, player);
@@ -75,268 +56,119 @@ namespace PokerAlgo
         }
 
 
-        public static void FlushFinder(List<Card> cards, Player player){
-            List<Card> currentWinnerHand = new();
-            List<Card> flushCards = new();
+        public static void FlushFinder(List<Card> combinedCards, Player player)
+        {
+            List<Card> flushCards = combinedCards.GroupBy(card => card.Suit)
+            .Where(group => group.Count() >= 5)
+            .SelectMany(group => group).ToList();
 
-            // ! Flush?
-            bool isFlush = false;
-            CardSuit flushSuit = CardSuit.Spades;
-
-            // Do we have a flush?
-            foreach (CardSuit currentSuit in Enum.GetValues(typeof(CardSuit)).Cast<CardSuit>())
+            if (flushCards.Count == 0)
             {
-                int count = 0;
-                foreach (Card c in cards)
-                {
-                    if (c.Suit == currentSuit)
-                    {
-                        count++;
-                    }
-                }
-
-                if (count >= 5)
-                {
-                    isFlush = true;
-                    flushSuit = currentSuit;
-                    break;
-                }
-            }
-
-            if(!isFlush){
-                // ! For Testing
-                if(debugEnable){
-                    Console.WriteLine("-NO FLUSH FOUND-");
-                }
-                if(unitTestingEnable){
-                    WinningHand t = new(HandType.Nothing, new List<Card>());
-                    player.WinningHands.Add(t);
-                }
+                if(debugEnable) Console.WriteLine("- No Flush -");
+                TestingAddNoWinningHand(player);
                 return;
             }
 
-            // * Extract all flush cards
-            if(debugEnable) Console.WriteLine("Flush Cards:");
-            foreach (Card c in cards)
-            {
-                if(c.Suit == flushSuit){
-                    flushCards.Add(new Card(c.Value, c.Suit, c.IsPlayerCard));
-                    if(debugEnable) Console.WriteLine(c);
+            DebugLogCards("Flush Finder - Flush Cards", flushCards);
 
-                }
+            List<Card> bestFive = new();
+
+            // ! Royal Flush
+            bestFive = flushCards.GetRange(flushCards.Count - 5, 5);
+            if(bestFive.ElementAt(0).Value == 10 && HasConsecutiveValues(bestFive) && HasPlayerCard(bestFive)){
+                AddWinningHand(player, HandType.RoyalFlush, bestFive);
+                return;
             }
 
-            // ! Do we have a royal flush?
-            bool isRoyalFlush = true;
-            bool[] royalMatches = { false, false, false, false, false };
-
-            foreach (Card c in flushCards)
-            {
-                switch (c.Value)
-                {
-                    case 1:
-                        royalMatches[0] = true;
-                        currentWinnerHand.Add(c);
-                        break;
-                    case 10:
-                        royalMatches[1] = true;
-                        currentWinnerHand.Add(c);
-                        break;
-                    case 11:
-                        royalMatches[2] = true;
-                        currentWinnerHand.Add(c);
-                        break;
-                    case 12:
-                        royalMatches[3] = true;
-                        currentWinnerHand.Add(c);
-                        break;
-                    case 13:
-                        royalMatches[4] = true;
-                        currentWinnerHand.Add(c);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            foreach (bool condition in royalMatches)
-            {
-                if (condition == false)
-                {
-                    isRoyalFlush = false;
-                    break;
-                }
-            }
-
-            if (isRoyalFlush && ContainsPlayerCard(currentWinnerHand))
-            {
-                WinningHand tempWinning = new(HandType.RoyalFlush, currentWinnerHand);
-                player.WinningHands.Add(tempWinning);
-                if(debugEnable){
-                    Console.Write("ROYAL FLUSH: ");
-                    foreach (Card c in currentWinnerHand)
-                    {
-                        Console.Write($"{c} ");
-                    }
-                    Console.WriteLine();
-                }
-                return; // Return if Royal Flush
-            }
-            
-            // ! Straight Flush?
-            for (int i = flushCards.Count -  5; i >= 0; i--)
-            {
-                List<Card> temp5 = flushCards.GetRange(i, 5);
-                if(HasConsecutiveValue(temp5) && ContainsPlayerCard(temp5)){
-                    WinningHand tempWinning = new(HandType.StraightFlush, temp5);
-                    player.WinningHands.Add(tempWinning);
-                    if(debugEnable){
-                        Console.Write($"{flushCards.Count} Card Flush - HIGHEST STRAIGHT FLUSH: ");
-                        foreach (Card c in temp5)
-                        {
-                            Console.Write($"{c} ");
-                        }
-                    }
-                    return;
-                }
-            }
-
-            // ! If not Royal Flush or Straight Flush. It's just a regular Flush
-            for (int index = 0; index < flushCards.Count; index++)
-            {
-                if (flushCards[index].Value == 1)
-                {
-                    flushCards[index].Value = 14;
-                }
-            }
-
-            flushCards = flushCards.OrderBy(c => c.Value).ToList();
-
+            // ! Straight Flush
             for (int i = flushCards.Count - 5; i >= 0; i--)
             {
-                List<Card> temp5 = flushCards.GetRange(i, 5);
-                if (ContainsPlayerCard(temp5))
+                bestFive = flushCards.GetRange(i, 5);
+                if (HasConsecutiveValues(bestFive) && HasPlayerCard(bestFive))
                 {
-                    WinningHand tempWinning = new(HandType.Flush, temp5);
-                    player.WinningHands.Add(tempWinning);
-                    if(debugEnable){
-                        Console.Write($"{flushCards.Count} Card Flush - HIGHEST FLUSH: ");
-                        foreach (Card c in temp5)
-                        {
-                            Console.Write($"{c} ");
-                        }
-                    }
+                    AddWinningHand(player, HandType.StraightFlush, bestFive);
                     return;
                 }
             }
 
-            // ! For Testing
-            if(debugEnable) Console.WriteLine("-NO FLUSH WITH PLAYER CARDS-\n");
-            if(unitTestingEnable){
-                WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
-                player.WinningHands.Add(tempWinningHand);
+            // ! Standard Flush
+            for (int i = flushCards.Count - 5; i >= 0; i--)
+            {
+                bestFive = flushCards.GetRange(i, 5);
+                if (HasPlayerCard(bestFive))
+                {
+                    AddWinningHand(player, HandType.Flush, bestFive);
+                    return;
+                }
             }
+
+            if(debugEnable) Console.WriteLine("\n- No Flush -");
+            TestingAddNoWinningHand(player);
         }
+    
 
         public static void StraightFinder(List<Card> cards, Player player){
-            List<Card> dupAces = new();
+            List<Card> tempCards = new();
+            // ! Deep Copy cards
             foreach (Card c in cards)
             {
-                dupAces.Add(new Card(c));
-                if(c.Value == 1){
-                    dupAces.Add(new Card(14, c.Suit, c.IsPlayerCard));
-                }
+                tempCards.Add(new Card(c));
             }
-            dupAces = dupAces.OrderBy(x => x.Value).ToList();
+
+            DebugLogCards("Straight Finder", tempCards);
 
             // ! Removes duplicates
-            for (int i = dupAces.Count - 1; i > 0; i--)
+            for (int i = tempCards.Count - 1; i > 0; i--)
             {
-                if(dupAces[i].Value == dupAces[i-1].Value){
-                    if(dupAces[i].IsPlayerCard && dupAces[i - 1].IsPlayerCard || !dupAces[i].IsPlayerCard && !dupAces[i - 1].IsPlayerCard)
+                if(tempCards[i].Value == tempCards[i-1].Value){
+                    if(tempCards[i].IsPlayerCard && tempCards[i - 1].IsPlayerCard || !tempCards[i].IsPlayerCard && !tempCards[i - 1].IsPlayerCard)
                     {
-                        dupAces.RemoveAt(i);
+                        tempCards.RemoveAt(i);
                     }
-                    else if(dupAces[i].IsPlayerCard){
-                        dupAces.RemoveAt(i - 1);
+                    else if(tempCards[i].IsPlayerCard){
+                        tempCards.RemoveAt(i - 1);
                     }
                     else{
-                        dupAces.RemoveAt(i);
+                        tempCards.RemoveAt(i);
                     }
                 }
             }
 
-            if (debugEnable) Console.WriteLine();
-            for (int i = dupAces.Count - 5; i >= 0; i--)
+            for (int i = tempCards.Count - 5; i >= 0; i--)
             {
-                List<Card> temp5 = dupAces.GetRange(i, 5);
-                if (HasConsecutiveValue(temp5) && ContainsPlayerCard(temp5) && !AllSameSuit(temp5))
+                List<Card> bestFive = tempCards.GetRange(i, 5);
+                if (HasConsecutiveValues(bestFive) && HasPlayerCard(bestFive) && !IsSameSuit(bestFive))
                 {
-                    WinningHand tempWinning = new(HandType.Straight, temp5);
-                    player.WinningHands.Add(tempWinning);
-                    if (debugEnable)
-                    {
-                        Console.Write($"Straight - HIGHEST STRAIGHT: ");
-                        foreach (Card c in temp5)
-                        {
-                            Console.Write($"{c} ");
-                        }
-                        Console.WriteLine("\n");
-                    }
+                    AddWinningHand(player, HandType.Straight, bestFive);
                     return;
                 }
             }
 
             // ! For Testing
-            if (debugEnable) Console.WriteLine("-NO STRAIGHT-\n");
-            if (unitTestingEnable)
-            {
-                WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
-                player.WinningHands.Add(tempWinningHand);
-            }
+            if (debugEnable) Console.WriteLine("- No Straight -");
+            TestingAddNoWinningHand(player);
         }
 
+
         public static void MultipleFinder(List<Card> cards, Player player){
-            List<Card> duplicateCards = cards.GroupBy(card => card.Value)
+            List<Card> duplicateCards = RemoveLowAces(cards);
+            duplicateCards = duplicateCards.GroupBy(card => card.Value)
             .Where(group => group.Count() > 1)
             .SelectMany(group => group).ToList();
 
-            // Make Aces value into 14
-            for (int i = 0; i < duplicateCards.Count; i++)
-            {
-                if (duplicateCards[i].Value == 1)
-                {
-                    duplicateCards[i] = new Card(14, duplicateCards[i].Suit, duplicateCards[i].IsPlayerCard);
-                }
+            if(duplicateCards.Count == 0){
+                TestingAddNoWinningHand(player);
+                return;
             }
 
-            duplicateCards = duplicateCards.OrderBy(x => x.Value).ToList();
-
-            if(debugEnable){
-                if(duplicateCards.Count > 0) Console.WriteLine("Multiple Finder - Duplicates:");
-                foreach (Card c in duplicateCards)
-                {
-                    Console.WriteLine($"{c}" + (c.IsPlayerCard ? "player" : ""));
-                }
-                if(duplicateCards.Count > 0)  Console.WriteLine();
-            }
+            DebugLogCards("Multiple Finder - Duplicates", duplicateCards);
 
             // ! Four of a Kind
             List<Card> fourKind = duplicateCards.GroupBy(card => card.Value)
             .Where(group => group.Count() == 4).SelectMany(group => group).ToList();
 
-            if(fourKind.Count == 4 && ContainsPlayerCard(duplicateCards)){
-                WinningHand tempWinning = new(HandType.FourKind, fourKind);
-                player.WinningHands.Add(tempWinning);
-                if (debugEnable)
-                {
-                    Console.Write($"FOUR OF A KIND: ");
-                    foreach (Card c in fourKind)
-                    {
-                        Console.Write($"{c}");
-                    }
-                    Console.WriteLine();
-                }
+            if(fourKind.Count == 4 && HasPlayerCard(duplicateCards)){
+                AddWinningHand(player, HandType.FourKind, fourKind);
                 return;
             }
 
@@ -348,11 +180,11 @@ namespace PokerAlgo
             .Where(group => group.Count() == 2)
             .SelectMany(group => group).ToList();
 
-            threeKinds = threeKinds.OrderBy(x => x.Value).ToList();
-            pairs = pairs.OrderBy(x => x.Value).ToList();
+            SortCardsByValue(threeKinds);
+            SortCardsByValue(pairs);
 
-            // * Quick Notes. Possible Combinations
-            // * 7 cards. 2x 3k | 1x 3k , 2x pair | 1x 3k , 1x pair | 3x pair | 2x pair | 1x pair
+            // * Possible Combinations
+            // * 7 cards. 2x 3k | 1x 3k , 2x pair | 1x 3k , 1x pair | 3k | 3x pair | 2x pair | 1x pair
 
             // ! Two, 3 of a kind. Full House
             if (threeKinds.Count == 6){                
@@ -360,7 +192,7 @@ namespace PokerAlgo
                 List<Card> bottom3 = threeKinds.GetRange(0, 3);
 
                 List<Card> fullHouse = new();
-                if(ContainsPlayerCard(top3) || ContainsPlayerCard(bottom3))
+                if(HasPlayerCard(top3) || HasPlayerCard(bottom3))
                 {
                     fullHouse.AddRange(top3);
                     if(bottom3[0].IsPlayerCard && bottom3[1].IsPlayerCard){
@@ -377,17 +209,7 @@ namespace PokerAlgo
                     throw new Exception("MultipleFinder() 2x, 3 of a kind. Something went very wrong. It's not possible for 2, 3Ks to exist and the player not have a card in.");
                 }
 
-                WinningHand tempWinning = new(HandType.FullHouse, fullHouse);
-                player.WinningHands.Add(tempWinning);
-                if (debugEnable)
-                {
-                    Console.Write($"2x 3K - FULL HOUSE: ");
-                    foreach (Card c in fullHouse)
-                    {
-                        Console.Write($"{c} ");
-                    }
-                    Console.WriteLine();
-                }
+                AddWinningHand(player, HandType.FullHouse, fullHouse);
             }
            
             // ! One, 3 of a kind and 2 pairs. Full House
@@ -396,12 +218,12 @@ namespace PokerAlgo
                 List<Card> bottomPair = pairs.GetRange(0, 2);
                 List<Card> fullHouse = new();
 
-                if (ContainsPlayerCard(threeKinds) || ContainsPlayerCard(topPair))
+                if (HasPlayerCard(threeKinds) || HasPlayerCard(topPair))
                 {
                     fullHouse.AddRange(threeKinds);
                     fullHouse.AddRange(topPair);
                 }
-                else if(ContainsPlayerCard(bottomPair)){
+                else if(HasPlayerCard(bottomPair)){
                     fullHouse.AddRange(threeKinds);
                     fullHouse.AddRange(bottomPair);
                 }
@@ -410,17 +232,7 @@ namespace PokerAlgo
                     throw new Exception("MultipleFinder() 1x, 3 of a kind, 2 pairs. Something went very wrong. It's not possible for 1x 3K and 2 pairs to exist and the player not have a card in.");
                 }
 
-                WinningHand tempWinning = new(HandType.FullHouse, fullHouse);
-                player.WinningHands.Add(tempWinning);
-                if (debugEnable)
-                {
-                    Console.Write($"3K, 2 Pairs - FULL HOUSE: ");
-                    foreach (Card c in fullHouse)
-                    {
-                        Console.Write($"{c} ");
-                    }
-                    Console.WriteLine();
-                }
+                AddWinningHand(player, HandType.FullHouse, fullHouse);
             }
           
             // ! One,  3 of a kind and 1 pair. Full House
@@ -429,53 +241,25 @@ namespace PokerAlgo
                 fullHouse.AddRange(threeKinds);
                 fullHouse.AddRange(pairs);
 
-                if(ContainsPlayerCard(fullHouse)){
-                    WinningHand tempWinning = new(HandType.FullHouse, fullHouse);
-                    player.WinningHands.Add(tempWinning);
-                    if (debugEnable)
-                    {
-                        Console.Write($"FULL HOUSE: ");
-                        foreach (Card c in fullHouse)
-                        {
-                            Console.Write($"{c} ");
-                        }
-                        Console.WriteLine();
-                    }
+                if(HasPlayerCard(fullHouse)){
+                    AddWinningHand(player, HandType.FullHouse, fullHouse);
                 }
                 else
                 {
-                    if (unitTestingEnable)
-                    {
-                        WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
-                        player.WinningHands.Add(tempWinningHand);
-                    }
+                    TestingAddNoWinningHand(player);
                 }
             }
 
             // ! Three of a kind
             else if (threeKinds.Count == 3)
             {
-                if (ContainsPlayerCard(threeKinds))
+                if (HasPlayerCard(threeKinds))
                 {
-                    WinningHand tempWinning = new(HandType.ThreeKind, threeKinds);
-                    player.WinningHands.Add(tempWinning);
-                    if (debugEnable)
-                    {
-                        Console.Write($"3K - THREE OF A KIND: ");
-                        foreach (Card c in threeKinds)
-                        {
-                            Console.Write($"{c} ");
-                        }
-                        Console.WriteLine();
-                    }
+                    AddWinningHand(player, HandType.ThreeKind, threeKinds);
                 }
                 else
                 {
-                    if (unitTestingEnable)
-                    {
-                        WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
-                        player.WinningHands.Add(tempWinningHand);
-                    }
+                    TestingAddNoWinningHand(player);
                 }
             }
 
@@ -488,13 +272,13 @@ namespace PokerAlgo
                 List<Card> twoPairs = new();
                 twoPairs.AddRange(topPair);
 
-                if (ContainsPlayerCard(midPair)){
+                if (HasPlayerCard(midPair)){
                     twoPairs.AddRange(midPair);
                 }
-                else if(ContainsPlayerCard(bottomPair)){
+                else if(HasPlayerCard(bottomPair)){
                     twoPairs.AddRange(bottomPair);
                 }
-                else if(ContainsPlayerCard(topPair)){
+                else if(HasPlayerCard(topPair)){
                     twoPairs.AddRange(midPair);
                 }
                 else
@@ -502,84 +286,64 @@ namespace PokerAlgo
                     throw new Exception("MultipleFinder() 3 pairs. Something went very wrong. It's not possible for 3 pairs to exist and the player not have a card in.");
                 }
 
-                WinningHand tempWinning = new(HandType.TwoPairs, twoPairs);
-                player.WinningHands.Add(tempWinning);
-                if (debugEnable)
-                {
-                    Console.Write($"3 PAIRS - TWO PAIRS: ");
-                    foreach (Card c in twoPairs)
-                    {
-                        Console.Write($"{c} ");
-                    }
-                    Console.WriteLine();
-                }
+                AddWinningHand(player, HandType.TwoPairs, twoPairs);
             }
             
             // ! 2 Pairs
             else if(pairs.Count == 4){
                 pairs = pairs.OrderByDescending(x => x.Value).ToList();
-                if (ContainsPlayerCard(pairs)){
-                    WinningHand tempWinning = new(HandType.TwoPairs, pairs);
-                    player.WinningHands.Add(tempWinning);
-                    if (debugEnable)
-                    {
-                        Console.Write($"2 PAIRS - TWO PAIRS: ");
-                        foreach (Card c in pairs)
-                        {
-                            Console.Write($"{c} ");
-                        }
-                        Console.WriteLine();
-                    }
+                if (HasPlayerCard(pairs)){
+                    AddWinningHand(player, HandType.TwoPairs, pairs);
                 }
                 else
                 {
-                    if (unitTestingEnable)
-                    {
-                        WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
-                        player.WinningHands.Add(tempWinningHand);
-                    }
+                    TestingAddNoWinningHand(player);
                 }
             }
             
             // ! 1 Pair
             else if(pairs.Count == 2){
-                if(ContainsPlayerCard(pairs)){
-                    WinningHand tempWinning = new(HandType.Pair, pairs);
-                    player.WinningHands.Add(tempWinning);
-                    if (debugEnable)
-                    {
-                        Console.Write($"PAIR: ");
-                        foreach (Card c in pairs)
-                        {
-                            Console.Write($"{c} ");
-                        }
-                        Console.WriteLine();
-                    }
+                if(HasPlayerCard(pairs)){
+                    AddWinningHand(player, HandType.Pair, pairs);
                 }
                 else
                 {
-                    if (unitTestingEnable)
-                    {
-                        WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
-                        player.WinningHands.Add(tempWinningHand);
-                    }
+                    TestingAddNoWinningHand(player);
                 }
             }
 
             // ! Nothing
             else{
-                if (debugEnable) Console.WriteLine("-NO FULL HOUSE, 3K, 2 PAIRS, OR PAIR-");
-                if (unitTestingEnable)
-                {
-                    WinningHand tempWinningHand = new(HandType.Nothing, new List<Card>());
-                    player.WinningHands.Add(tempWinningHand);
-                }
+                if (debugEnable) Console.WriteLine("- No Full House, 3K, 2 Pairs, or Pair -");
+                TestingAddNoWinningHand(player);
             }
         }
 
 
         // * Helper Methods
-        private static void LogCards(string description, List<Card> cards){
+        private static void AddLowAces(List<Card> cards){
+            List<Card> acesToAdd = new();
+            foreach (Card c in cards)
+            {
+                if(c.Value == 14){
+                    acesToAdd.Add(new Card(1, c.Suit, c.IsPlayerCard));
+                }
+            }
+            cards.InsertRange(0, acesToAdd);
+        }
+
+        private static List<Card> RemoveLowAces(List<Card> cards){
+            return cards.Where(c => c.Value != 1).ToList();
+        }
+
+        private static void TestingAddNoWinningHand(Player player){
+            if (unitTestingEnable)
+            {
+                player.WinningHands.Add(new(HandType.Nothing, new List<Card>()));
+            }
+        }
+
+        private static void DebugLogCards(string description, List<Card> cards){
             if (debugEnable)
             {
                 Console.WriteLine($"{description}: ");
@@ -595,10 +359,10 @@ namespace PokerAlgo
         }
 
         private static void SortCardsByValue(List<Card> cards){
-            cards = cards.OrderBy(c => c.Value).ToList();
+            cards.Sort((x, y) => x.Value.CompareTo(y.Value));
         }
 
-        private static bool ContainsPlayerCard(List<Card> cards){
+        private static bool HasPlayerCard(List<Card> cards){
             foreach (Card c in cards)
             {
                 if(c.IsPlayerCard){
@@ -608,7 +372,7 @@ namespace PokerAlgo
             return false;
         }
 
-        private static bool HasConsecutiveValue(List<Card> cards)
+        private static bool HasConsecutiveValues(List<Card> cards)
         {
             int startingValue = 0;
             for (int i = 0; i < cards.Count; i++)
@@ -629,7 +393,7 @@ namespace PokerAlgo
             return true;
         }
 
-        private static bool AllSameSuit(List<Card> cards){
+        private static bool IsSameSuit(List<Card> cards){
             CardSuit suit = cards.ElementAt(0).Suit;
             foreach (Card c in cards)
             {
@@ -642,7 +406,7 @@ namespace PokerAlgo
 
         private static void AddWinningHand(Player player, HandType handType, List<Card> cards)
         {
-            if (ContainsPlayerCard(cards))
+            if (HasPlayerCard(cards))
             {
                 player.WinningHands.Add(new WinningHand(handType, cards));
                 if (debugEnable)

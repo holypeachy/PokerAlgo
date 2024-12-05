@@ -18,7 +18,7 @@ namespace PokerAlgo
         {
             foreach (CardSuit suit in Enum.GetValues(typeof(CardSuit)).Cast<CardSuit>() )
             {
-                for (int value = 1; value <= 13; value++)
+                for (int value = 2; value <= 14; value++)
                 {
                     Cards.Add(new Card(value, suit, false));
                 }
@@ -47,7 +47,7 @@ namespace PokerAlgo
         {
             foreach (Card card in Cards)
             {
-                Console.Write($"[{card.Value},{card.Suit}] \n");
+                Console.WriteLine(card);
             }
         }
 

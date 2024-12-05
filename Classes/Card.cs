@@ -34,9 +34,7 @@ namespace PokerAlgo
 
         public override string ToString()
         {
-            // return $"[{Value},{Suit}]";
-            // return "[" + (Value == 1 || Value == 14 ? "A" : Value <= 10 ? Value : Value == 11 ? "J" : Value == 12 ? "Q" : Value == 13 ? "K" : Value) + $",{Suit}]";
-            return "[" + (Value == 1 ||  Value > 11 ? CardValueLookUp[Value] : Value) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
+            return "[" + (Value == 1 || Value > 10 ? CardValueLookUp[Value] : Value) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
         }
 
         public override bool Equals(object? obj)

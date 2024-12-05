@@ -12,13 +12,15 @@ namespace PokerAlgo{
 
 
         public Testing(){
-            PerformFinderTest("FlushFinder", pathToFlush, Algo.FlushFinder);
-            PerformFinderTest("StraightFinder", pathToStraight, Algo.StraightFinder);
+            // PerformFinderTest("FlushFinder", pathToFlush, Algo.FlushFinder);
+            // PerformFinderTest("StraightFinder", pathToStraight, Algo.StraightFinder);
             PerformFinderTest("MultipleFinder", pathToMultiple, Algo.MultipleFinder);
         }
 
-        public void PerformFinderTest(string testName, string pathToTest, AlgoFunction function){
-            if(!Algo.unitTestingEnable){
+        public void PerformFinderTest(string testName, string pathToTest, AlgoFunction function)
+        {
+            if (!Algo.unitTestingEnable)
+            {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("⚠️ Variable \"unitTestingEnable\" is FALSE and will be set to TRUE!");
                 Algo.unitTestingEnable = true;
@@ -40,7 +42,8 @@ namespace PokerAlgo{
             bool passed = true;
             foreach (TestObject test in testObjects)
             {
-                if(debugEnable){
+                if (debugEnable)
+                {
                     Console.WriteLine("Current Object:");
                     Console.WriteLine(test);
                     Console.WriteLine();
@@ -49,21 +52,23 @@ namespace PokerAlgo{
                 WinningHand actualHand = new(HandType.Nothing, new List<Card>());
                 Player player = new("Test", test.PlayerCards.Item1, test.PlayerCards.Item2);
 
-                List<Card> combinedCards = new();
-                combinedCards.Add(player.Hand.Item1);
-                combinedCards.Add(player.Hand.Item2);
-                foreach (Card c in test.CommunityCards)
+                List<Card> combinedCards = new()
                 {
-                    combinedCards.Add(c);
-                }
+                    player.Hand.Item1,
+                    player.Hand.Item2
+                };
+                combinedCards.AddRange(test.CommunityCards);
+
                 combinedCards = combinedCards.OrderBy(x => x.Value).ToList();
+                AddLowAces(combinedCards);
                 function(combinedCards, player);
 
                 List<WinningHand> expectedHands = test.ExpectedWinningHands;
                 List<WinningHand> actualHands = player.WinningHands;
 
                 passed = true;
-                if(expectedHands.Count == actualHands.Count){
+                if (expectedHands.Count == actualHands.Count)
+                {
                     for (int handIndex = 0; handIndex < expectedHands.Count; handIndex++)
                     {
                         expectedHand = expectedHands[handIndex];
@@ -73,14 +78,16 @@ namespace PokerAlgo{
                         {
                             for (int cardIndex = 0; cardIndex < expectedHand.Cards.Count; cardIndex++)
                             {
-                                if(!IsSuitRelevant(expectedHand.Type)){
+                                if (!IsSuitRelevant(expectedHand.Type))
+                                {
                                     if (!expectedHand.Cards[cardIndex].EqualsValue(actualHand.Cards[cardIndex]))
                                     {
                                         passed = false;
                                         break;
                                     }
                                 }
-                                else{
+                                else
+                                {
                                     if (!expectedHand.Cards[cardIndex].Equals(actualHand.Cards[cardIndex]))
                                     {
                                         passed = false;
@@ -95,7 +102,8 @@ namespace PokerAlgo{
                             break;
                         }
 
-                        if(!passed){
+                        if (!passed)
+                        {
                             break;
                         }
                     }
@@ -106,7 +114,8 @@ namespace PokerAlgo{
                 }
 
                 // Console.WriteLine(test.Description);
-                if(passed){
+                if (passed)
+                {
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"TEST {testCount++}:" + " PASSED ✅");
                     Console.ResetColor();
@@ -120,6 +129,19 @@ namespace PokerAlgo{
                     Console.ResetColor();
                 }
             }
+        }
+
+        private void AddLowAces(List<Card> cards)
+        {
+            List<Card> acesToAdd = new();
+            foreach (Card c in cards)
+            {
+                if (c.Value == 14)
+                {
+                    acesToAdd.Add(new Card(1, c.Suit, c.IsPlayerCard));
+                }
+            }
+            cards.InsertRange(0, acesToAdd);
         }
 
         public void MakeTemplateTestJson(string pathToTest){

@@ -1998,5 +1998,171 @@
         "Cards": []
       }
     ]
+  },
+  {
+    "Description": "Pair of Aces | Both on Player",
+    "PlayerCards": {
+      "Item1": {
+        "Value": 14,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Item2": {
+        "Value": 14,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Value": 13,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 10,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 8,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 6,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 4,
+        "Suit": 1,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedWinningHands": [
+      {
+        "Type": 1,
+        "Cards": [
+          {
+            "Value": 14,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 14,
+            "Suit": 2,
+            "IsPlayerCard": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Description": "Pair of Aces | One on Player, One on Community",
+    "PlayerCards": {
+      "Item1": {
+        "Value": 14,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Item2": {
+        "Value": 9,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Value": 14,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 12,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 11,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 7,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 3,
+        "Suit": 1,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedWinningHands": [
+      {
+        "Type": 1,
+        "Cards": [
+          {
+            "Value": 14,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 14,
+            "Suit": 3,
+            "IsPlayerCard": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Description": "Pair of Aces | On Community Only",
+    "PlayerCards": {
+      "Item1": {
+        "Value": 10,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Item2": {
+        "Value": 9,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Value": 14,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 14,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 8,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 6,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedWinningHands": [
+      {
+        "Type": 0,
+        "Cards": []
+      }
+    ]
   }
 ]
