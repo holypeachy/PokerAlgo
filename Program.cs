@@ -52,13 +52,12 @@ TODO: Determine winning hands in community cards.
 TODO: Start the second part of the algo, comparing the hands of all players.
 TODO: 
 
-? Future Suggestions 
+? Future Ideas 
+? Make PerformFinderTest more modular.
 ? 
 
 * Changes
-* Rewrote FlushFinder, now vastly improved.
-* Replaced repeating code by methods in StraightFinder and MultipleFinder.
-* When a Deck object is created, Aces are rank 14 instead of 1.
-* Added a few extra cases to all Tests.json files.
+* Improved some method names.
+* Improved visuals on PerformFinderTest.
 * 
 */

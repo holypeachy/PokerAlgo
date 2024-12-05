@@ -12,9 +12,9 @@ namespace PokerAlgo{
 
 
         public Testing(){
-            // PerformFinderTest("FlushFinder", pathToFlush, Algo.FlushFinder);
-            // PerformFinderTest("StraightFinder", pathToStraight, Algo.StraightFinder);
-            PerformFinderTest("MultipleFinder", pathToMultiple, Algo.MultipleFinder);
+            PerformFinderTest("FlushFinder", pathToFlush, Algo.FindFlush);
+            PerformFinderTest("StraightFinder", pathToStraight, Algo.FindStraight);
+            PerformFinderTest("MultipleFinder", pathToMultiple, Algo.FindMultiple);
         }
 
         public void PerformFinderTest(string testName, string pathToTest, AlgoFunction function)
@@ -42,6 +42,7 @@ namespace PokerAlgo{
             bool passed = true;
             foreach (TestObject test in testObjects)
             {
+                Console.WriteLine($"Running Test {testCount++}: {test.Description}");
                 if (debugEnable)
                 {
                     Console.WriteLine("Current Object:");
@@ -117,18 +118,19 @@ namespace PokerAlgo{
                 if (passed)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"TEST {testCount++}:" + " PASSED ✅");
+                    Console.WriteLine("TEST PASSED ✅");
                     Console.ResetColor();
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"TEST {testCount++}: FAILED ❌ | {test.Description}");
+                    Console.WriteLine($"TEST FAILED ❌");
                     Console.WriteLine($"   Expected: {expectedHand.Type}, Cards: {string.Join(", ", expectedHand.Cards)}");
                     Console.WriteLine($"   Actual: {actualHand.Type}, Cards: {string.Join(", ", actualHand.Cards)}");
                     Console.ResetColor();
                 }
             }
+            Console.WriteLine();
         }
 
         private void AddLowAces(List<Card> cards)
@@ -221,7 +223,7 @@ namespace PokerAlgo{
                     combinedCards.Add(c);
                 }
                 combinedCards = combinedCards.OrderBy(x => x.Value).ToList();
-                Algo.FlushFinder(combinedCards, player);
+                Algo.FindFlush(combinedCards, player);
 
                 WinningHand expected = test.ExpectedWinningHands[0];
                 WinningHand actual = player.WinningHands[0];

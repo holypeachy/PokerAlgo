@@ -50,13 +50,13 @@ namespace PokerAlgo
 
             AddLowAces(cards);
 
-            FlushFinder(cards, player);
-            StraightFinder(cards, player);
-            MultipleFinder(cards, player);
+            FindFlush(cards, player);
+            FindStraight(cards, player);
+            FindMultiple(cards, player);
         }
 
 
-        public static void FlushFinder(List<Card> combinedCards, Player player)
+        public static void FindFlush(List<Card> combinedCards, Player player)
         {
             List<Card> flushCards = combinedCards.GroupBy(card => card.Suit)
             .Where(group => group.Count() >= 5)
@@ -107,7 +107,7 @@ namespace PokerAlgo
         }
     
 
-        public static void StraightFinder(List<Card> cards, Player player){
+        public static void FindStraight(List<Card> cards, Player player){
             List<Card> tempCards = new();
             // ! Deep Copy cards
             foreach (Card c in cards)
@@ -150,7 +150,7 @@ namespace PokerAlgo
         }
 
 
-        public static void MultipleFinder(List<Card> cards, Player player){
+        public static void FindMultiple(List<Card> cards, Player player){
             List<Card> duplicateCards = RemoveLowAces(cards);
             duplicateCards = duplicateCards.GroupBy(card => card.Value)
             .Where(group => group.Count() > 1)
@@ -321,6 +321,27 @@ namespace PokerAlgo
 
 
         // * Helper Methods
+
+        private static void AddWinningHand(Player player, HandType handType, List<Card> cards)
+        {
+            if (HasPlayerCard(cards))
+            {
+                player.WinningHands.Add(new WinningHand(handType, cards));
+                if (debugEnable)
+                {
+                    Console.Write($"{handType}: ");
+                    foreach (Card c in cards)
+                    {
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = c.Suit == CardSuit.Spades || c.Suit == CardSuit.Clubs ? ConsoleColor.Black : ConsoleColor.Red;
+                        Console.Write($"{c} ");
+                        Console.ResetColor();
+                    }
+                }
+            }
+        }
+
+
         private static void AddLowAces(List<Card> cards){
             List<Card> acesToAdd = new();
             foreach (Card c in cards)
@@ -335,6 +356,7 @@ namespace PokerAlgo
         private static List<Card> RemoveLowAces(List<Card> cards){
             return cards.Where(c => c.Value != 1).ToList();
         }
+
 
         private static void TestingAddNoWinningHand(Player player){
             if (unitTestingEnable)
@@ -357,6 +379,7 @@ namespace PokerAlgo
                 Console.WriteLine();
             }
         }
+
 
         private static void SortCardsByValue(List<Card> cards){
             cards.Sort((x, y) => x.Value.CompareTo(y.Value));
@@ -402,25 +425,6 @@ namespace PokerAlgo
                 }
             }
             return true;
-        }
-
-        private static void AddWinningHand(Player player, HandType handType, List<Card> cards)
-        {
-            if (HasPlayerCard(cards))
-            {
-                player.WinningHands.Add(new WinningHand(handType, cards));
-                if (debugEnable)
-                {
-                    Console.Write($"{handType}: ");
-                    foreach (Card c in cards)
-                    {
-                        Console.BackgroundColor = ConsoleColor.White;
-                        Console.ForegroundColor = c.Suit == CardSuit.Spades || c.Suit == CardSuit.Clubs ? ConsoleColor.Black : ConsoleColor.Red;
-                        Console.Write($"{c} ");
-                        Console.ResetColor();
-                    }
-                }
-            }
         }
 
     }
