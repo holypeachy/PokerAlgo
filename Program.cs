@@ -45,22 +45,22 @@
 
 /*
 TODO: Replace repeating code with AddWinningHand method.
+
 TODO: Combine all methods into the first part of the algo.
 TODO: Create tests for first part of algo.
+TODO: Determine winning hands in community cards.
 TODO: Start the second part of the algo, comparing the hands of all players.
 
 ? Future Suggestions
-? Abstract (verb) Sorting cards, checking for duplicates, and verifying consecutive values.
-? Use link in HasConsecutiveValue instead of manual iteration?
+? Abstract out Sorting cards, checking for duplicates, and verifying consecutive values.
+? Use LINQ in HasConsecutiveValue instead of manual iteration?
 ? Group cards only once. Then extract fourKind, threeKinds, pairs. 
 ? Since only StraightFinder needs Aces to be 1 and 14, we can make all aces 14 by default. This simplifies Royal Flush logic.
-
+? Abstract out debug logs into its own function?
 
 * Changes
-* Added all appropriate unit tests for MultipleFinder, debugged and all tests pass now.
-* Unit tests are a god sent.
-* First time I've had to actually use a debugger.
-* Fixed annoying new line thing.
-* Decks shuffle twice upon creation; makes me feel better.
-* Card method EqualsNoSuit has been renamed to EqualsValue and no longer check is card is player card or not.
+* Added Dictionaries (Look up table) for the ToString method of Card to print A,J,Q,K instead of number ranks.
+* The card to string now handles displaying if the card is a player's, this prevents repeating code.
+* Added LogCards and SortCardsByValue helper methods to abstract repeated code.
+* Added DeterminePlayerHands2, cleaner than the first.
 */

@@ -3,13 +3,13 @@ namespace PokerAlgo
     static class Algo
     {
         private static bool debugEnable = true;
-        public static bool unitTestingEnable = false;
+        public static bool unitTestingEnable = true;
 
         public static void FindWinner(List<Player> players, List<Card> community)
         {
             // Lot of fancy code stuff
-            DeterminePlayerHands(players[0], community);
-            
+            DeterminePlayerHands2(players[0], community);
+
             // Player testPlayer = new Player("Test",
             // new Card(5, CardSuit.Diamonds, true),
             // new Card(5, CardSuit.Hearts, true));
@@ -52,6 +52,28 @@ namespace PokerAlgo
             StraightFinder(cards, player);
             MultipleFinder(cards, player);
         }
+
+        private static void DeterminePlayerHands2(Player player, List<Card> community)
+        {
+            // * Combine and sort cards
+            List<Card> cards = new();
+
+            cards.Add(player.Hand.Item1);
+            cards.Add(player.Hand.Item2);
+            foreach (Card c in community)
+            {
+                cards.Add(c);
+            }
+
+            SortCardsByValue(cards);
+
+            LogCards("All Cards: ", cards);
+
+            FlushFinder(cards, player);
+            StraightFinder(cards, player);
+            MultipleFinder(cards, player);
+        }
+
 
         public static void FlushFinder(List<Card> cards, Player player){
             List<Card> currentWinnerHand = new();
@@ -215,7 +237,7 @@ namespace PokerAlgo
                 player.WinningHands.Add(tempWinningHand);
             }
         }
-    
+
         public static void StraightFinder(List<Card> cards, Player player){
             List<Card> dupAces = new();
             foreach (Card c in cards)
@@ -557,6 +579,25 @@ namespace PokerAlgo
 
 
         // * Helper Methods
+        private static void LogCards(string description, List<Card> cards){
+            if (debugEnable)
+            {
+                Console.WriteLine($"{description}: ");
+                foreach (Card c in cards)
+                {
+                    // Console.BackgroundColor = ConsoleColor.White;
+                    // Console.ForegroundColor = c.Suit == CardSuit.Spades || c.Suit == CardSuit.Clubs ? ConsoleColor.Black : ConsoleColor.Red;
+                    Console.WriteLine($"{c}");
+                    // Console.ResetColor();
+                }
+                Console.WriteLine();
+            }
+        }
+
+        private static void SortCardsByValue(List<Card> cards){
+            cards = cards.OrderBy(c => c.Value).ToList();
+        }
+
         private static bool ContainsPlayerCard(List<Card> cards){
             foreach (Card c in cards)
             {
@@ -606,7 +647,14 @@ namespace PokerAlgo
                 player.WinningHands.Add(new WinningHand(handType, cards));
                 if (debugEnable)
                 {
-                    Console.WriteLine($"{handType}: {string.Join(", ", cards)}");
+                    Console.Write($"{handType}: ");
+                    foreach (Card c in cards)
+                    {
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = c.Suit == CardSuit.Spades || c.Suit == CardSuit.Clubs ? ConsoleColor.Black : ConsoleColor.Red;
+                        Console.Write($"{c} ");
+                        Console.ResetColor();
+                    }
                 }
             }
         }

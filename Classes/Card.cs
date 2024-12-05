@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text.Json.Serialization;
 
 namespace PokerAlgo
@@ -7,6 +8,11 @@ namespace PokerAlgo
         public int Value {get; set;}
         public CardSuit Suit {get; set;}
         public bool IsPlayerCard {get; set;}
+
+        private Dictionary<int, string> CardValueLookUp = new Dictionary<int, string>
+        {
+            {1, "A"}, {11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
+        };
 
         [JsonConstructor]
         public Card(int value, CardSuit suit, bool isPlayerCard)
@@ -29,7 +35,8 @@ namespace PokerAlgo
         public override string ToString()
         {
             // return $"[{Value},{Suit}]";
-            return "[" + (Value == 1 || Value == 14 ? "A" : Value <= 10 ? Value : Value == 11 ? "J" : Value == 12 ? "Q" : Value == 13 ? "K" : Value) + $",{Suit}]";
+            // return "[" + (Value == 1 || Value == 14 ? "A" : Value <= 10 ? Value : Value == 11 ? "J" : Value == 12 ? "Q" : Value == 13 ? "K" : Value) + $",{Suit}]";
+            return "[" + (Value == 1 ||  Value > 11 ? CardValueLookUp[Value] : Value) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
         }
 
         public override bool Equals(object? obj)
