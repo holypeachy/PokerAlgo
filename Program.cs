@@ -2,7 +2,7 @@
 {
     class Program
     {
-        private static bool debugEnable = true;
+        private static bool debugEnable = false;
 
         static void Main()
         {
@@ -31,7 +31,7 @@
 
             if (debugEnable)
             {
-                Console.Write("\nCommunity Cards:\n");
+                Console.Write("\nCommunity Cards:\n\t\t");
                 foreach (Card c in communityCards)
                 {
                     Console.Write($"{c} ");
@@ -49,7 +49,6 @@
 TODO: Combine all methods into the first part of the algo.
 TODO: Create tests for first part of algo.
 TODO: Determine winning hands in community cards.
-TODO: Start the second part of the algo, comparing the hands of all players.
 TODO: 
 
 ? Future Ideas 
@@ -57,7 +56,8 @@ TODO:
 ? 
 
 * Changes
-* Improved some method names.
-* Improved visuals on PerformFinderTest.
-* 
+* Two Pairs no longer get sorted in reverse.
+* Removed low aces before standard flush detection, this would cause false flushes.
+* Added SortWinningHands and SortHand methods to player class.
+* Added DetermineWinner, BreakTie, and DetermineCommunityHands methods to Algo, yet to be implemented.
 */

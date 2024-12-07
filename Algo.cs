@@ -14,9 +14,12 @@ namespace PokerAlgo
                 Console.WriteLine(player.Name + ":");
                 foreach (WinningHand hand in player.WinningHands)
                 {
-                    Console.WriteLine("   " + hand);
+                    Console.WriteLine("    " + hand);
                 }
             }
+
+            DetermineWinner(players);
+
 
             // * Manual Testing
             // Player testPlayer = new Player("Test",
@@ -53,6 +56,11 @@ namespace PokerAlgo
             FindFlush(cards, player);
             FindStraight(cards, player);
             FindMultiple(cards, player);
+            player.SortWinningHands();
+            player.SortHand();
+            if(player.WinningHands.Count == 0){
+                player.WinningHands.Add(new WinningHand(HandType.Nothing, new List<Card>()));
+            }
         }
 
 
@@ -69,7 +77,7 @@ namespace PokerAlgo
                 return;
             }
 
-            DebugLogCards("Flush Finder - Flush Cards", flushCards);
+            DebugLogCards("FindFlush - Flush Cards", flushCards);
 
             List<Card> bestFive = new();
 
@@ -92,13 +100,16 @@ namespace PokerAlgo
             }
 
             // ! Standard Flush
-            for (int i = flushCards.Count - 5; i >= 0; i--)
-            {
-                bestFive = flushCards.GetRange(i, 5);
-                if (HasPlayerCard(bestFive))
+            flushCards = RemoveLowAces(flushCards);
+            if(flushCards.Count >= 5){
+                for (int i = flushCards.Count - 5; i >= 0; i--)
                 {
-                    AddWinningHand(player, HandType.Flush, bestFive);
-                    return;
+                    bestFive = flushCards.GetRange(i, 5);
+                    if (HasPlayerCard(bestFive))
+                    {
+                        AddWinningHand(player, HandType.Flush, bestFive);
+                        return;
+                    }
                 }
             }
 
@@ -106,7 +117,6 @@ namespace PokerAlgo
             TestingAddNoWinningHand(player);
         }
     
-
         public static void FindStraight(List<Card> cards, Player player){
             List<Card> tempCards = new();
             // ! Deep Copy cards
@@ -148,7 +158,6 @@ namespace PokerAlgo
             if (debugEnable) Console.WriteLine("- No Straight -");
             TestingAddNoWinningHand(player);
         }
-
 
         public static void FindMultiple(List<Card> cards, Player player){
             List<Card> duplicateCards = RemoveLowAces(cards);
@@ -270,7 +279,6 @@ namespace PokerAlgo
                 List<Card> bottomPair = pairs.GetRange(0,2);
 
                 List<Card> twoPairs = new();
-                twoPairs.AddRange(topPair);
 
                 if (HasPlayerCard(midPair)){
                     twoPairs.AddRange(midPair);
@@ -285,13 +293,13 @@ namespace PokerAlgo
                 {
                     throw new Exception("MultipleFinder() 3 pairs. Something went very wrong. It's not possible for 3 pairs to exist and the player not have a card in.");
                 }
+                twoPairs.AddRange(topPair);
 
                 AddWinningHand(player, HandType.TwoPairs, twoPairs);
             }
             
             // ! 2 Pairs
             else if(pairs.Count == 4){
-                pairs = pairs.OrderByDescending(x => x.Value).ToList();
                 if (HasPlayerCard(pairs)){
                     AddWinningHand(player, HandType.TwoPairs, pairs);
                 }
@@ -319,6 +327,42 @@ namespace PokerAlgo
             }
         }
 
+
+        public static void DetermineWinner(List<Player> players){
+            // TODO: Need to check community winning hands too. Royal Flush, Straight Flush, Full House, Flush, Straight
+
+            List<Player> sortedPlayers = players.OrderBy(p => p.WinningHands.ElementAt(0).Type).ToList();
+            List<Player> winners = new();
+
+            for (int i = sortedPlayers.Count - 1; i > 0; i--)
+            {
+                if(sortedPlayers[i].WinningHands.ElementAt(0).Type > sortedPlayers[i-1].WinningHands.ElementAt(0).Type){
+                    winners.Add(sortedPlayers[i]);
+                    break;
+                }
+                else if(sortedPlayers[i].WinningHands.ElementAt(0).Type == sortedPlayers[i - 1].WinningHands.ElementAt(0).Type)
+                {
+                    winners.Add(sortedPlayers[i]);
+                    if(i==1){
+                        winners.Add(sortedPlayers[0]);
+                    }
+                }
+            }
+
+            if(winners.Count > 1){
+                BreakTie(winners);
+            }
+        }
+
+        private static void BreakTie(List<Player> winners){
+            // ! Logic if there is a tie
+            
+        }
+
+        private static void DetermineCommunityHands(){
+            // ! Detect Royal Flush, Straight Flush, Full House, Flush, and Straight in community.
+            
+        }
 
         // * Helper Methods
 

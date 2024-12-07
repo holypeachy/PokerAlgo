@@ -23,5 +23,16 @@ namespace PokerAlgo{
         {
             return $"{Name}: {Hand.Item1} {Hand.Item2}";
         }
+
+        public void SortWinningHands(){
+            WinningHands.OrderByDescending(h => h.Type);
+        }
+        public void SortHand(){
+            Tuple<Card, Card> handTemp;
+            if(Hand.Item1.Value > Hand.Item2.Value){
+                handTemp = new(Hand.Item2, Hand.Item1);
+                Hand = handTemp;
+            }
+        }
     }
 }
