@@ -32,6 +32,9 @@ namespace PokerAlgo{
             if(Hand.Item1.Value > Hand.Item2.Value){
                 handTemp = new(Hand.Item2, Hand.Item1);
                 Hand = handTemp;
+                // Console.WriteLine(Hand);
+            }else{
+                // Console.WriteLine(Hand);
             }
         }
     }

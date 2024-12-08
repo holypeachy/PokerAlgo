@@ -1093,22 +1093,22 @@
         "Type": 2,
         "Cards": [
           {
-            "Value": 9,
+            "Value": 7,
             "Suit": 1,
             "IsPlayerCard": true
           },
           {
-            "Value": 9,
+            "Value": 7,
             "Suit": 2,
             "IsPlayerCard": false
           },
           {
-            "Value": 7,
+            "Value": 9,
             "Suit": 1,
             "IsPlayerCard": true
           },
           {
-            "Value": 7,
+            "Value": 9,
             "Suit": 2,
             "IsPlayerCard": false
           }
@@ -1162,16 +1162,6 @@
         "Type": 2,
         "Cards": [
           {
-            "Value": 7,
-            "Suit": 1,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 7,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
             "Value": 5,
             "Suit": 3,
             "IsPlayerCard": true
@@ -1179,6 +1169,16 @@
           {
             "Value": 5,
             "Suit": 0,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 7,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 7,
+            "Suit": 2,
             "IsPlayerCard": false
           }
         ]
@@ -1231,16 +1231,6 @@
         "Type": 2,
         "Cards": [
           {
-            "Value": 9,
-            "Suit": 1,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 9,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
             "Value": 7,
             "Suit": 2,
             "IsPlayerCard": false
@@ -1249,6 +1239,16 @@
             "Value": 7,
             "Suit": 3,
             "IsPlayerCard": true
+          },
+          {
+            "Value": 9,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 9,
+            "Suit": 2,
+            "IsPlayerCard": false
           }
         ]
       }
@@ -1300,16 +1300,6 @@
         "Type": 2,
         "Cards": [
           {
-            "Value": 9,
-            "Suit": 1,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 9,
-            "Suit": 2,
-            "IsPlayerCard": true
-          },
-          {
             "Value": 7,
             "Suit": 1,
             "IsPlayerCard": false
@@ -1318,6 +1308,16 @@
             "Value": 7,
             "Suit": 3,
             "IsPlayerCard": false
+          },
+          {
+            "Value": 9,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 9,
+            "Suit": 2,
+            "IsPlayerCard": true
           }
         ]
       }
@@ -1369,16 +1369,6 @@
         "Type": 2,
         "Cards": [
           {
-            "Value": 9,
-            "Suit": 1,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 9,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
             "Value": 7,
             "Suit": 1,
             "IsPlayerCard": true
@@ -1387,6 +1377,16 @@
             "Value": 7,
             "Suit": 3,
             "IsPlayerCard": true
+          },
+          {
+            "Value": 9,
+            "Suit": 1,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 9,
+            "Suit": 2,
+            "IsPlayerCard": false
           }
         ]
       }
@@ -1438,16 +1438,6 @@
         "Type": 2,
         "Cards": [
           {
-            "Value": 9,
-            "Suit": 1,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 9,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
             "Value": 5,
             "Suit": 1,
             "IsPlayerCard": true
@@ -1456,6 +1446,16 @@
             "Value": 5,
             "Suit": 3,
             "IsPlayerCard": true
+          },
+          {
+            "Value": 9,
+            "Suit": 1,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 9,
+            "Suit": 2,
+            "IsPlayerCard": false
           }
         ]
       }
@@ -1507,16 +1507,6 @@
         "Type": 2,
         "Cards": [
           {
-            "Value": 9,
-            "Suit": 1,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 9,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
             "Value": 7,
             "Suit": 1,
             "IsPlayerCard": false
@@ -1525,6 +1515,16 @@
             "Value": 7,
             "Suit": 3,
             "IsPlayerCard": true
+          },
+          {
+            "Value": 9,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 9,
+            "Suit": 2,
+            "IsPlayerCard": false
           }
         ]
       }
@@ -1576,16 +1576,6 @@
         "Type": 2,
         "Cards": [
           {
-            "Value": 9,
-            "Suit": 1,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 9,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
             "Value": 7,
             "Suit": 1,
             "IsPlayerCard": false
@@ -1593,6 +1583,16 @@
           {
             "Value": 7,
             "Suit": 3,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 9,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 9,
+            "Suit": 2,
             "IsPlayerCard": false
           }
         ]
@@ -1645,16 +1645,6 @@
         "Type": 2,
         "Cards": [
           {
-            "Value": 9,
-            "Suit": 1,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 9,
-            "Suit": 2,
-            "IsPlayerCard": true
-          },
-          {
             "Value": 7,
             "Suit": 1,
             "IsPlayerCard": false
@@ -1663,6 +1653,16 @@
             "Value": 7,
             "Suit": 3,
             "IsPlayerCard": false
+          },
+          {
+            "Value": 9,
+            "Suit": 1,
+            "IsPlayerCard": true
+          },
+          {
+            "Value": 9,
+            "Suit": 2,
+            "IsPlayerCard": true
           }
         ]
       }
@@ -1714,16 +1714,6 @@
         "Type": 2,
         "Cards": [
           {
-            "Value": 9,
-            "Suit": 1,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 9,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
             "Value": 7,
             "Suit": 1,
             "IsPlayerCard": true
@@ -1732,6 +1722,16 @@
             "Value": 7,
             "Suit": 3,
             "IsPlayerCard": true
+          },
+          {
+            "Value": 9,
+            "Suit": 1,
+            "IsPlayerCard": false
+          },
+          {
+            "Value": 9,
+            "Suit": 2,
+            "IsPlayerCard": false
           }
         ]
       }
