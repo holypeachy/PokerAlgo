@@ -2,7 +2,7 @@ namespace PokerAlgo
 {
 	class Deck
 	{
-		public List<Card> Cards {get; set;}
+		private List<Card> Cards {get; set;}
 
 		public Deck()
 		{
@@ -29,17 +29,17 @@ namespace PokerAlgo
 		{
 			Random rand = new();
 			Card tempCard;
-			int randomNum;
+			int targetIndex;
 			
-			for (int target = 0; target < Cards.Count; target++)
+			for (int currentIndex = 0; currentIndex < Cards.Count; currentIndex++)
 			{
-				randomNum = rand.Next(52);
-				if(randomNum == target){
+				targetIndex = rand.Next(Cards.Count);
+				if(targetIndex == currentIndex){
 					continue;
 				}
-				tempCard = Cards.ElementAt(target);
-				Cards[target] = Cards.ElementAt(randomNum);
-				Cards[randomNum] = tempCard;
+				tempCard = Cards.ElementAt(currentIndex);
+				Cards[currentIndex] = Cards.ElementAt(targetIndex);
+				Cards[targetIndex] = tempCard;
 			}
 		}
 
@@ -69,9 +69,9 @@ namespace PokerAlgo
 				throw new Exception("Deck.NextCard() - No More Cards in The Deck");
 			}
 
-			Card cardToRemove = Cards.First();
+			Card cardOnTop = Cards.First();
 			Cards.RemoveAt(0);
-			return cardToRemove;
+			return cardOnTop;
 		} 
 	}
 }

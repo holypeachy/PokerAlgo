@@ -8,7 +8,7 @@ namespace PokerAlgo{
 		private string pathToStraight = @"./Tests/StraightTests.json";
 		private string pathToMultiple = @"./Tests/MultipleTests.json";
 
-		private static bool debugEnable = false;
+		private static bool _debugEnable = false;
 
 
 		public Testing(){
@@ -19,16 +19,16 @@ namespace PokerAlgo{
 
 		public void PerformFinderTest(string testName, string pathToTest, AlgoFunction function)
 		{
-			if (!Algo.unitTestingEnable)
+			if (!Algo._unitTestingEnable)
 			{
 				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine("⚠️ Variable \"unitTestingEnable\" is FALSE and will be set to TRUE!");
-				Algo.unitTestingEnable = true;
+				Algo._unitTestingEnable = true;
 				Console.ResetColor();
 			}
 
 			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine($"🧪--{testName}---");
+			Console.WriteLine($"🧪 --{testName}---");
 			Console.ResetColor();
 
 			string json = File.ReadAllText(pathToTest);
@@ -43,7 +43,7 @@ namespace PokerAlgo{
 			foreach (TestObject test in testObjects)
 			{
 				Console.WriteLine($"Running Test {testCount++}: {test.Description}");
-				if (debugEnable)
+				if (_debugEnable)
 				{
 					Console.WriteLine("Current Object:");
 					Console.WriteLine(test);
@@ -55,8 +55,8 @@ namespace PokerAlgo{
 
 				List<Card> combinedCards = new()
 				{
-					player.Hand.Item1,
-					player.Hand.Item2
+					player.Hand.First,
+					player.Hand.Second
 				};
 				combinedCards.AddRange(test.CommunityCards);
 
@@ -65,15 +65,15 @@ namespace PokerAlgo{
 				function(combinedCards, player);
 
 				List<WinningHand> expectedHands = test.ExpectedWinningHands;
-				List<WinningHand> actualHands = player.WinningHands;
+				WinningHand actualHands = player.WinningHand;
 
 				passed = true;
-				if (expectedHands.Count == actualHands.Count)
+				if (expectedHands.Count == 1)
 				{
 					for (int handIndex = 0; handIndex < expectedHands.Count; handIndex++)
 					{
 						expectedHand = expectedHands[handIndex];
-						actualHand = actualHands[handIndex];
+						actualHand = actualHands;
 
 						if (expectedHand.Type == actualHand.Type && expectedHand.Cards.Count == actualHand.Cards.Count)
 						{
@@ -81,7 +81,7 @@ namespace PokerAlgo{
 							{
 								if (!IsSuitRelevant(expectedHand.Type))
 								{
-									if (!expectedHand.Cards[cardIndex].EqualsValue(actualHand.Cards[cardIndex]))
+									if (!expectedHand.Cards[cardIndex].EqualsInValue(actualHand.Cards[cardIndex]))
 									{
 										passed = false;
 										break;
@@ -201,52 +201,52 @@ namespace PokerAlgo{
 		}
 
 		// ! Depricated
-		public void TestFlushes()
-		{
-			string json = File.ReadAllText(@"./FlushTests.json");
-			TestObject[]? testObjects = JsonSerializer.Deserialize<TestObject[]>(json);
-			if (testObjects is null)
-			{
-				throw new Exception("testObjects array is null. FlushTests.json is empty?");
-			}
+		// public void TestFlushes()
+		// {
+		// 	string json = File.ReadAllText(@"./FlushTests.json");
+		// 	TestObject[]? testObjects = JsonSerializer.Deserialize<TestObject[]>(json);
+		// 	if (testObjects is null)
+		// 	{
+		// 		throw new Exception("testObjects array is null. FlushTests.json is empty?");
+		// 	}
 
-			int testCount = 1;
-			foreach (TestObject test in testObjects)
-			{
-				Player player = new("Test", test.PlayerCards.Item1, test.PlayerCards.Item2);
+		// 	int testCount = 1;
+		// 	foreach (TestObject test in testObjects)
+		// 	{
+		// 		Player player = new("Test", test.PlayerCards.Item1, test.PlayerCards.Item2);
 
-				List<Card> combinedCards = new();
-				combinedCards.Add(player.Hand.Item1);
-				combinedCards.Add(player.Hand.Item2);
-				foreach (Card c in test.CommunityCards)
-				{
-					combinedCards.Add(c);
-				}
-				combinedCards = combinedCards.OrderBy(x => x.Value).ToList();
-				Algo.FindFlush(combinedCards, player);
+		// 		List<Card> combinedCards = new();
+		// 		combinedCards.Add(player.Hand.First);
+		// 		combinedCards.Add(player.Hand.First);
+		// 		foreach (Card c in test.CommunityCards)
+		// 		{
+		// 			combinedCards.Add(c);
+		// 		}
+		// 		combinedCards = combinedCards.OrderBy(x => x.Value).ToList();
+		// 		Algo.FindFlush(combinedCards, player);
 
-				WinningHand expected = test.ExpectedWinningHands[0];
-				WinningHand actual = player.WinningHands[0];
+		// 		WinningHand expected = test.ExpectedWinningHands[0];
+		// 		WinningHand actual = player.WinningHand;
 
-				bool passed = true;
-				if (expected.Type == actual.Type && expected.Cards.Count == actual.Cards.Count)
-				{
-					for (int i = 0; i < expected.Cards.Count; i++)
-					{
-						if (!expected.Cards[i].Equals(actual.Cards[i]))
-						{
-							passed = false;
-						}
-					}
-				}
-				else
-				{
-					passed = false;
-				}
-				// Console.WriteLine(test.Description);
-				Console.WriteLine($"TEST {testCount++}:" + (passed ? " PASSED ✅" : $" FAILED ❌: {test.Description}"));
-			}
-		}
+		// 		bool passed = true;
+		// 		if (expected.Type == actual.Type && expected.Cards.Count == actual.Cards.Count)
+		// 		{
+		// 			for (int i = 0; i < expected.Cards.Count; i++)
+		// 			{
+		// 				if (!expected.Cards[i].Equals(actual.Cards[i]))
+		// 				{
+		// 					passed = false;
+		// 				}
+		// 			}
+		// 		}
+		// 		else
+		// 		{
+		// 			passed = false;
+		// 		}
+		// 		// Console.WriteLine(test.Description);
+		// 		Console.WriteLine($"TEST {testCount++}:" + (passed ? " PASSED ✅" : $" FAILED ❌: {test.Description}"));
+		// 	}
+		// }
 
 	}
 }

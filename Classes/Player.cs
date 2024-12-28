@@ -3,40 +3,35 @@ namespace PokerAlgo{
 	class Player
 	{
 		public string Name { get; set; }
-		public Tuple<Card, Card> Hand { get; set; }
+		public Pair<Card, Card> Hand { get; set; }
 		
-		public List<WinningHand> WinningHands { get; set; }
-		public int HighestScore { get; set; }
+		public WinningHand? WinningHand { get; set; }
+		public bool IsWinner { get; set; }
 
 
 		public Player(string name, Card first, Card second)
 		{
 			this.Name = name;
-			this.Hand = new Tuple<Card, Card>(first, second);
+			this.Hand = new Pair<Card, Card>(first, second);
 			
-			this.Hand.Item1.IsPlayerCard = true;
-			this.Hand.Item2.IsPlayerCard = true;
+			this.Hand.First.IsPlayerCard = true;
+			this.Hand.Second.IsPlayerCard = true;
 
-			this.HighestScore = 0;
-			this.WinningHands = new();
+			this.WinningHand = null;
+			this.IsWinner = false;
 		}
 
 		public override string ToString()
 		{
-			return $"{Name}: {Hand.Item1} {Hand.Item2}";
+			return $"{Name}: {Hand.First} {Hand.Second}";
 		}
-
-		public void SortWinningHands(){
-			WinningHands.OrderByDescending(h => h.Type);
-		}
+		
 		public void SortHand(){
-			Tuple<Card, Card> handTemp;
-			if(Hand.Item1.Value > Hand.Item2.Value){
-				handTemp = new(Hand.Item2, Hand.Item1);
-				Hand = handTemp;
-				// Console.WriteLine(Hand);
-			}else{
-				// Console.WriteLine(Hand);
+			Card bufferCard;
+			if(Hand.First.Value > Hand.Second.Value){
+				bufferCard = Hand.Second;
+				Hand.Second = Hand.First;
+				Hand.First = bufferCard;
 			}
 		}
 	}

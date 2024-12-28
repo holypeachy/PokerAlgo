@@ -1,12 +1,15 @@
-﻿namespace PokerAlgo
+﻿using System.Diagnostics;
+
+namespace PokerAlgo
 {
 	class Program
 	{
-		private static bool debugEnable = true;
+		private static bool _debugEnable = true;
 
 		static void Main()
 		{
-			Console.Clear();
+			var watch = Stopwatch.StartNew();
+
 			Deck deck = new();
 			List<Card> communityCards = new List<Card>();
 
@@ -17,10 +20,12 @@
 				new Player("Ben", deck.NextCard(), deck.NextCard())
 			};
 
-			if(debugEnable){
+			if(_debugEnable){
+				Console.WriteLine("--- 🚀 Game Starts");
+				Console.WriteLine("--- 😎 Players:");
 				foreach (Player p in players)
 				{
-					Console.WriteLine(p);
+					Console.WriteLine("\t" + p);
 				}
 			}
 
@@ -28,15 +33,10 @@
 			{
 				communityCards.Add(deck.NextCard());
 			}
-			// communityCards.Add(new Card(14, CardSuit.Spades, false));
-			// communityCards.Add(new Card(14, CardSuit.Clubs, false));
-			// communityCards.Add(new Card(14, CardSuit.Diamonds, false));
-			// communityCards.Add(new Card(13, CardSuit.Spades, false));
-			// communityCards.Add(new Card(13, CardSuit.Clubs, false));
 
-			if (debugEnable)
+			if (_debugEnable)
 			{
-				Console.Write("\nCommunity Cards:\n\t\t");
+				Console.Write("\n--- 🃏 Community Cards:\n\t\t");
 				foreach (Card c in communityCards)
 				{
 					Console.Write($"{c} ");
@@ -44,15 +44,24 @@
 				Console.WriteLine();
 			}
 
+			// Code to run
 			Algo.FindWinner(players, communityCards);
 			// Testing testing = new();
+
+			watch.Stop();
+			Console.WriteLine();
+			var elapsedMs = watch.ElapsedMilliseconds;
+			Console.BackgroundColor = ConsoleColor.Blue;
+			Console.Write($" 🕜 Execution Time: {elapsedMs}ms ");
+			Console.ResetColor();
 		}
 	}
 }
 
 /*
-* Current dotnet run output: Players, Community, Hands, Winner(s)
+* Current dotnet run output: Players, Community, Winning Hand for each player
 
+! ISSUES:
 ! Since the tie breaker code only runs through the winners once, there is a chance of:
 Winners:
 		Ben: Type: Pair| Cards: [A,Spades]🙂 [A,Diamonds]
@@ -62,21 +71,29 @@ Winners:
 Pair Tie
 Ben: Type: Pair| Cards: [A,Spades]🙂 [A,Diamonds]
 Tom: Type: Pair| Cards: [K,Clubs]🙂 [K,Diamonds]
-? hasChangesBeenMade bool to keep track of loop, if no we can move on. If yes we need to check one more time.
-! BUT:
-TODO: Rewrite the second part, it fucking sucks.
+? Idea: hasChangesBeenMade bool to keep track of loop, if no we can move on. If yes we need to check one more time.
 
-TODO: Combine all methods into the first part of the algo.
+! TOFIX: Rewrite the second part, it fucking sucks.
+
+TODO: Add control flow by checking if the Player already has a better hand, if so we skip unecessary code execution.
+TODO: Combine all methods into the first part of the algo. However I wanna do that.
+TODO: Write second part of algo, should be easier with the recent changes.
 TODO: Create tests for first part of algo.
 TODO: Determine winning hands in community cards.
 TODO: Separate Algo class into several files.
 
 ? Future Ideas 
 ? Make PerformFinderTest more modular. That or make a new Testing system using Attributes and Reflection.
-? 
+? Implement custom Exceptions.
+? I should make the Algo a nuget package and upload it.
 
 * Changes
-* Made small changes to improve organization and readability.
-* Added ResetDeck method to Deck.
+* Massive Changes.
+* Restructured the algo in the following manner: Player object no longer has a list of WinningHand(s), only one WinningHand is necessary.
+* The Winning hand should contain the best five cards, including the winning combo; if no winning hand is found the best 5 cards are picked.
+* Since we store the best 5 cards in WinningHand I'll need to rewrite all tests.
+* Added Pair class, a mutable tuple for ease.
+* Quickly patched up the Testing class so I could run the Algo class.
+* Made debug logs look a lot nicer.
 * 
 */

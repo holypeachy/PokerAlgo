@@ -13,7 +13,7 @@ namespace PokerAlgo
 
         public override string ToString()
         {
-            return $"Type: {Type}" +  (Type == HandType.Nothing ? "" :  $"| Cards: {string.Join(" ", Cards)}");
+            return $"WinningHand | Type: {Type}" + $"| Cards: {string.Join(" ", Cards)}";
         }
     }
 }

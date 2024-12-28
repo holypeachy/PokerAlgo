@@ -35,18 +35,13 @@ namespace PokerAlgo
             return "[" + (Value == 1 || Value > 10 ? CardValueLookUp[Value] : Value) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
         }
 
-        public bool EqualsValue(Card other)
-        {
-            return this.Value == other.Value;
-        }
-
         public override bool Equals(object? obj)
         {
             try
             {
                 Card? other = (Card?)obj;
 
-                return other is null ? false : (this.Value == other.Value && this.Suit == other.Suit && this.IsPlayerCard == other.IsPlayerCard);
+                return other is null ? false : ( this.Value == other.Value && this.Suit == other.Suit && this.IsPlayerCard == other.IsPlayerCard ); // ? Should I include IsPlayerCard?
             }
             catch (System.Exception)
             {
@@ -54,7 +49,12 @@ namespace PokerAlgo
             }
         }
 
-        public override int GetHashCode()   // Had to implement cus Equals override for some reason
+        public bool EqualsInValue(Card other)
+        {
+            return this.Value == other.Value;
+        }
+
+        public override int GetHashCode()   // Had to implement cus Equals override, for some reason
         {
             return base.GetHashCode();
         }
