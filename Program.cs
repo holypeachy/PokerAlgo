@@ -4,7 +4,7 @@ namespace PokerAlgo
 {
 	class Program
 	{
-		private static bool _debugEnable = true;
+		private static int _debuVerbosity = Algo._debugVerbosity;
 
 		static void Main()
 		{
@@ -20,7 +20,7 @@ namespace PokerAlgo
 				new Player("Ben", deck.NextCard(), deck.NextCard())
 			};
 
-			if(_debugEnable){
+			if(_debuVerbosity > 0){
 				Console.WriteLine("--- 🚀 Game Starts");
 				Console.WriteLine("--- 😎 Players:");
 				foreach (Player p in players)
@@ -34,7 +34,7 @@ namespace PokerAlgo
 				communityCards.Add(deck.NextCard());
 			}
 
-			if (_debugEnable)
+			if (_debuVerbosity > 0)
 			{
 				Console.Write("\n--- 🃏 Community Cards:\n\t\t");
 				foreach (Card c in communityCards)
@@ -54,6 +54,7 @@ namespace PokerAlgo
 			Console.BackgroundColor = ConsoleColor.Blue;
 			Console.Write($" 🕜 Execution Time: {elapsedMs}ms ");
 			Console.ResetColor();
+			Console.WriteLine();
 		}
 	}
 }
@@ -75,25 +76,22 @@ Tom: Type: Pair| Cards: [K,Clubs]🙂 [K,Diamonds]
 
 ! TOFIX: Rewrite the second part, it fucking sucks.
 
-TODO: Add control flow by checking if the Player already has a better hand, if so we skip unecessary code execution.
-TODO: Combine all methods into the first part of the algo. However I wanna do that.
-TODO: Write second part of algo, should be easier with the recent changes.
-TODO: Create tests for first part of algo.
-TODO: Determine winning hands in community cards.
+TODO: Finish FindWinner method.
+TODO: Create tests for everything.
 TODO: Separate Algo class into several files.
 
 ? Future Ideas 
 ? Make PerformFinderTest more modular. That or make a new Testing system using Attributes and Reflection.
 ? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
+? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching.
+? Use SortedSet for storing cards when order matters to avoid additional sorting operations.
+? WinningHand nullable? It has been giving me a headache with the warnings
 
 * Changes
-* Massive Changes.
-* Restructured the algo in the following manner: Player object no longer has a list of WinningHand(s), only one WinningHand is necessary.
-* The Winning hand should contain the best five cards, including the winning combo; if no winning hand is found the best 5 cards are picked.
-* Since we store the best 5 cards in WinningHand I'll need to rewrite all tests.
-* Added Pair class, a mutable tuple for ease.
-* Quickly patched up the Testing class so I could run the Algo class.
-* Made debug logs look a lot nicer.
+* Added verbosity levels for debugging.
+* Added control flow by checking if the Player already has a better hand, if so we skip unecessary code execution.
+* Added DetermineCommunityWinningHand method.
+* Added FindWinner method but need to implement full logic.
 * 
 */
