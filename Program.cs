@@ -45,7 +45,7 @@ namespace PokerAlgo
 			}
 
 			// Code to run
-			Algo.FindWinner(players, communityCards);
+			Algo.DetermineWinner(players, communityCards);
 			// Testing testing = new();
 
 			watch.Stop();
@@ -72,26 +72,26 @@ Winners:
 Pair Tie
 Ben: Type: Pair| Cards: [A,Spades]🙂 [A,Diamonds]
 Tom: Type: Pair| Cards: [K,Clubs]🙂 [K,Diamonds]
-? Idea: hasChangesBeenMade bool to keep track of loop, if no we can move on. If yes we need to check one more time.
 
 ! TOFIX: Rewrite the second part, it fucking sucks.
 
-TODO: Finish FindWinner method.
-TODO: Create tests for everything.
 TODO: Separate Algo class into several files.
+TODO: Finish FindWinner method.
+TODO: Adjust verbosity levels for second part.
+TODO: Create tests for everything.
 
 ? Future Ideas 
-? Make PerformFinderTest more modular. That or make a new Testing system using Attributes and Reflection.
+? Make PerformFinderTest more modular. That or make a new Testing system using Attributes and Reflection. Make testing suite?
 ? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
 ? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching.
 ? Use SortedSet for storing cards when order matters to avoid additional sorting operations.
-? WinningHand nullable? It has been giving me a headache with the warnings
+? Add multiple executions in main method for easier testing.
+
+? WinningHand nullable? It has been giving me a headache with the warnings. NOPE, it's a good programming pattern.
 
 * Changes
-* Added verbosity levels for debugging.
-* Added control flow by checking if the Player already has a better hand, if so we skip unecessary code execution.
-* Added DetermineCommunityWinningHand method.
-* Added FindWinner method but need to implement full logic.
+* Implemented Community_BreakTieLessFive, which breaks the player tie if the community has a better hand as is less than 5 cards.
+* Added PlayerWinningObj class to encapsulate player winning hand cards.
 * 
 */

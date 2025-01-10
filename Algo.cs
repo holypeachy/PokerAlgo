@@ -5,8 +5,26 @@ namespace PokerAlgo
         public static int _debugVerbosity = 1; // * Levels | 0 = Debug Logging disabled | 1 = Progress Report | 2 = Everything
         public static bool _unitTestingEnable = false; // TODO Work in Progress
 
-        public static void FindWinner(List<Player> players, List<Card> communityCards)
+        private static Dictionary<HandType, int> _numberOfCardsOfHand = new()
         {
+            {HandType.Nothing, 0},
+            {HandType.Pair, 2},
+            {HandType.TwoPairs, 4},
+            {HandType.ThreeKind, 3},
+            {HandType.Straight, 5},
+            {HandType.Flush, 5},
+            {HandType.FullHouse, 5},
+            {HandType.FourKind, 4},
+            {HandType.StraightFlush, 5},
+            {HandType.RoyalFlush, 5}
+        };
+
+        public static void DetermineWinner(List<Player> players, List<Card> communityCards)
+        {
+            if(players.Count < 2)
+            {
+                throw new Exception("Algo.FindWinner() - players.Count < 2. There must be at least 2 players.");
+            }
             if(_debugVerbosity > 0) Console.WriteLine("\n--- 🔎 Algo Starts");
             foreach (Player player in players)
             {
@@ -36,7 +54,7 @@ namespace PokerAlgo
                 Console.WriteLine("\n--- 💭 Find Winner\n");
             }
 
-            FindWinner(players, community);
+            FindWinners(players, community);
 
             // ! Temporary
             // Player communityPlayer = DetermineCommunityHands(communityCards);
@@ -542,380 +560,486 @@ namespace PokerAlgo
         }
 
 
-        public static void FindWinner(List<Player> allPlayers, Player community)
+        public static void FindWinners(List<Player> allPlayers, Player community)
         {
-            // ! Temporary, shouldn't need this after proper testing
+            // ! Temporary, shouldn't need this after proper testing. ???
             if (community.WinningHand is null)
             {
-                throw new Exception("Algo.FindWinners() - WinningHand is null. This shouldn't happen");
+                throw new Exception("Algo.FindWinners() - Community WinningHand is null. This shouldn't happen");
             }
             foreach (Player p in allPlayers)
             {
                 if (p.WinningHand is null)
                 {
-                    throw new Exception("Algo.FindWinners() - WinningHand is null. This shouldn't happen");
+                    throw new Exception($"Algo.FindWinners() - Player\'s \'{p.Name}\' WinningHand is null. This shouldn't happen.");
                 }
             }
 
+            // ! Order from highest to lowest hand value
             List<Player> players = allPlayers.OrderByDescending(x => (int)x.WinningHand.Type).ToList();
 
-            DebugLogPlayers("Algo.FindWinners() - Players after sorting by WinningHand.Type", players);
+            DebugLogPlayers("Algo.FindWinners() - Players after sorting by WinningHand.Type", players, community);
 
+            if (_debugVerbosity > 0) Console.WriteLine();
+
+            // ! If community is greater. 2 options:
+            if(community.WinningHand.Type > players.ElementAt(0).WinningHand.Type)
+            {
+                // ! If community has best 5 cards then tie among all players
+                if(_numberOfCardsOfHand[community.WinningHand.Type] == 5)
+                {
+                    Console.WriteLine("TIE AMONG ALL PLAYERS");
+                    foreach (Player p in players)
+                    {
+                        p.IsWinner = true;
+                    }
+                }
+
+                // ! If community has less than 5 best cards then tie break players.
+                else
+                {
+                    Console.WriteLine($"COMMUNITY HAND GREATER: WE NEED TO TIE BREAK PLAYERS BECAUSE NUMBER OF CARDS: {_numberOfCardsOfHand[community.WinningHand.Type]}");
+                    Community_BreakTieLessFive(players, community);
+                }
+            }
+
+            // ! If community and player are the same. Tie break everything. If community wins it's a tie
+            else if (community.WinningHand.Type == players.ElementAt(0).WinningHand.Type)
+            {
+                Console.WriteLine("COMMUNITY == PLAYER. NEED TO BREAK TIE. IF COMMUNITY WINS IT'S TIE");
+            }
+            // ! If the community hand is worse then we proceed as usual
+
+            else if (community.WinningHand.Type < players.ElementAt(0).WinningHand.Type)
+            {
+                Console.WriteLine("NEED TO BREAK TIE AMONG PLAYERS **ONLY**");
+            }
+            else
+            {
+                throw new Exception("what the actual fuck");
+            }
+            
         }
 
+
+        // TODO: Take a look at this again
+        private static void Community_BreakTieLessFive(List<Player> allPlayers, Player community)
+        {
+            int numberOfHand = _numberOfCardsOfHand[community.WinningHand.Type];
+            int numberRemaining = 5 - _numberOfCardsOfHand[community.WinningHand.Type];
+
+            List<Card> communityCards = community.WinningHand.Cards.GetRange(5 - numberOfHand, numberOfHand);
+
+            List<PlayerWinningObj> winningObjs = new();
+            foreach (Player p in allPlayers)
+            {
+                winningObjs.Add(new PlayerWinningObj(p, p.WinningHand.Cards.Except(communityCards).ToList()));
+            }
+
+            PlayerWinningObj current;
+            PlayerWinningObj next;
+            List<PlayerWinningObj> tempWinningObjs = winningObjs.ToList();
+            bool hasChangesBeenMade;
+            do
+            {
+                hasChangesBeenMade = false;
+                for (int playerIndex = 0; playerIndex < winningObjs.Count - 1; playerIndex++)
+                {
+                    current = winningObjs[playerIndex];
+                    next = winningObjs[playerIndex + 1];
+
+                    for (int cardsIndex = 0; cardsIndex < numberRemaining; cardsIndex++)
+                    {
+                        if(current.Cards[current.Cards.Count - 1 - cardsIndex].Value < next.Cards[next.Cards.Count - 1 - cardsIndex].Value)
+                        {
+                            tempWinningObjs.Remove(current);
+                            hasChangesBeenMade = true;
+                        }
+                        else if (current.Cards[current.Cards.Count - 1 - cardsIndex].Value > next.Cards[next.Cards.Count - 1 - cardsIndex].Value)
+                        {
+                            tempWinningObjs.Remove(next);
+                            hasChangesBeenMade = true;
+                        }
+                    }
+                }
+                winningObjs = tempWinningObjs.ToList();
+            }while(hasChangesBeenMade);
+
+            Console.WriteLine("Winners and their Tie Breakers:");
+            foreach (PlayerWinningObj o in winningObjs)
+            {
+                Console.Write(o.Owner.Name + ":\n\t");
+                foreach (var c in o.Cards.GetRange(o.Cards.Count - numberRemaining, numberRemaining))
+                {
+                    Console.Write(c + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        private static List<Player> BreakTie(List<Player> allPlayers)
+        {
+            throw new NotImplementedException();
+        }
+
+        // ! -1 left wins, 0 tie, 1 right wins
+        private static int ComparePlayerHands(Player left, Player right)
+        {
+            throw new NotImplementedException();
+        }
 
         // ! Second Part of Algo. Need to rewrite
-        public static Tuple<string, List<Player>> DetermineWinners(List<Player> players, Player community){
-            List<Player> sortedPlayers = players.OrderBy(p => p.WinningHand.Type).ToList();
-            List<Player> winners = new();
+        // public static Tuple<string, List<Player>> DetermineWinners(List<Player> players, Player community){
+        //     List<Player> sortedPlayers = players.OrderBy(p => p.WinningHand.Type).ToList();
+        //     List<Player> winners = new();
 
-            if (community.WinningHand.Type == HandType.RoyalFlush)
-            {
-                return new Tuple<string, List<Player>>("Royal Flush", sortedPlayers);
-            }
-            else if (community.WinningHand.Type == HandType.StraightFlush ||
-            community.WinningHand.Type == HandType.FullHouse ||
-            community.WinningHand.Type == HandType.Flush ||
-            community.WinningHand.Type == HandType.Straight)
-            {
-                sortedPlayers.Add(community);
-                sortedPlayers = sortedPlayers.OrderBy(p => p.WinningHand.Type).ToList();
-            }
+        //     if (community.WinningHand.Type == HandType.RoyalFlush)
+        //     {
+        //         return new Tuple<string, List<Player>>("Royal Flush", sortedPlayers);
+        //     }
+        //     else if (community.WinningHand.Type == HandType.StraightFlush ||
+        //     community.WinningHand.Type == HandType.FullHouse ||
+        //     community.WinningHand.Type == HandType.Flush ||
+        //     community.WinningHand.Type == HandType.Straight)
+        //     {
+        //         sortedPlayers.Add(community);
+        //         sortedPlayers = sortedPlayers.OrderBy(p => p.WinningHand.Type).ToList();
+        //     }
 
-            // ! We compare player's best hand type
-            for (int i = sortedPlayers.Count - 1; i > 0; i--)
-            {
-                if(sortedPlayers[i].WinningHand.Type > sortedPlayers[i-1].WinningHand.Type){
-                    winners.Add(sortedPlayers[i]);
-                    break;
-                }
-                else if(sortedPlayers[i].WinningHand.Type == sortedPlayers[i - 1].WinningHand.Type)
-                {
-                    winners.Add(sortedPlayers[i]);
-                    if(i==1){
-                        winners.Add(sortedPlayers[0]);
-                    }
-                }
-            }
+        //     // ! We compare player's best hand type
+        //     for (int i = sortedPlayers.Count - 1; i > 0; i--)
+        //     {
+        //         if(sortedPlayers[i].WinningHand.Type > sortedPlayers[i-1].WinningHand.Type){
+        //             winners.Add(sortedPlayers[i]);
+        //             break;
+        //         }
+        //         else if(sortedPlayers[i].WinningHand.Type == sortedPlayers[i - 1].WinningHand.Type)
+        //         {
+        //             winners.Add(sortedPlayers[i]);
+        //             if(i==1){
+        //                 winners.Add(sortedPlayers[0]);
+        //             }
+        //         }
+        //     }
 
-            if(_debugVerbosity > 1)
-            {
-                Console.WriteLine("\nWinners:");
-                foreach (Player player in winners)
-                {
-                    Console.WriteLine($"\t{player.Name}: {player.WinningHand}");
-                    if (player.WinningHand.Type == HandType.Nothing)
-                    {
-                        Console.Write(player.Hand);
-                    }
-                }
-            }
+        //     if(_debugVerbosity > 1)
+        //     {
+        //         Console.WriteLine("\nWinners:");
+        //         foreach (Player player in winners)
+        //         {
+        //             Console.WriteLine($"\t{player.Name}: {player.WinningHand}");
+        //             if (player.WinningHand.Type == HandType.Nothing)
+        //             {
+        //                 Console.Write(player.Hand);
+        //             }
+        //         }
+        //     }
 
-            if(winners.Count > 1){
-                return BreakTie(winners, community, sortedPlayers);
-            }
-            else if(winners.Count == 1){
-                if(winners.ElementAt(0).Name == "Community"){
-                    return new Tuple<string, List<Player>>("Community Wins, Tie", sortedPlayers);
-                }
-                else{
-                    return new Tuple<string, List<Player>>("Simple Player Win", winners);
-                }
-            }
+        //     if(winners.Count > 1){
+        //         return BreakTie(winners, community, sortedPlayers);
+        //     }
+        //     else if(winners.Count == 1){
+        //         if(winners.ElementAt(0).Name == "Community"){
+        //             return new Tuple<string, List<Player>>("Community Wins, Tie", sortedPlayers);
+        //         }
+        //         else{
+        //             return new Tuple<string, List<Player>>("Simple Player Win", winners);
+        //         }
+        //     }
 
-            throw new Exception($"DetermineWinners: Something went very wrong. winners.Count={winners.Count}");
-        }
+        //     throw new Exception($"DetermineWinners: Something went very wrong. winners.Count={winners.Count}");
+        // }
 
-        private static Tuple<string, List<Player>> BreakTie(List<Player> tieWinners, Player communityPlayer, List<Player> allPlayers){
-            // ! Logic if there is a tie
-            HandType tieType = tieWinners.ElementAt(0)
-            .WinningHand.Type;
+        // private static Tuple<string, List<Player>> BreakTie(List<Player> tieWinners, Player communityPlayer, List<Player> allPlayers){
+        //     // ! Logic if there is a tie
+        //     HandType tieType = tieWinners.ElementAt(0)
+        //     .WinningHand.Type;
 
-            List<Player> tempWinners = tieWinners.ToList();
+        //     List<Player> tempWinners = tieWinners.ToList();
 
-            switch (tieType)
-            {
-                case HandType.RoyalFlush:
-                    return new Tuple<string, List<Player>>("Player Royal Flush Tie", tieWinners);
-                case HandType.StraightFlush:
-                    for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
-                    {
-                        List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
-                        List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
-                        for (int i = 4; i >= 0; i--){
-                            if (current[i].Value > next[i].Value){
-                                tempWinners.Remove(tieWinners[playerIndex + 1]);
-                                break;
-                            }
-                            else if(current[i].Value < next[i].Value){
-                                tempWinners.Remove(tieWinners[playerIndex]);
-                                break;
-                            }
-                        }
-                    }
+        //     switch (tieType)
+        //     {
+        //         case HandType.RoyalFlush:
+        //             return new Tuple<string, List<Player>>("Player Royal Flush Tie", tieWinners);
+        //         case HandType.StraightFlush:
+        //             for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
+        //             {
+        //                 List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
+        //                 List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
+        //                 for (int i = 4; i >= 0; i--){
+        //                     if (current[i].Value > next[i].Value){
+        //                         tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                         break;
+        //                     }
+        //                     else if(current[i].Value < next[i].Value){
+        //                         tempWinners.Remove(tieWinners[playerIndex]);
+        //                         break;
+        //                     }
+        //                 }
+        //             }
 
-                    if(tempWinners.Count == 1){
-                        if(tempWinners.Contains(communityPlayer)){
-                            return new Tuple<string, List<Player>>("Straight Flush Tie By Community", allPlayers);
-                        }
-                        return new Tuple<string, List<Player>>("Straight Flush Simple Win", tempWinners);
-                    }
-                    else{
-                        if (tempWinners.Contains(communityPlayer))
-                        {
-                            return new Tuple<string, List<Player>>("Straight Flush Tie By Community", allPlayers);
-                        }
-                        return new Tuple<string, List<Player>>("Straight Flush Tie", tempWinners);
-                    }
-                
-                case HandType.FourKind:
-                    for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
-                    {
-                        List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
-                        List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
-                        if (current[0].Value > next[0].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex + 1]);
-                        }
-                        else if (current[0].Value < next[0].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex]);
-                        }
-                    }
-                    if (tempWinners.Count == 1)
-                    {
-                        return new Tuple<string, List<Player>>("Player FourKind Simple Win", tempWinners);
-                    }
-                    else
-                    {
-                        return new Tuple<string, List<Player>>("Player FourKind Tie", tempWinners);
-                    }
-                
-                case HandType.FullHouse:
-                    for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
-                    {
-                        List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
-                        List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
-                        if (current[0].Value > next[0].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex + 1]);
-                        }
-                        else if (current[0].Value < next[0].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex]);
-                        }
-                        else if (current[3].Value > next[3].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex + 1]);
-                        }
-                        else if (current[3].Value < next[3].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex]);
-                        }
-                    }
-                    if (tempWinners.Count == 1)
-                    {
-                        if (tempWinners.Contains(communityPlayer))
-                        {
-                            return new Tuple<string, List<Player>>("Full House Tie By Community", allPlayers);
-                        }
-                        return new Tuple<string, List<Player>>("Full House Simple Win", tempWinners);
-                    }
-                    else
-                    {
-                        if (tempWinners.Contains(communityPlayer))
-                        {
-                            return new Tuple<string, List<Player>>("Full House Tie By Community", allPlayers);
-                        }
-                        return new Tuple<string, List<Player>>("Full House Tie", tempWinners);
-                    }
-                
-                case HandType.Flush:
-                    for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
-                    {
-                        List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
-                        List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
-                        for (int i = 4; i >= 0; i--)
-                            {
-                            if (current[i].Value > next[i].Value)
-                            {
-                                tempWinners.Remove(tieWinners[playerIndex + 1]);
-                                break;
-                            }
-                            else if (current[i].Value < next[i].Value)
-                            {
-                                tempWinners.Remove(tieWinners[playerIndex]);
-                                break;
-                            }
-                        }
-                    }
+        //             if(tempWinners.Count == 1){
+        //                 if(tempWinners.Contains(communityPlayer)){
+        //                     return new Tuple<string, List<Player>>("Straight Flush Tie By Community", allPlayers);
+        //                 }
+        //                 return new Tuple<string, List<Player>>("Straight Flush Simple Win", tempWinners);
+        //             }
+        //             else{
+        //                 if (tempWinners.Contains(communityPlayer))
+        //                 {
+        //                     return new Tuple<string, List<Player>>("Straight Flush Tie By Community", allPlayers);
+        //                 }
+        //                 return new Tuple<string, List<Player>>("Straight Flush Tie", tempWinners);
+        //             }
 
-                    if (tempWinners.Count == 1)
-                    {
-                        if (tempWinners.Contains(communityPlayer))
-                        {
-                            return new Tuple<string, List<Player>>("Flush Tie By Community", allPlayers);
-                        }
-                        return new Tuple<string, List<Player>>("Flush Simple Win", tempWinners);
-                    }
-                    else
-                    {
-                        if (tempWinners.Contains(communityPlayer))
-                        {
-                            return new Tuple<string, List<Player>>("Flush Tie By Community", allPlayers);
-                        }
-                        return new Tuple<string, List<Player>>("Flush Tie", tempWinners);
-                    }
+        //         case HandType.FourKind:
+        //             for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
+        //             {
+        //                 List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
+        //                 List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
+        //                 if (current[0].Value > next[0].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                 }
+        //                 else if (current[0].Value < next[0].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex]);
+        //                 }
+        //             }
+        //             if (tempWinners.Count == 1)
+        //             {
+        //                 return new Tuple<string, List<Player>>("Player FourKind Simple Win", tempWinners);
+        //             }
+        //             else
+        //             {
+        //                 return new Tuple<string, List<Player>>("Player FourKind Tie", tempWinners);
+        //             }
 
-                case HandType.Straight:
-                    for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
-                    {
-                        List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
-                        List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
-                        for (int i = 4; i >= 0; i--)
-                        {
-                            if (current[i].Value > next[i].Value)
-                            {
-                                tempWinners.Remove(tieWinners[playerIndex + 1]);
-                                break;
-                            }
-                            else if (current[i].Value < next[i].Value)
-                            {
-                                tempWinners.Remove(tieWinners[playerIndex]);
-                                break;
-                            }
-                        }
-                    }
+        //         case HandType.FullHouse:
+        //             for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
+        //             {
+        //                 List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
+        //                 List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
+        //                 if (current[0].Value > next[0].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                 }
+        //                 else if (current[0].Value < next[0].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex]);
+        //                 }
+        //                 else if (current[3].Value > next[3].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                 }
+        //                 else if (current[3].Value < next[3].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex]);
+        //                 }
+        //             }
+        //             if (tempWinners.Count == 1)
+        //             {
+        //                 if (tempWinners.Contains(communityPlayer))
+        //                 {
+        //                     return new Tuple<string, List<Player>>("Full House Tie By Community", allPlayers);
+        //                 }
+        //                 return new Tuple<string, List<Player>>("Full House Simple Win", tempWinners);
+        //             }
+        //             else
+        //             {
+        //                 if (tempWinners.Contains(communityPlayer))
+        //                 {
+        //                     return new Tuple<string, List<Player>>("Full House Tie By Community", allPlayers);
+        //                 }
+        //                 return new Tuple<string, List<Player>>("Full House Tie", tempWinners);
+        //             }
 
-                    if (tempWinners.Count == 1)
-                    {
-                        if (tempWinners.Contains(communityPlayer))
-                        {
-                            return new Tuple<string, List<Player>>("Straight Tie By Community", allPlayers);
-                        }
-                        return new Tuple<string, List<Player>>("Straight Simple Win", tempWinners);
-                    }
-                    else
-                    {
-                        if (tempWinners.Contains(communityPlayer))
-                        {
-                            return new Tuple<string, List<Player>>("Straight Tie By Community", allPlayers);
-                        }
-                        return new Tuple<string, List<Player>>("Straight Tie", tempWinners);
-                    }
+        //         case HandType.Flush:
+        //             for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
+        //             {
+        //                 List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
+        //                 List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
+        //                 for (int i = 4; i >= 0; i--)
+        //                     {
+        //                     if (current[i].Value > next[i].Value)
+        //                     {
+        //                         tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                         break;
+        //                     }
+        //                     else if (current[i].Value < next[i].Value)
+        //                     {
+        //                         tempWinners.Remove(tieWinners[playerIndex]);
+        //                         break;
+        //                     }
+        //                 }
+        //             }
 
-                case HandType.ThreeKind:
-                    for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
-                    {
-                        List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
-                        List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
-                        if (current[0].Value > next[0].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex + 1]);
-                        }
-                        else if (current[0].Value < next[0].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex]);
-                        }
-                    }
-                    if (tempWinners.Count == 1)
-                    {
-                        return new Tuple<string, List<Player>>("3Kind Simple Win", tempWinners);
-                    }
-                    else
-                    {
-                        return new Tuple<string, List<Player>>("3Kind Tie", tempWinners);
-                    }
+        //             if (tempWinners.Count == 1)
+        //             {
+        //                 if (tempWinners.Contains(communityPlayer))
+        //                 {
+        //                     return new Tuple<string, List<Player>>("Flush Tie By Community", allPlayers);
+        //                 }
+        //                 return new Tuple<string, List<Player>>("Flush Simple Win", tempWinners);
+        //             }
+        //             else
+        //             {
+        //                 if (tempWinners.Contains(communityPlayer))
+        //                 {
+        //                     return new Tuple<string, List<Player>>("Flush Tie By Community", allPlayers);
+        //                 }
+        //                 return new Tuple<string, List<Player>>("Flush Tie", tempWinners);
+        //             }
 
-                case HandType.TwoPairs:
-                    for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
-                    {
-                        List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
-                        List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
-                        if (current[2].Value > next[2].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex + 1]);
-                        }
-                        else if (current[2].Value < next[2].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex]);
-                        }
-                        else if (current[0].Value > next[0].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex + 1]);
-                        }
-                        else if (current[0].Value < next[0].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex]);
-                        }
-                    }
-                    if (tempWinners.Count == 1)
-                    {
-                        return new Tuple<string, List<Player>>("2Pairs Simple Win", tempWinners);
-                    }
-                    else
-                    {
-                        return new Tuple<string, List<Player>>("2Pairs Tie", tempWinners);
-                    }
+        //         case HandType.Straight:
+        //             for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
+        //             {
+        //                 List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
+        //                 List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
+        //                 for (int i = 4; i >= 0; i--)
+        //                 {
+        //                     if (current[i].Value > next[i].Value)
+        //                     {
+        //                         tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                         break;
+        //                     }
+        //                     else if (current[i].Value < next[i].Value)
+        //                     {
+        //                         tempWinners.Remove(tieWinners[playerIndex]);
+        //                         break;
+        //                     }
+        //                 }
+        //             }
 
-                case HandType.Pair:
-                    for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
-                    {
-                        List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
-                        List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
-                        if (current[0].Value > next[0].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex + 1]);
-                        }
-                        else if (current[0].Value < next[0].Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex]);
-                        }
-                    }
-                    if (tempWinners.Count == 1)
-                    {
-                        return new Tuple<string, List<Player>>("Pair Simple Win", tempWinners);
-                    }
-                    else
-                    {
-                        return new Tuple<string, List<Player>>("Pair Tie", tempWinners);
-                    }
+        //             if (tempWinners.Count == 1)
+        //             {
+        //                 if (tempWinners.Contains(communityPlayer))
+        //                 {
+        //                     return new Tuple<string, List<Player>>("Straight Tie By Community", allPlayers);
+        //                 }
+        //                 return new Tuple<string, List<Player>>("Straight Simple Win", tempWinners);
+        //             }
+        //             else
+        //             {
+        //                 if (tempWinners.Contains(communityPlayer))
+        //                 {
+        //                     return new Tuple<string, List<Player>>("Straight Tie By Community", allPlayers);
+        //                 }
+        //                 return new Tuple<string, List<Player>>("Straight Tie", tempWinners);
+        //             }
 
-                case HandType.Nothing:
-                    for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
-                    {
-                        Pair<Card, Card> current = tieWinners[playerIndex].Hand;
-                        Pair<Card, Card> next = tieWinners[playerIndex + 1].Hand;
-                        if (current.Second.Value > next.Second.Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex + 1]);
-                        }
-                        else if (current.Second.Value < next.Second.Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex]);
-                        }
-                        else if (current.First.Value > next.First.Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex + 1]);
-                        }
-                        else if (current.First.Value < next.First.Value)
-                        {
-                            tempWinners.Remove(tieWinners[playerIndex]);
-                        }
-                    }
-                    if (tempWinners.Count == 1)
-                    {
-                        return new Tuple<string, List<Player>>("High Card Simple Win", tempWinners);
-                    }
-                    else
-                    {
-                        return new Tuple<string, List<Player>>("High Card Tie", tempWinners);
-                    }
+        //         case HandType.ThreeKind:
+        //             for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
+        //             {
+        //                 List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
+        //                 List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
+        //                 if (current[0].Value > next[0].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                 }
+        //                 else if (current[0].Value < next[0].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex]);
+        //                 }
+        //             }
+        //             if (tempWinners.Count == 1)
+        //             {
+        //                 return new Tuple<string, List<Player>>("3Kind Simple Win", tempWinners);
+        //             }
+        //             else
+        //             {
+        //                 return new Tuple<string, List<Player>>("3Kind Tie", tempWinners);
+        //             }
 
-                default:
-                    throw new Exception("BreakTie: Something went very wrong");
-            }
-        }
+        //         case HandType.TwoPairs:
+        //             for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
+        //             {
+        //                 List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
+        //                 List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
+        //                 if (current[2].Value > next[2].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                 }
+        //                 else if (current[2].Value < next[2].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex]);
+        //                 }
+        //                 else if (current[0].Value > next[0].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                 }
+        //                 else if (current[0].Value < next[0].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex]);
+        //                 }
+        //             }
+        //             if (tempWinners.Count == 1)
+        //             {
+        //                 return new Tuple<string, List<Player>>("2Pairs Simple Win", tempWinners);
+        //             }
+        //             else
+        //             {
+        //                 return new Tuple<string, List<Player>>("2Pairs Tie", tempWinners);
+        //             }
+
+        //         case HandType.Pair:
+        //             for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
+        //             {
+        //                 List<Card> current = tieWinners[playerIndex].WinningHand.Cards;
+        //                 List<Card> next = tieWinners[playerIndex + 1].WinningHand.Cards;
+        //                 if (current[0].Value > next[0].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                 }
+        //                 else if (current[0].Value < next[0].Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex]);
+        //                 }
+        //             }
+        //             if (tempWinners.Count == 1)
+        //             {
+        //                 return new Tuple<string, List<Player>>("Pair Simple Win", tempWinners);
+        //             }
+        //             else
+        //             {
+        //                 return new Tuple<string, List<Player>>("Pair Tie", tempWinners);
+        //             }
+
+        //         case HandType.Nothing:
+        //             for (int playerIndex = 0; playerIndex < tieWinners.Count - 1; playerIndex++)
+        //             {
+        //                 Pair<Card, Card> current = tieWinners[playerIndex].Hand;
+        //                 Pair<Card, Card> next = tieWinners[playerIndex + 1].Hand;
+        //                 if (current.Second.Value > next.Second.Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                 }
+        //                 else if (current.Second.Value < next.Second.Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex]);
+        //                 }
+        //                 else if (current.First.Value > next.First.Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex + 1]);
+        //                 }
+        //                 else if (current.First.Value < next.First.Value)
+        //                 {
+        //                     tempWinners.Remove(tieWinners[playerIndex]);
+        //                 }
+        //             }
+        //             if (tempWinners.Count == 1)
+        //             {
+        //                 return new Tuple<string, List<Player>>("High Card Simple Win", tempWinners);
+        //             }
+        //             else
+        //             {
+        //                 return new Tuple<string, List<Player>>("High Card Tie", tempWinners);
+        //             }
+
+        //         default:
+        //             throw new Exception("BreakTie: Something went very wrong");
+        //     }
+        // }
 
 
         // * Helper Methods
@@ -1014,11 +1138,28 @@ namespace PokerAlgo
         {
             if (_debugVerbosity > 0)
             {
-                Console.WriteLine($"🤖 {description}: ");
+                Console.WriteLine($"🤖 {description}:");
                 foreach (Player p in players)
                 {
                     Console.WriteLine("\tWinning Hand for " + p.Name);
-                    Console.Write("\t\t" + p.WinningHand + "\n");
+                    Console.WriteLine("\t\t" + p.WinningHand);
+                }
+            }
+        }
+
+        private static void DebugLogPlayers(string description, List<Player> players, Player community)
+        {
+            if (_debugVerbosity > 0)
+            {
+                Console.WriteLine($"🤖 {description}:");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\tWinning Hand for " + community.Name);
+                Console.Write("\t\t" + community.WinningHand + "\n");
+                Console.ResetColor();
+                foreach (Player p in players)
+                {
+                    Console.WriteLine("\tWinning Hand for " + p.Name);
+                    Console.WriteLine("\t\t" + p.WinningHand);
                 }
             }
         }
