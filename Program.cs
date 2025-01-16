@@ -44,9 +44,12 @@ namespace PokerAlgo
 				Console.WriteLine();
 			}
 
-			// Code to run
+			
+			// ! Main Code Execution
 			Algo.DetermineWinner(players, communityCards);
 			// Testing testing = new();
+			// !
+			
 
 			watch.Stop();
 			Console.WriteLine();
@@ -60,24 +63,18 @@ namespace PokerAlgo
 }
 
 /*
-* Current dotnet run output: Players, Community, Winning Hand for each player
+* Current dotnet run output: Players, Community, Winning Hand for each player.
+* SetWinningHand is the last method I checked from the bottom up.
 
 ! ISSUES:
-! Since the tie breaker code only runs through the winners once, there is a chance of:
-Winners:
-		Ben: Type: Pair| Cards: [A,Spades]🙂 [A,Diamonds]
-		Matt: Type: Pair| Cards: [K,Hearts]🙂 [K,Diamonds]
-		Tom: Type: Pair| Cards: [K,Clubs]🙂 [K,Diamonds]
+! 
 
-Pair Tie
-Ben: Type: Pair| Cards: [A,Spades]🙂 [A,Diamonds]
-Tom: Type: Pair| Cards: [K,Clubs]🙂 [K,Diamonds]
-
-! TOFIX: Rewrite the second part, it fucking sucks.
-
+TODO: Clean up debug console logs.
+TODO: Standardize how to handle winners.
+TODO: Remove Testing_AddNoWinningHand.
 TODO: Separate Algo class into several files.
-TODO: Finish FindWinner method.
 TODO: Adjust verbosity levels for second part.
+TODO: Update testing class.
 TODO: Create tests for everything.
 
 ? Future Ideas 
@@ -87,11 +84,13 @@ TODO: Create tests for everything.
 ? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching.
 ? Use SortedSet for storing cards when order matters to avoid additional sorting operations.
 ? Add multiple executions in main method for easier testing.
+? Use extensions for better code readability.
 
 ? WinningHand nullable? It has been giving me a headache with the warnings. NOPE, it's a good programming pattern.
 
 * Changes
-* Implemented Community_BreakTieLessFive, which breaks the player tie if the community has a better hand as is less than 5 cards.
-* Added PlayerWinningObj class to encapsulate player winning hand cards.
+* Added ComparePlayerHands method that compares two player hands and determines if one wins or if they both tie.
+* Added CompareKickers that simply compares two lists of cards and determines if one wins or tie.
+* Removed some depricated methods and commented code.
 * 
 */
