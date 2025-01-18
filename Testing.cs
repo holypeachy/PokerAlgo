@@ -12,9 +12,9 @@ namespace PokerAlgo{
 
 
 		public Testing(){
-			PerformFinderTest("FlushFinder", pathToFlush, Algo.FindFlush);
-			PerformFinderTest("StraightFinder", pathToStraight, Algo.FindStraight);
-			PerformFinderTest("MultipleFinder", pathToMultiple, Algo.FindMultiple);
+			PerformFinderTest("FlushFinder", pathToFlush, Algo.EvaluateFlush);
+			PerformFinderTest("StraightFinder", pathToStraight, Algo.EvaluateStraight);
+			PerformFinderTest("MultipleFinder", pathToMultiple, Algo.EvaluateMultiples);
 		}
 
 		public void PerformFinderTest(string testName, string pathToTest, AlgoFunction function)
