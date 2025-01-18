@@ -10,5 +10,10 @@ namespace PokerAlgo
             this.First = First;
             this.Second = Second;
         }
+
+        public override string ToString()
+        {
+            return $"{First} {Second}";
+        }
     }
 }

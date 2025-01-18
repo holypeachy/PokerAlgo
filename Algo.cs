@@ -3,7 +3,6 @@ namespace PokerAlgo
     static partial class Algo
     {
         public static int _debugVerbosity = 0; // * Levels | 0 = Debug Logging disabled | 1 = Progress Report | 2 = Everything
-        public static bool _unitTestingEnable = false; // TODO Work in Progress
 
         private static Dictionary<HandType, int> _numberOfCardsOfHand = new()
         {
@@ -102,10 +101,9 @@ namespace PokerAlgo
             EvaluateMultiples(cards, player);
         }
 
-        // * Beautiful
-        public static void EvaluateFlush(List<Card> combinedCards, Player player)
+        public static void EvaluateFlush(List<Card> cards, Player player)
         {
-            List<Card> flushCards = combinedCards.GroupBy(card => card.Suit)
+            List<Card> flushCards = cards.GroupBy(card => card.Suit)
             .Where(group => group.Count() >= 5)
             .SelectMany(group => group).ToList();
 
@@ -157,7 +155,6 @@ namespace PokerAlgo
             DebugLog("⚠️  Algo.EvaluateFlush() - No Player Flush", 2);
         }
 
-        // * Beautiful
         public static void EvaluateStraight(List<Card> cards, Player player){
             // ! If Player already has a winning hand, no need to execute this method
             if (player.WinningHand != null && player.WinningHand.Type > HandType.Straight)

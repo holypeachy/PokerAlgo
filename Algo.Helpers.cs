@@ -198,7 +198,7 @@ namespace PokerAlgo
             return cards.Where(c => c.Value != 1).ToList();
         }
 
-        private static void SortCardsByValue(List<Card> cards)
+        internal static void SortCardsByValue(List<Card> cards)
         {
             cards.Sort((x, y) => x.Value.CompareTo(y.Value));
         }

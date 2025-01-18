@@ -2,12 +2,12 @@
   {
     "Description": "Royal Flush | 1 Player Card",
     "PlayerCards": {
-      "Item1": {
+      "First": {
         "Value": 13,
         "Suit": 2,
         "IsPlayerCard": true
       },
-      "Item2": {
+      "Second": {
         "Value": 3,
         "Suit": 1,
         "IsPlayerCard": true
@@ -40,48 +40,46 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 9,
-        "Cards": [
-          {
-            "Value": 10,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 11,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 12,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 13,
-            "Suit": 2,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 14,
-            "Suit": 2,
-            "IsPlayerCard": false
-          }
-        ]
-      }
-    ]
+    "ExpectedHand": {
+      "Type": 9,
+      "Cards": [
+        {
+          "Value": 10,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 11,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 12,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 13,
+          "Suit": 2,
+          "IsPlayerCard": true
+        },
+        {
+          "Value": 14,
+          "Suit": 2,
+          "IsPlayerCard": false
+        }
+      ]
+    }
   },
   {
     "Description": "Royal Flush | 2 Player Cards",
     "PlayerCards": {
-      "Item1": {
+      "First": {
         "Value": 13,
         "Suit": 2,
         "IsPlayerCard": true
       },
-      "Item2": {
+      "Second": {
         "Value": 14,
         "Suit": 2,
         "IsPlayerCard": true
@@ -114,48 +112,46 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 9,
-        "Cards": [
-          {
-            "Value": 10,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 11,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 12,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 13,
-            "Suit": 2,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 14,
-            "Suit": 2,
-            "IsPlayerCard": true
-          }
-        ]
-      }
-    ]
+    "ExpectedHand": {
+      "Type": 9,
+      "Cards": [
+        {
+          "Value": 10,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 11,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 12,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 13,
+          "Suit": 2,
+          "IsPlayerCard": true
+        },
+        {
+          "Value": 14,
+          "Suit": 2,
+          "IsPlayerCard": true
+        }
+      ]
+    }
   },
   {
     "Description": "Straight Flush | 1 Player Card",
     "PlayerCards": {
-      "Item1": {
+      "First": {
         "Value": 9,
         "Suit": 3,
         "IsPlayerCard": true
       },
-      "Item2": {
+      "Second": {
         "Value": 2,
         "Suit": 1,
         "IsPlayerCard": true
@@ -188,66 +184,64 @@
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 8,
-        "Cards": [
-          {
-            "Value": 5,
-            "Suit": 3,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 6,
-            "Suit": 3,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 7,
-            "Suit": 3,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 8,
-            "Suit": 3,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 9,
-            "Suit": 3,
-            "IsPlayerCard": true
-          }
-        ]
-      }
-    ]
+    "ExpectedHand": {
+      "Type": 8,
+      "Cards": [
+        {
+          "Value": 5,
+          "Suit": 3,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 6,
+          "Suit": 3,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 7,
+          "Suit": 3,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 8,
+          "Suit": 3,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 9,
+          "Suit": 3,
+          "IsPlayerCard": true
+        }
+      ]
+    }
   },
   {
     "Description": "Straight Flush | 2 Player Cards",
     "PlayerCards": {
-      "Item1": {
-        "Value": 8,
+      "First": {
+        "Value": 9,
         "Suit": 3,
         "IsPlayerCard": true
       },
-      "Item2": {
-        "Value": 7,
+      "Second": {
+        "Value": 5,
         "Suit": 3,
         "IsPlayerCard": true
       }
     },
     "CommunityCards": [
       {
+        "Value": 8,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 7,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
         "Value": 6,
-        "Suit": 3,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 5,
-        "Suit": 3,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 4,
         "Suit": 3,
         "IsPlayerCard": false
       },
@@ -257,54 +251,52 @@
         "IsPlayerCard": false
       },
       {
-        "Value": 9,
-        "Suit": 2,
+        "Value": 4,
+        "Suit": 0,
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 8,
-        "Cards": [
-          {
-            "Value": 4,
-            "Suit": 3,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 5,
-            "Suit": 3,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 6,
-            "Suit": 3,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 7,
-            "Suit": 3,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 8,
-            "Suit": 3,
-            "IsPlayerCard": true
-          }
-        ]
-      }
-    ]
+    "ExpectedHand": {
+      "Type": 8,
+      "Cards": [
+        {
+          "Value": 5,
+          "Suit": 3,
+          "IsPlayerCard": true
+        },
+        {
+          "Value": 6,
+          "Suit": 3,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 7,
+          "Suit": 3,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 8,
+          "Suit": 3,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 9,
+          "Suit": 3,
+          "IsPlayerCard": true
+        }
+      ]
+    }
   },
   {
     "Description": "Flush | 1 Player Card",
     "PlayerCards": {
-      "Item1": {
-        "Value": 8,
-        "Suit": 3,
+      "First": {
+        "Value": 12,
+        "Suit": 0,
         "IsPlayerCard": true
       },
-      "Item2": {
-        "Value": 3,
+      "Second": {
+        "Value": 4,
         "Suit": 2,
         "IsPlayerCard": true
       }
@@ -312,304 +304,242 @@
     "CommunityCards": [
       {
         "Value": 14,
-        "Suit": 2,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
-        "Value": 10,
-        "Suit": 2,
+        "Value": 9,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
         "Value": 7,
-        "Suit": 2,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
         "Value": 5,
-        "Suit": 2,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
-        "Value": 2,
-        "Suit": 0,
+        "Value": 3,
+        "Suit": 1,
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 5,
-        "Cards": [
-          {
-            "Value": 3,
-            "Suit": 2,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 5,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 7,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 10,
-            "Suit": 2,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 14,
-            "Suit": 2,
-            "IsPlayerCard": false
-          }
-        ]
-      }
-    ]
+    "ExpectedHand": {
+      "Type": 5,
+      "Cards": [
+        {
+          "Value": 5,
+          "Suit": 0,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 7,
+          "Suit": 0,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 9,
+          "Suit": 0,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 12,
+          "Suit": 0,
+          "IsPlayerCard": true
+        },
+        {
+          "Value": 14,
+          "Suit": 0,
+          "IsPlayerCard": false
+        }
+      ]
+    }
   },
   {
     "Description": "Flush | 2 Player Cards",
     "PlayerCards": {
-      "Item1": {
+      "First": {
         "Value": 14,
-        "Suit": 0,
+        "Suit": 1,
         "IsPlayerCard": true
       },
-      "Item2": {
-        "Value": 9,
-        "Suit": 0,
+      "Second": {
+        "Value": 12,
+        "Suit": 1,
         "IsPlayerCard": true
       }
     },
     "CommunityCards": [
       {
-        "Value": 12,
-        "Suit": 0,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 7,
-        "Suit": 0,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 5,
-        "Suit": 0,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 3,
+        "Value": 9,
         "Suit": 1,
         "IsPlayerCard": false
       },
       {
+        "Value": 7,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 3,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
         "Value": 4,
-        "Suit": 3,
+        "Suit": 0,
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 5,
-        "Cards": [
-          {
-            "Value": 5,
-            "Suit": 0,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 7,
-            "Suit": 0,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 9,
-            "Suit": 0,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 12,
-            "Suit": 0,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 14,
-            "Suit": 0,
-            "IsPlayerCard": true
-          }
-        ]
-      }
-    ]
+    "ExpectedHand": {
+      "Type": 5,
+      "Cards": [
+        {
+          "Value": 5,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 7,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 9,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 12,
+          "Suit": 1,
+          "IsPlayerCard": true
+        },
+        {
+          "Value": 14,
+          "Suit": 1,
+          "IsPlayerCard": true
+        }
+      ]
+    }
   },
   {
     "Description": "Nothing | Royal Flush on Community No Player Cards",
     "PlayerCards": {
-      "Item1": {
+      "First": {
         "Value": 9,
-        "Suit": 0,
+        "Suit": 3,
         "IsPlayerCard": true
       },
-      "Item2": {
-        "Value": 3,
-        "Suit": 1,
+      "Second": {
+        "Value": 5,
+        "Suit": 2,
         "IsPlayerCard": true
       }
     },
     "CommunityCards": [
       {
-        "Value": 14,
-        "Suit": 2,
+        "Value": 10,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
-        "Value": 13,
-        "Suit": 2,
+        "Value": 11,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
         "Value": 12,
-        "Suit": 2,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
-        "Value": 11,
-        "Suit": 2,
+        "Value": 13,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
-        "Value": 10,
-        "Suit": 2,
+        "Value": 14,
+        "Suit": 0,
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 0,
-        "Cards": []
-      }
-    ]
+    "ExpectedHand": null
   },
   {
     "Description": "Nothing | Straight Flush on Community No Player Cards",
     "PlayerCards": {
-      "Item1": {
-        "Value": 3,
-        "Suit": 1,
+      "First": {
+        "Value": 8,
+        "Suit": 2,
         "IsPlayerCard": true
       },
-      "Item2": {
-        "Value": 7,
-        "Suit": 2,
+      "Second": {
+        "Value": 4,
+        "Suit": 3,
         "IsPlayerCard": true
       }
     },
     "CommunityCards": [
       {
-        "Value": 8,
-        "Suit": 3,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 7,
-        "Suit": 3,
+        "Value": 5,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
         "Value": 6,
-        "Suit": 3,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
-        "Value": 5,
-        "Suit": 3,
+        "Value": 7,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
-        "Value": 4,
-        "Suit": 3,
+        "Value": 8,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 9,
+        "Suit": 0,
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 0,
-        "Cards": []
-      }
-    ]
+    "ExpectedHand": null
   },
   {
     "Description": "Nothing | Flush on Community No Player Cards",
     "PlayerCards": {
-      "Item1": {
-        "Value": 3,
-        "Suit": 0,
-        "IsPlayerCard": true
-      },
-      "Item2": {
-        "Value": 4,
-        "Suit": 1,
-        "IsPlayerCard": true
-      }
-    },
-    "CommunityCards": [
-      {
-        "Value": 14,
-        "Suit": 2,
-        "IsPlayerCard": false
-      },
-      {
+      "First": {
         "Value": 10,
         "Suit": 2,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 7,
-        "Suit": 2,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 5,
-        "Suit": 2,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 2,
-        "Suit": 2,
-        "IsPlayerCard": false
-      }
-    ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 0,
-        "Cards": []
-      }
-    ]
-  },
-  {
-    "Description": "Nothing | No Poker Hands at All",
-    "PlayerCards": {
-      "Item1": {
-        "Value": 3,
-        "Suit": 0,
         "IsPlayerCard": true
       },
-      "Item2": {
-        "Value": 7,
-        "Suit": 1,
+      "Second": {
+        "Value": 3,
+        "Suit": 3,
         "IsPlayerCard": true
       }
     },
     "CommunityCards": [
       {
-        "Value": 2,
-        "Suit": 3,
+        "Value": 5,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
-        "Value": 5,
-        "Suit": 3,
+        "Value": 7,
+        "Suit": 0,
         "IsPlayerCard": false
       },
       {
@@ -618,33 +548,71 @@
         "IsPlayerCard": false
       },
       {
+        "Value": 12,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 14,
+        "Suit": 0,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": null
+  },
+  {
+    "Description": "Nothing | No Poker Hands at All",
+    "PlayerCards": {
+      "First": {
+        "Value": 2,
+        "Suit": 0,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Value": 4,
+        "Suit": 3,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Value": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 7,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 9,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
         "Value": 10,
         "Suit": 1,
         "IsPlayerCard": false
       },
       {
-        "Value": 4,
+        "Value": 11,
         "Suit": 2,
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 0,
-        "Cards": []
-      }
-    ]
+    "ExpectedHand": null
   },
   {
     "Description": "Low Straight Flush (A-5) | 1 Player Card Involved",
     "PlayerCards": {
-      "Item1": {
+      "First": {
         "Value": 5,
         "Suit": 1,
         "IsPlayerCard": true
       },
-      "Item2": {
-        "Value": 10,
+      "Second": {
+        "Value": 8,
         "Suit": 2,
         "IsPlayerCard": true
       }
@@ -668,119 +636,115 @@
       {
         "Value": 14,
         "Suit": 1,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 11,
-        "Suit": 3,
-        "IsPlayerCard": false
-      }
-    ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 8,
-        "Cards": [
-          {
-            "Value": 1,
-            "Suit": 1,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 2,
-            "Suit": 1,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 3,
-            "Suit": 1,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 4,
-            "Suit": 1,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 5,
-            "Suit": 1,
-            "IsPlayerCard": true
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "Description": "Low Straight Flush (A-5) | 2 Player Cards Involved",
-    "PlayerCards": {
-      "Item1": {
-        "Value": 5,
-        "Suit": 1,
-        "IsPlayerCard": true
-      },
-      "Item2": {
-        "Value": 3,
-        "Suit": 1,
-        "IsPlayerCard": true
-      }
-    },
-    "CommunityCards": [
-      {
-        "Value": 4,
-        "Suit": 1,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 2,
-        "Suit": 1,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 14,
-        "Suit": 1,
-        "IsPlayerCard": false
-      },
-      {
-        "Value": 11,
-        "Suit": 2,
         "IsPlayerCard": false
       },
       {
         "Value": 6,
+        "Suit": 2,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 8,
+      "Cards": [
+        {
+          "Value": 1,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 2,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 3,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 4,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 5,
+          "Suit": 1,
+          "IsPlayerCard": true
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Low Straight Flush (A-5) | 2 Player Cards Involved",
+    "PlayerCards": {
+      "First": {
+        "Value": 5,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Value": 4,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Value": 3,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 2,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 14,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 6,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Value": 7,
         "Suit": 3,
         "IsPlayerCard": false
       }
     ],
-    "ExpectedWinningHands": [
-      {
-        "Type": 8,
-        "Cards": [
-          {
-            "Value": 1,
-            "Suit": 1,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 2,
-            "Suit": 1,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 3,
-            "Suit": 1,
-            "IsPlayerCard": true
-          },
-          {
-            "Value": 4,
-            "Suit": 1,
-            "IsPlayerCard": false
-          },
-          {
-            "Value": 5,
-            "Suit": 1,
-            "IsPlayerCard": true
-          }
-        ]
-      }
-    ]
+    "ExpectedHand": {
+      "Type": 8,
+      "Cards": [
+        {
+          "Value": 1,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 2,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 3,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Value": 4,
+          "Suit": 1,
+          "IsPlayerCard": true
+        },
+        {
+          "Value": 5,
+          "Suit": 1,
+          "IsPlayerCard": true
+        }
+      ]
+    }
   }
 ]

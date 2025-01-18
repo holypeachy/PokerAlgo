@@ -66,7 +66,7 @@ namespace PokerAlgo
 		{
 			if(Cards.Count <= 0)
 			{
-				throw new Exception("Deck.NextCard() - No More Cards in The Deck");
+				throw new Exception("⛔ Deck.NextCard() - No More Cards in The Deck");
 			}
 
 			Card cardOnTop = Cards.First();

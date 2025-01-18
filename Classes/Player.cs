@@ -6,7 +6,6 @@ namespace PokerAlgo{
 		public Pair<Card, Card> Hand { get; set; }
 		
 		public WinningHand? WinningHand { get; set; }
-		public bool IsWinner { get; set; }
 
 
 		public Player(string name, Card first, Card second)
@@ -18,7 +17,6 @@ namespace PokerAlgo{
 			this.Hand.Second.IsPlayerCard = true;
 
 			this.WinningHand = null;
-			this.IsWinner = false;
 		}
 
 		public override string ToString()

@@ -43,15 +43,10 @@ namespace PokerAlgo
 
                 return other is null ? false : ( this.Value == other.Value && this.Suit == other.Suit && this.IsPlayerCard == other.IsPlayerCard ); // ? Should I include IsPlayerCard?
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return false;
             }
-        }
-
-        public bool EqualsInValue(Card other)
-        {
-            return this.Value == other.Value;
         }
 
         public override int GetHashCode()   // Had to implement cus Equals override, for some reason
