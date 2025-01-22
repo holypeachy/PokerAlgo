@@ -16,6 +16,8 @@ namespace PokerAlgo
 
 		public void CreateDeck()
 		{
+			Cards = new List<Card>();
+
 			foreach (CardSuit suit in Enum.GetValues(typeof(CardSuit)).Cast<CardSuit>() )
 			{
 				for (int rank = 2; rank <= 14; rank++)
@@ -53,8 +55,6 @@ namespace PokerAlgo
 
 		public void ResetDeck()
 		{
-			Cards = new List<Card>();
-
 			CreateDeck();
 
 			ShuffleDeck();

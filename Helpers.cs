@@ -1,10 +1,11 @@
-// File: Algo.Debug.cs
 namespace PokerAlgo
 {
-    static partial class Algo
+    internal static class Helpers
     {
-        // * Debug Logging
-        private static void DebugLog(string log = "", int verbosity = 1)
+        private static int _debugVerbosity = Algo._debugVerbosity;
+
+
+        public static void DebugLog(string log = "", int verbosity = 1)
         {
             if (_debugVerbosity > verbosity - 1)
             {
@@ -12,7 +13,7 @@ namespace PokerAlgo
             }
         }
 
-        private static void DebugLogCards(string description, List<Card> cards)
+        public static void DebugLogCards(string description, List<Card> cards)
         {
             if (_debugVerbosity > 1)
             {
@@ -21,7 +22,7 @@ namespace PokerAlgo
             }
         }
 
-        private static void DebugLogPlayers(string description, List<Player> players)
+        public static void DebugLogPlayers(string description, List<Player> players)
         {
             if (_debugVerbosity > 0)
             {
@@ -43,7 +44,7 @@ namespace PokerAlgo
             }
         }
 
-        private static void DebugLogPlayers(string description, List<Player> players, Player community)
+        public static void DebugLogPlayers(string description, List<Player> players, Player community)
         {
             if (_debugVerbosity > 0)
             {

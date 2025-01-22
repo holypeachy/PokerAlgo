@@ -1,5 +1,5 @@
 namespace PokerAlgo{
-    enum CardSuit
+    public enum CardSuit
     {
         Spades, Clubs, Hearts, Diamonds
     }

@@ -1,9 +1,9 @@
 namespace PokerAlgo{
 
-	class Player
+	public class Player
 	{
 		public string Name { get; set; }
-		public Pair<Card, Card> Hand { get; set; }
+		public Pair<Card, Card> HoleCards { get; set; }
 		
 		public WinningHand? WinningHand { get; set; }
 
@@ -11,25 +11,25 @@ namespace PokerAlgo{
 		public Player(string name, Card first, Card second)
 		{
 			this.Name = name;
-			this.Hand = new Pair<Card, Card>(first, second);
+			this.HoleCards = new Pair<Card, Card>(first, second);
 			
-			this.Hand.First.IsPlayerCard = true;
-			this.Hand.Second.IsPlayerCard = true;
+			this.HoleCards.First.IsPlayerCard = true;
+			this.HoleCards.Second.IsPlayerCard = true;
 
 			this.WinningHand = null;
 		}
 
 		public override string ToString()
 		{
-			return $"{Name}: {Hand.First} {Hand.Second}";
+			return $"{Name}: {HoleCards.First} {HoleCards.Second}";
 		}
 		
 		public void SortHand(){
 			Card bufferCard;
-			if(Hand.First.Value > Hand.Second.Value){
-				bufferCard = Hand.Second;
-				Hand.Second = Hand.First;
-				Hand.First = bufferCard;
+			if(HoleCards.First.Rank > HoleCards.Second.Rank){
+				bufferCard = HoleCards.Second;
+				HoleCards.Second = HoleCards.First;
+				HoleCards.First = bufferCard;
 			}
 		}
 	}

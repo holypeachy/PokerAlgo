@@ -2,7 +2,7 @@
 
 namespace PokerAlgo
 {
-	class Program
+	public class Program
 	{
 		private static int _debuVerbosity = Algo._debugVerbosity;
 
@@ -10,10 +10,9 @@ namespace PokerAlgo
 		{
 			int executions = 1;
 			int inputVerbosity;
-			if(args.Length < 1){}
+			if(args.Length < 1){ Algo._debugVerbosity = 1; }
 			else if(args.Length == 2 && int.TryParse(args[1], out executions))
 			{
-				inputVerbosity = 0;
 				int.TryParse(args[0], out inputVerbosity);
 				if ((inputVerbosity == 0 || inputVerbosity == 1 || inputVerbosity == 2) && executions < 2)
 				{
@@ -22,7 +21,7 @@ namespace PokerAlgo
 			}
 			else if (args.Length == 1 && int.TryParse(args[0], out inputVerbosity))
 			{
-				if ((inputVerbosity == 0 || inputVerbosity == 1 || inputVerbosity == 2))
+				if (inputVerbosity == 0 || inputVerbosity == 1 || inputVerbosity == 2)
 				{
 					Algo._debugVerbosity = inputVerbosity;
 				}
@@ -45,8 +44,8 @@ namespace PokerAlgo
 					new Player("Tom", deck.NextCard(), deck.NextCard()),
 					new Player("Matt", deck.NextCard(), deck.NextCard()),
 					new Player("Ben", deck.NextCard(), deck.NextCard()),
-					new Player("Sam", deck.NextCard(), deck.NextCard()),
-					new Player("Jim", deck.NextCard(), deck.NextCard()),
+					// new Player("Sam", deck.NextCard(), deck.NextCard()),
+					// new Player("Jim", deck.NextCard(), deck.NextCard()),
 				};
 
 				if (_debuVerbosity > 0)
@@ -121,26 +120,25 @@ namespace PokerAlgo
 
 TODO
 TODO: Add early break to BreakTies() and BreakTieCommunityLessThanFiveCards() when the winner is the one on the left. Split the list to prevent useless loop runs.
-TODO: Update tests and create tests for other methods.
+TODO: Update tests and create tests for other methods. (Use external dataset instead?)
 
 ? Future Ideas 
-? Make PerformFinderTest more modular. That or make a new Testing system using Attributes and Reflection. Make testing suite?
 ? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
 ? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching. if (threeKinds.Count >= 3 && pairs.Count >= 2) { ... }
 ? Use SortedSet for storing cards when order matters to avoid additional sorting operations.
-? Add multiple executions in main method for easier testing.
-? Use extensions for better code readability.
+? Use method extensions for better code readability
+? Use Debug.Assert() in spots where I've been throwing errors to assert that something should always be true.
+? Should HandEvaluator return a nullable WinningHand object? It should never do so. Use the null-coalescing operator "??".
 
 * Notes
 * "WinningHand nullable? It has been giving me a headache with the warnings." Turns out, it's a good programming pattern.
 * 
 
 * Changes
-* Removed PlayerWinningObj class.
-* Changed and renamed TestObject to HandEvalUnitTest.
-* Rewrote Testing class.
-* Rewrote Tests for EvaluateFlush.
-* Removed IsWinner property from Player.
+* HandEvaluator class is now responsible for determining the winning hand given a list of cards for either a player or the community.
+* I combined the Algo class back into one file since it is not as large.
+* Player hand cards have been renamed to HoleCards.
+* Card Value has been renamed to Rank.
 * 
 */

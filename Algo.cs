@@ -1,8 +1,10 @@
+using System.Diagnostics;
+
 namespace PokerAlgo
 {
-    static partial class Algo
+    public static class Algo
     {
-        public static int _debugVerbosity = 0; // * Levels | 0 = Debug Logging disabled | 1 = Progress Report | 2 = Everything
+        public static int _debugVerbosity { get; set; } = 0; // * Verbosity Levels | 0 = Disabled | 1 = Progress Report | 2 = Everything
 
         private static Dictionary<HandType, int> _numberOfCardsOfHand = new()
         {
@@ -18,7 +20,7 @@ namespace PokerAlgo
             {HandType.RoyalFlush, 5}
         };
 
-        // ! This should be the only public method in this class.
+
         public static List<Player> GetWinners(List<Player> players, List<Card> communityCards)
         {
             if(players.Count < 2)
@@ -26,7 +28,9 @@ namespace PokerAlgo
                 throw new Exception("⛔ Algo.FindWinner() - players.Count < 2. There must be at least 2 players.");
             }
 
-            DebugLog("\n--- 🔎 Algo Starts");
+            Helpers.DebugLog("\n--- 🔎 Algo Starts");
+            HandEvaluator handEvaluator = new HandEvaluator();
+            List<Card> combinedCards;
 
             foreach (Player player in players)
             {
@@ -37,14 +41,16 @@ namespace PokerAlgo
                     Console.WriteLine("💭 Determining Hand for \'" + player.Name + "\'");
                     Console.ResetColor();
                 }
-                DeterminePlayerWinningHand(player, communityCards);
-            }
 
-            // Parallel.ForEach(
-            //     players, player => {
-            //         DeterminePlayerWinningHand(player, communityCards);
-            //     }
-            // );
+                combinedCards = new()
+                {
+                    player.HoleCards.First,
+                    player.HoleCards.Second
+                };
+                combinedCards.AddRange(communityCards);
+
+                player.WinningHand = handEvaluator.GetWinningHand(combinedCards);
+            }
 
             Player community = new("Community", new Card(0, CardSuit.Spades, true), new Card(0, CardSuit.Spades, true));
 
@@ -55,485 +61,16 @@ namespace PokerAlgo
                 Console.ResetColor();
             }
 
-            DetermineCommunityWinningHand(communityCards, community);
+            community.WinningHand = handEvaluator.GetCommunityWinningHand(communityCards);
 
-            DebugLog("\n--- 💭 Find Winners");
+            Helpers.DebugLog("\n--- 💭 Find Winners");
 
             List<Player> winners = DetermineWinners(players, community);
 
+            Debug.Assert(winners.Count >= 1, "Algo.GetWinners() - winners.Count < 1.");
+
             return winners;
-
-            // * Manual Testing
-            // Player testPlayer = new Player("Test",
-            // new Card(10, CardSuit.Diamonds, true),
-            // new Card(11, CardSuit.Diamonds, true));
-
-            // List<Card> testCom = new List<Card>(){
-            // new Card(9, CardSuit.Diamonds, false),
-            // new Card(8, CardSuit.Diamonds, false),
-            // new Card(13, CardSuit.Diamonds, false),
-            // new Card(12, CardSuit.Diamonds, false),
-            // new Card(14, CardSuit.Diamonds, false)};
-
-            // DeterminePlayerHands(testPlayer, testCom);
         }
-
-
-        // * Main Methods
-        private static void DeterminePlayerWinningHand(Player player, List<Card> community)
-        {
-            // * Combine and sort cards
-            List<Card> cards = new()
-            {
-                player.Hand.First,
-                player.Hand.Second
-            };
-            cards.AddRange(community);
-
-            SortCardsByValue(cards);
-
-            DebugLogCards("Algo.DeterminePlayerWinningHand() - All Cards", cards);
-
-            EvaluateFlush(cards, player);
-            DebugLog("", 2);
-            EvaluateStraight(cards, player);
-            DebugLog("", 2);
-            EvaluateMultiples(cards, player);
-        }
-
-        public static void EvaluateFlush(List<Card> cards, Player player)
-        {
-            List<Card> flushCards = cards.GroupBy(card => card.Suit)
-            .Where(group => group.Count() >= 5)
-            .SelectMany(group => group).ToList();
-
-            if (flushCards.Count == 0)
-            {
-                DebugLog("⚠️  Algo.EvaluateFlush() - No Flush", 2);
-                return;
-            }
-
-            DebugLogCards("Algo.EvaluateFlush() - Flush Cards", flushCards);
-
-            List<Card> bestFive = new();
-
-            // ! Royal Flush
-            bestFive = GetBestFiveCards(flushCards);
-            if(bestFive.ElementAt(0).Value == 10 && HasConsecutiveValues(bestFive) && HasPlayerCard(bestFive)){
-                SetWinningHand(player, HandType.RoyalFlush, bestFive);
-                return;
-            }
-
-            AddLowAces(flushCards);
-
-            // ! Straight Flush
-            for (int i = flushCards.Count - 5; i >= 0; i--)
-            {
-                bestFive = flushCards.GetRange(i, 5);
-                if (HasConsecutiveValues(bestFive) && HasPlayerCard(bestFive))
-                {
-                    SetWinningHand(player, HandType.StraightFlush, bestFive);
-                    return;
-                }
-            }
-
-            flushCards = RemoveLowAces(flushCards);
-
-            // ! Standard Flush
-            if(flushCards.Count >= 5){
-                for (int i = flushCards.Count - 5; i >= 0; i--)
-                {
-                    bestFive = flushCards.GetRange(i, 5);
-                    if (HasPlayerCard(bestFive))
-                    {
-                        SetWinningHand(player, HandType.Flush, bestFive);
-                        return;
-                    }
-                }
-            }
-
-            DebugLog("⚠️  Algo.EvaluateFlush() - No Player Flush", 2);
-        }
-
-        public static void EvaluateStraight(List<Card> cards, Player player){
-            // ! If Player already has a winning hand, no need to execute this method
-            if (player.WinningHand != null && player.WinningHand.Type > HandType.Straight)
-            {
-                DebugLog($"⚠️  Algo.EvaluateStraight() - Early return. Player already has a higher winning hand {player.WinningHand.Type.ToString()}.", 2);
-                return;
-            }
-
-            // Shallow Copy, no need to deep copy here
-            List<Card> tempCards = cards.ToList();
-            AddLowAces(tempCards);
-
-            // ! Removes duplicates
-            for (int i = tempCards.Count - 1; i > 0; i--)
-            {
-                if(tempCards[i].Value == tempCards[i-1].Value){
-                    if(tempCards[i].IsPlayerCard && tempCards[i - 1].IsPlayerCard || !tempCards[i].IsPlayerCard && !tempCards[i - 1].IsPlayerCard)
-                    {
-                        tempCards.RemoveAt(i);
-                    }
-                    else if(tempCards[i].IsPlayerCard){
-                        tempCards.RemoveAt(i - 1);
-                    }
-                    else{
-                        tempCards.RemoveAt(i);
-                    }
-                }
-            }
-
-            DebugLogCards("Algo.EvaluateStraight() - Without Duplicates", tempCards);
-
-
-            for (int i = tempCards.Count - 5; i >= 0; i--)
-            {
-                List<Card> bestFive = tempCards.GetRange(i, 5);
-                if (HasConsecutiveValues(bestFive) && HasPlayerCard(bestFive) && !IsSameSuit(bestFive))
-                {
-                    SetWinningHand(player, HandType.Straight, bestFive);
-                    return;
-                }
-            }
-
-            // ! For Testing
-            DebugLog("⚠️  Algo.EvaluateStraight() - No Straight", 2);
-        }
-
-        // * Okay for now, need to look at it again
-        public static void EvaluateMultiples(List<Card> cards, Player player){
-            // ! If Player already has a winning hand, no need to execute this method
-            if (player.WinningHand != null && player.WinningHand.Type > HandType.FourKind)
-            {
-                DebugLog($"⚠️  Algo.EvaluateMultiples() - Early return at start. Player already has winning hand: {player.WinningHand.Type.ToString()}.", 2);
-                return;
-            }
-
-            List<Card> duplicateCards = RemoveLowAces(cards); // ? Just in case
-
-            duplicateCards = duplicateCards.GroupBy(card => card.Value)
-            .Where(group => group.Count() > 1)
-            .SelectMany(group => group).ToList();
-
-            if(duplicateCards.Count == 0){
-                DebugLog("⚠️  Algo.EvaluateMultiples() - No Multiple", 2);
-                if (player.WinningHand == null) SetWinningHand(player, HandType.Nothing, CompleteWinningHand(new List<Card>(), cards));
-                return;
-            }
-
-            DebugLogCards("Algo.EvaluateMultiples() - Duplicate Cards", duplicateCards);
-
-            // ! Four of a Kind
-            List<Card> fourKind = duplicateCards.GroupBy(card => card.Value)
-            .Where(group => group.Count() == 4).SelectMany(group => group).ToList();
-
-            if(fourKind.Count == 4 && HasPlayerCard(duplicateCards)){
-                SetWinningHand(player, HandType.FourKind, CompleteWinningHand(fourKind, cards));
-                return;
-            }
-            else{
-                DebugLog("⚠️  Algo.EvaluateMultiples() - No FourKind", 2);
-            }
-
-            List<Card> threeKinds = duplicateCards.GroupBy(card => card.Value)
-            .Where(group => group.Count() == 3)
-            .SelectMany(group => group).ToList();
-
-            List<Card> pairs = duplicateCards.GroupBy(card => card.Value)
-            .Where(group => group.Count() == 2)
-            .SelectMany(group => group).ToList();
-
-            SortCardsByValue(threeKinds);
-            SortCardsByValue(pairs);
-
-            // * Possible Combinations
-            // * 7 cards. 2x 3k | 1x 3k , 2x pair | 1x 3k , 1x pair | 3k | 3x pair | 2x pair | 1x pair
-
-            // ! Two, 3 of a kind. Full House
-            if (threeKinds.Count == 6){                
-                List<Card> top3 = threeKinds.GetRange(3, 3);
-                List<Card> bottom3 = threeKinds.GetRange(0, 3);
-
-                List<Card> fullHouse = new();
-                if(HasPlayerCard(top3) || HasPlayerCard(bottom3))
-                {
-                    fullHouse.AddRange(top3);
-                    if(bottom3[0].IsPlayerCard && bottom3[1].IsPlayerCard){
-                        fullHouse.AddRange(bottom3.GetRange(0, 2));
-                    }
-                    else if(bottom3[1].IsPlayerCard && bottom3[2].IsPlayerCard){
-                        fullHouse.AddRange(bottom3.GetRange(1, 2));
-                    }
-                    else{
-                        fullHouse.AddRange(bottom3.GetRange(1, 2)); // ! Warning for testing, because the last 2 cards will be picked. EqualsValue???
-                    }
-                }
-                else{
-                    // ! Unecessary but should keep for now. It's 6 out of 7 cards. The player has to have at least 1.
-                    throw new Exception("⛔ MultipleFinder() 2x, 3 of a kind. It's not possible for 2, 3Ks to exist and the player not have a card in.");
-                }
-
-                SetWinningHand(player, HandType.FullHouse, fullHouse);
-                return;
-            }
-           
-            // ! One, 3 of a kind and 2 pairs. Full House
-            else if(threeKinds.Count == 3 && pairs.Count == 4){
-                List<Card> topPair = pairs.GetRange(2, 2);
-                List<Card> bottomPair = pairs.GetRange(0, 2);
-                List<Card> fullHouse = new();
-
-                if (HasPlayerCard(threeKinds) || HasPlayerCard(topPair))
-                {
-                    fullHouse.AddRange(threeKinds);
-                    fullHouse.AddRange(topPair);
-                }
-                else if(HasPlayerCard(bottomPair)){
-                    fullHouse.AddRange(threeKinds);
-                    fullHouse.AddRange(bottomPair);
-                }
-                else
-                {
-                    // ! Unecessary but should keep for now. It's 7 out of 7 cards. The player has to have at least 1.
-                    throw new Exception("⛔ MultipleFinder() 1x, 3 of a kind, 2 pairs. It's not possible for 1x 3K and 2 pairs to exist and the player not have a card in.");
-                }
-
-                SetWinningHand(player, HandType.FullHouse, fullHouse);
-                return;
-            }
-          
-            // ! One,  3 of a kind and 1 pair. Full House
-            else if(threeKinds.Count == 3 && pairs.Count == 2){
-                List<Card> fullHouse = new();
-                fullHouse.AddRange(threeKinds);
-                fullHouse.AddRange(pairs);
-
-                if(HasPlayerCard(fullHouse)){
-                    SetWinningHand(player, HandType.FullHouse, fullHouse);
-                    return;
-                }
-            }
-
-            if (player.WinningHand != null && player.WinningHand.Type > HandType.ThreeKind)
-            {
-                DebugLog($"\n⚠️  Algo.EvaluateMultiples() - Early return after Full House. Player already has winning hand: {player.WinningHand.Type.ToString()}.", 2);
-                return;
-            }
-
-            // ! Three of a kind
-            if (threeKinds.Count == 3)
-            {
-                if (HasPlayerCard(threeKinds))
-                {
-                    SetWinningHand(player, HandType.ThreeKind, CompleteWinningHand(threeKinds, cards));
-                }
-            }
-
-            // ! 3 Pairs
-            else if (pairs.Count == 6){
-                List<Card> topPair = pairs.GetRange(4,2);
-                List<Card> midPair = pairs.GetRange(2,2);
-                List<Card> bottomPair = pairs.GetRange(0,2);
-
-                List<Card> twoPairs = new();
-
-                if (HasPlayerCard(midPair)){
-                    twoPairs.AddRange(midPair);
-                }
-                else if(HasPlayerCard(bottomPair)){
-                    twoPairs.AddRange(bottomPair);
-                }
-                else if(HasPlayerCard(topPair)){
-                    twoPairs.AddRange(midPair);
-                }
-                else
-                {
-                    // ! Unecessary but should keep for now. It's 6 out of 7 cards. The player has to have at least 1.
-                    throw new Exception("⛔ MultipleFinder() 3 pairs. It's not possible for 3 pairs to exist and the player not have a card in.");
-                }
-                twoPairs.AddRange(topPair);
-
-                SetWinningHand(player, HandType.TwoPairs, CompleteWinningHand(twoPairs, cards));
-            }
-            
-            // ! 2 Pairs
-            else if(pairs.Count == 4){
-                if (HasPlayerCard(pairs)){
-                    SetWinningHand(player, HandType.TwoPairs, CompleteWinningHand(pairs, cards));
-                }
-            }
-            
-            // ! 1 Pair
-            else if(pairs.Count == 2){
-                if(HasPlayerCard(pairs)){
-                    SetWinningHand(player, HandType.Pair, CompleteWinningHand(pairs,cards));
-                }
-            }
-
-            // ! Nothing
-            else{
-                DebugLog("⚠️  Algo.EvaluateMultiples() - No Multiple", 2);
-                if (player.WinningHand == null) SetWinningHand(player, HandType.Nothing, CompleteWinningHand(new List<Card>(), cards));
-            }
-            
-            if (player.WinningHand == null) SetWinningHand(player, HandType.Nothing, CompleteWinningHand(new List<Card>(), cards));
-        }
-
-
-        // * Okay for now, need to optimize in the future
-        public static void DetermineCommunityWinningHand(List<Card> communityCards, Player community)
-        {
-            // Shallow copy for ease
-            List<Card> cards = communityCards.ToList();
-            SortCardsByValue(cards);
-
-            DebugLogCards("Algo.DetermineCommunityWinningHand() - Sorted Community Cards", cards);
-
-            List<Card> bestFive = new();
-
-            if (!IsSameSuit(cards))
-            {
-                DebugLog("⚠️  Algo.DetermineCommunityWinningHand() - No Flush\n", 2);
-            }
-            else{
-                // ! Royal Flush
-                bestFive = GetBestFiveCards(cards);
-                if (bestFive.ElementAt(0).Value == 10 && HasConsecutiveValues(bestFive))
-                {
-                    SetWinningHand(community, HandType.RoyalFlush, bestFive);
-                    return;
-                }
-
-                // ! Straight Flush
-                AddLowAces(cards);
-                // cards.AddLowAces();
-                for (int i = cards.Count - 5; i >= 0; i--)
-                {
-                    bestFive = cards.GetRange(i, 5);
-                    if (HasConsecutiveValues(bestFive))
-                    {
-                        SetWinningHand(community, HandType.StraightFlush, bestFive);
-                        return;
-                    }
-                }
-                cards = RemoveLowAces(cards);
-
-                // ! Standard Flush
-                SetWinningHand(community, HandType.Flush, cards);
-                return;
-            }
-
-            List<Card> tempCards = cards.ToList();
-
-            // ! Removes duplicates
-            for (int i = tempCards.Count - 1; i > 0; i--)
-            {
-                if (tempCards[i].Value == tempCards[i - 1].Value)
-                {
-                    if (tempCards[i].IsPlayerCard && tempCards[i - 1].IsPlayerCard || !tempCards[i].IsPlayerCard && !tempCards[i - 1].IsPlayerCard)
-                    {
-                        tempCards.RemoveAt(i);
-                    }
-                    else if (tempCards[i].IsPlayerCard)
-                    {
-                        tempCards.RemoveAt(i - 1);
-                    }
-                    else
-                    {
-                        tempCards.RemoveAt(i);
-                    }
-                }
-            }
-
-            DebugLogCards("Algo.DetermineCommunityWinningHand() - Without Duplicates", tempCards);
-            // ! Straight
-            AddLowAces(tempCards);
-            if(tempCards.Count >= 5){
-                for (int i = tempCards.Count - 5; i >= 0; i--)
-                {
-                    bestFive = tempCards.GetRange(i, 5);
-                    if (HasConsecutiveValues(bestFive) && !IsSameSuit(bestFive))
-                    {
-                        SetWinningHand(community, HandType.Straight, bestFive);
-                        return;
-                    }
-                }
-            }
-            tempCards = RemoveLowAces(tempCards);
-
-            DebugLog("⚠️  Algo.DetermineCommunityWinningHand() - No Straight\n", 2);
-
-            List<Card> duplicateCards = cards.GroupBy(card => card.Value)
-                            .Where(group => group.Count() > 1)
-                            .SelectMany(group => group).ToList();
-
-            if (duplicateCards.Count == 0)
-            {
-                DebugLog("⚠️  Algo.DetermineCommunityWinningHand() - No Multiple\n", 2);
-                SetWinningHand(community, HandType.Nothing, cards);
-                return;
-            }
-
-            // ! Four of a Kind
-            List<Card> fourKind = duplicateCards.GroupBy(card => card.Value)
-            .Where(group => group.Count() == 4).SelectMany(group => group).ToList();
-
-            if (fourKind.Count == 4)
-            {
-                SetWinningHand(community, HandType.FourKind, CompleteWinningHand(fourKind, cards));
-                return;
-            }
-
-            DebugLog("⚠️  Algo.DetermineCommunityWinningHand() - No FourKind", 2);
-
-
-            List<Card> threeKinds = duplicateCards.GroupBy(card => card.Value)
-            .Where(group => group.Count() == 3)
-            .SelectMany(group => group).ToList();
-
-            List<Card> pairs = duplicateCards.GroupBy(card => card.Value)
-            .Where(group => group.Count() == 2)
-            .SelectMany(group => group).ToList();
-
-            SortCardsByValue(threeKinds);
-            SortCardsByValue(pairs);
-
-            // ! One,  3 of a kind and 1 pair. Full House
-            if (threeKinds.Count == 3 && pairs.Count == 2)
-            {
-                List<Card> fullHouse = new();
-                fullHouse.AddRange(threeKinds);
-                fullHouse.AddRange(pairs);
-
-                SetWinningHand(community, HandType.FullHouse, fullHouse);
-            }
-
-            // ! Three of a kind
-            else if (threeKinds.Count == 3)
-            {
-                SetWinningHand(community, HandType.ThreeKind, CompleteWinningHand(threeKinds, cards));
-            }
-
-            // ! 2 Pairs
-            else if (pairs.Count == 4)
-            {
-                SetWinningHand(community, HandType.TwoPairs, CompleteWinningHand(pairs, cards));
-            }
-
-            // ! 1 Pair
-            else if (pairs.Count == 2)
-            {
-                SetWinningHand(community, HandType.Pair, CompleteWinningHand(pairs, cards));
-            }
-            else
-            {
-                SetWinningHand(community, HandType.Nothing, cards);
-            }
-
-            return;
-        }
-
 
         public static List<Player> DetermineWinners(List<Player> allPlayers, Player community)
         {
@@ -553,9 +90,9 @@ namespace PokerAlgo
             // ! Order from highest to lowest hand value
             List<Player> players = allPlayers.OrderByDescending(x => x.WinningHand.Type).ToList();
 
-            DebugLogPlayers("Algo.FindWinners() - Players after sorting by WinningHand.Type", players, community);
+            Helpers.DebugLogPlayers("Algo.FindWinners() - Players after sorting by WinningHand.Type", players, community);
 
-            DebugLog("", 2);
+            Helpers.DebugLog("", 2);
 
             // ! If community is greater. 2 options:
             if(community.WinningHand.Type > players.ElementAt(0).WinningHand.Type)
@@ -563,7 +100,7 @@ namespace PokerAlgo
                 // ! If community has best 5 cards then tie among all players
                 if(_numberOfCardsOfHand[community.WinningHand.Type] == 5)
                 {
-                    DebugLog("Algo.DetermineWinners() - Community Hand is Better | 5 Card Hand | Tie Among All Players\n", 1);
+                    Helpers.DebugLog("Algo.DetermineWinners() - Community Hand is Better | 5 Card Hand | Tie Among All Players\n", 1);
 
                     return players;
                 }
@@ -571,7 +108,7 @@ namespace PokerAlgo
                 // ! If community has less than 5 best cards then tie break players.
                 else
                 {
-                    DebugLog($"Algo.DetermineWinners() - Community Hand is Better | {_numberOfCardsOfHand[community.WinningHand.Type]} Card Hand | Tie Break Players\n", 1);
+                    Helpers.DebugLog($"Algo.DetermineWinners() - Community Hand is Better | {_numberOfCardsOfHand[community.WinningHand.Type]} Card Hand | Tie Break Players\n", 1);
                     List<Player> winners = BreakTieCommunityLessThanFiveCards(players, community);
 
                     return winners;
@@ -581,13 +118,13 @@ namespace PokerAlgo
             // ! If community and player are the same. Tie break everything. If community wins it's a tie
             else if (community.WinningHand.Type == players.ElementAt(0).WinningHand.Type)
             {
-                DebugLog("Algo.DetermineWinners() - Community Hand is Equal | Tie Break Community + Players\n", 1);
+                Helpers.DebugLog("Algo.DetermineWinners() - Community Hand is Equal | Tie Break Community + Players\n", 1);
                 players.Add(community);
                 List<Player> winners = BreakTies(players);
 
                 if(winners.Count == 1 && winners.Contains(community))
                 {
-                    DebugLog("Algo.DetermineWinners() - Community Wins | Everyone Ties\n", 1);
+                    Helpers.DebugLog("Algo.DetermineWinners() - Community Wins | Everyone Ties\n", 1);
                 }
                 else
                 {
@@ -600,7 +137,7 @@ namespace PokerAlgo
             // ! If the community hand is worse then we proceed as normal
             else
             {
-                DebugLog("Algo.DetermineWinners() - Players Best Hand is Better | Tie Break Players Only\n", 1);
+                Helpers.DebugLog("Algo.DetermineWinners() - Players Best Hand is Better | Tie Break Players Only\n", 1);
                 List<Player> winners = BreakTies(players);
 
                 return winners;
@@ -622,7 +159,7 @@ namespace PokerAlgo
                 for (int playerIndex = 0; playerIndex < winners.Count - 1; playerIndex++)
                 {
                     int result = ComparePlayerHands(winners[playerIndex], winners[playerIndex + 1]);
-                    DebugLog($"Algo.BreakTies() - " + (result == -1 ? winners[playerIndex].Name + " has better hand\n" : result == 1 ? winners[playerIndex + 1].Name + " has better hand\n" : "Players Tie"), 2);
+                    Helpers.DebugLog($"Algo.BreakTies() - " + (result == -1 ? winners[playerIndex].Name + " has better hand\n" : result == 1 ? winners[playerIndex + 1].Name + " has better hand\n" : "Players Tie"), 2);
 
                     if (result == -1)
                     {
@@ -666,8 +203,8 @@ namespace PokerAlgo
                 hasChangesBeenMade = false;
                 for (int i = 0; i < winners.Count - 1; i++)
                 {
-                    DebugLog($"Algo.BreakTieCommunityLessThanFiveCards() - {winners.ElementAt(i).Name} | Hand: {winners.ElementAt(i).WinningHand.Type}", 2);
-                    DebugLog($"Algo.BreakTieCommunityLessThanFiveCards() - {winners.ElementAt(i+1).Name} | Hand: {winners.ElementAt(i + 1).WinningHand.Type}", 2);
+                    Helpers.DebugLog($"Algo.BreakTieCommunityLessThanFiveCards() - {winners.ElementAt(i).Name} | Hand: {winners.ElementAt(i).WinningHand.Type}", 2);
+                    Helpers.DebugLog($"Algo.BreakTieCommunityLessThanFiveCards() - {winners.ElementAt(i+1).Name} | Hand: {winners.ElementAt(i + 1).WinningHand.Type}", 2);
 
                     tempLeft = winners.ElementAt(i).WinningHand.Cards.ToList().Except(winningCards).ToList();
                     tempLeft = tempLeft.GetRange(tempLeft.Count - numberRemaining, numberRemaining);
@@ -676,7 +213,7 @@ namespace PokerAlgo
                     tempRight = tempRight.GetRange(tempRight.Count - numberRemaining, numberRemaining);
 
                     int result = CompareKickers(tempLeft, tempRight);
-                    DebugLog($"Algo.BreakTieCommunityLessThanFiveCards() - " + (result == -1 ? winners[i].Name + " has better hand\n" : result == 1 ? winners[i + 1].Name + " has better hand\n" : "Players Tie"), 2);
+                    Helpers.DebugLog($"Algo.BreakTieCommunityLessThanFiveCards() - " + (result == -1 ? winners[i].Name + " has better hand\n" : result == 1 ? winners[i + 1].Name + " has better hand\n" : "Players Tie"), 2);
 
                     if (result == -1)
                     {
@@ -701,6 +238,126 @@ namespace PokerAlgo
             } while (hasChangesBeenMade && winners.Count > 1);
 
             return winners;
+        }
+
+
+        // ! -1 left wins, 0 tie, 1 right wins
+        private static int ComparePlayerHands(Player player1, Player player2)
+        {
+            if (player1.WinningHand is null || player2.WinningHand is null) throw new Exception("⛔ Algo.ComparePlayerHands(): A player's winning hand is null.");
+
+            WinningHand left = player1.WinningHand;
+            WinningHand right = player2.WinningHand;
+
+            // * left.Type = HandType.RoyalFlush;
+            // * right.Type = HandType.RoyalFlush;
+
+            Helpers.DebugLog($"Algo.ComparePlayerHands() - {player1.Name} | Hand: {player1.WinningHand.Type}", 2);
+            Helpers.DebugLog($"Algo.ComparePlayerHands() - {player2.Name} | Hand: {player2.WinningHand.Type}", 2);
+
+            if (left.Type > right.Type)
+            {
+                return -1;
+            }
+            else if (right.Type > left.Type)
+            {
+                return 1;
+            }
+
+            List<Card> leftCards = left.Cards;
+            List<Card> rightCards = right.Cards;
+
+            switch (left.Type)
+            {
+                case HandType.RoyalFlush:
+                    throw new Exception("⛔ Algo.ComparePlayerHands(): Since only one player can have a royal flush it makes no sense that it would get to this point. "
+                                        + "Also since my code does not give community winning hands to the players, no two players can have a royal flush.");
+
+                case HandType.StraightFlush:
+                    return CompareKickers(leftCards, rightCards);
+
+                case HandType.FourKind:
+                    if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
+                    else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
+                    else return CompareKickers(new List<Card> { leftCards.ElementAt(0) }, new List<Card> { rightCards.ElementAt(0) });
+
+                case HandType.FullHouse:
+                    if (leftCards.ElementAt(0).Rank > rightCards.ElementAt(0).Rank) return -1;
+                    else if (rightCards.ElementAt(0).Rank > leftCards.ElementAt(0).Rank) return 1;
+                    else if (leftCards.ElementAt(3).Rank > rightCards.ElementAt(3).Rank) return -1;
+                    else if (rightCards.ElementAt(3).Rank > leftCards.ElementAt(3).Rank) return 1;
+                    else return 0;
+
+                case HandType.Flush:
+                    return CompareKickers(leftCards, rightCards);
+
+                case HandType.Straight:
+                    return CompareKickers(leftCards, rightCards);
+
+                case HandType.ThreeKind:
+                    if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
+                    else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
+                    else return CompareKickers(leftCards.GetRange(0, 2), rightCards.GetRange(0, 2));
+
+                case HandType.TwoPairs:
+                    if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
+                    else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
+                    if (leftCards.ElementAt(2).Rank > rightCards.ElementAt(2).Rank) return -1;
+                    else if (rightCards.ElementAt(2).Rank > leftCards.ElementAt(2).Rank) return 1;
+
+                    else return CompareKickers(new List<Card> { leftCards.ElementAt(0) }, new List<Card> { rightCards.ElementAt(0) });
+
+
+                case HandType.Pair:
+                    if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
+                    else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
+                    else return CompareKickers(leftCards.GetRange(0, 3), rightCards.GetRange(0, 3));
+
+                case HandType.Nothing:
+                    return CompareKickers(leftCards, rightCards);
+
+                default:
+                    throw new Exception("⛔ Algo.ComparePlayerHands(): Switch defaulted.");
+            }
+
+            throw new NotImplementedException();
+        }
+
+        // ! -1 left wins, 0 tie, 1 right wins
+        private static int CompareKickers(List<Card> left, List<Card> right)
+        {
+            Helpers.DebugLogCards("Algo.CompareKickers() - Left", left);
+            Helpers.DebugLogCards("Algo.CompareKickers() - Right", right);
+
+            if (left.Count != right.Count)
+            {
+                Console.WriteLine(string.Join(' ', left));
+                Console.WriteLine(string.Join(' ', right));
+                throw new Exception("⛔ Algo.CompareKickers(): left.Count != right.Count.");
+            }
+
+            for (int i = left.Count - 1; i >= 0; i--)
+            {
+                if (left.ElementAt(i).Rank > right.ElementAt(i).Rank)
+                {
+                    Helpers.DebugLog("Algo.CompareKickers() - Left Wins", 2);
+                    return -1;
+                }
+                else if (right.ElementAt(i).Rank > left.ElementAt(i).Rank)
+                {
+                    Helpers.DebugLog("Algo.CompareKickers() - Right Wins", 2);
+                    return 1;
+                }
+            }
+            Helpers.DebugLog("Algo.CompareKickers() - Tie", 2);
+
+            return 0;
+        }
+
+
+        internal static void SortCardsByValue(List<Card> cards)
+        {
+            cards.Sort((x, y) => x.Rank.CompareTo(y.Rank));
         }
 
     }

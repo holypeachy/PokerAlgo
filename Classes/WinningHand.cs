@@ -1,6 +1,6 @@
 namespace PokerAlgo
 {
-    class WinningHand
+    public class WinningHand
     {
         public HandType Type { get; set; }
         public List<Card> Cards { get; set; }

@@ -4,15 +4,15 @@ namespace PokerAlgo {
 	class Testing {
 		private delegate void AlgoFunction(List<Card> cards, Player player);
 
-		private string pathToFlush = @"C:\Users\Frank\Code\poker-algo\Tests\FlushTests.json";
-		private string pathToStraight = @"C:\Users\Frank\Code\poker-algo\Tests\Tests\StraightTests.json";
-		private string pathToMultiple = @"C:\Users\Frank\Code\poker-algo\Tests\Tests\MultipleTests.json";
+		// private string pathToFlush = @"C:\Users\Frank\Code\poker-algo\Tests\FlushTests.json";
+		// private string pathToStraight = @"C:\Users\Frank\Code\poker-algo\Tests\Tests\StraightTests.json";
+		// private string pathToMultiple = @"C:\Users\Frank\Code\poker-algo\Tests\Tests\MultipleTests.json";
 
 		private static bool _debugEnable = false;
 
 
 		public Testing() {
-			PerformHandEvalTests("EvaluateFlush", pathToFlush, Algo.EvaluateFlush);
+			// ! PerformHandEvalTests("EvaluateFlush", pathToFlush, Algo.EvaluateFlush);
 			// ! PerformHandEvalTests("EvaluateStraight", pathToStraight, Algo.EvaluateStraight);
 			// ! PerformHandEvalTests("EvaluateMultiples", pathToMultiple, Algo.EvaluateMultiples);
 		}
@@ -46,8 +46,8 @@ namespace PokerAlgo {
 
 				List<Card> cards = new()
 				{
-					player.Hand.First,
-					player.Hand.Second
+					player.HoleCards.First,
+					player.HoleCards.Second
 				};
 				cards.AddRange(test.CommunityCards);
 

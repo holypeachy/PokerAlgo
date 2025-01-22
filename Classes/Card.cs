@@ -2,9 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace PokerAlgo
 {
-    class Card
+    public class Card
     {
-        public int Value {get; set;}
+        public int Rank {get; set;}
         public CardSuit Suit {get; set;}
         public bool IsPlayerCard {get; set;}
 
@@ -17,14 +17,14 @@ namespace PokerAlgo
         [JsonConstructor]
         public Card(int value, CardSuit suit, bool isPlayerCard)
         {
-            this.Value = value;
+            this.Rank = value;
             this.Suit = suit;
             this.IsPlayerCard = isPlayerCard;
         }
 
         public Card(Card other)
         {
-            this.Value = other.Value;
+            this.Rank = other.Rank;
             this.Suit = other.Suit;
             this.IsPlayerCard = other.IsPlayerCard;
         }
@@ -32,7 +32,7 @@ namespace PokerAlgo
 
         public override string ToString()
         {
-            return "[" + (Value == 1 || Value > 10 ? CardValueLookUp[Value] : Value) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
+            return "[" + (Rank == 1 || Rank > 10 ? CardValueLookUp[Rank] : Rank) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
         }
 
         public override bool Equals(object? obj)
@@ -41,7 +41,7 @@ namespace PokerAlgo
             {
                 Card? other = (Card?)obj;
 
-                return other is null ? false : ( this.Value == other.Value && this.Suit == other.Suit && this.IsPlayerCard == other.IsPlayerCard ); // ? Should I include IsPlayerCard?
+                return other is null ? false : ( this.Rank == other.Rank && this.Suit == other.Suit && this.IsPlayerCard == other.IsPlayerCard ); // ? Should I include IsPlayerCard?
             }
             catch (Exception)
             {
