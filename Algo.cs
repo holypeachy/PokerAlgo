@@ -6,21 +6,6 @@ namespace PokerAlgo
     {
         public static int _debugVerbosity { get; set; } = 0; // * Verbosity Levels | 0 = Disabled | 1 = Progress Report | 2 = Everything
 
-        private static Dictionary<HandType, int> _numberOfCardsOfHand = new()
-        {
-            {HandType.Nothing, 0},
-            {HandType.Pair, 2},
-            {HandType.TwoPairs, 4},
-            {HandType.ThreeKind, 3},
-            {HandType.Straight, 5},
-            {HandType.Flush, 5},
-            {HandType.FullHouse, 5},
-            {HandType.FourKind, 4},
-            {HandType.StraightFlush, 5},
-            {HandType.RoyalFlush, 5}
-        };
-
-
         public static List<Player> GetWinners(List<Player> players, List<Card> communityCards)
         {
             if(players.Count < 2)
@@ -52,33 +37,21 @@ namespace PokerAlgo
                 player.WinningHand = handEvaluator.GetWinningHand(combinedCards);
             }
 
-            Player community = new("Community", new Card(0, CardSuit.Spades, true), new Card(0, CardSuit.Spades, true));
-
-            if (_debugVerbosity > 0)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("\n🃏 Determining Hand for Community");
-                Console.ResetColor();
-            }
-
-            community.WinningHand = handEvaluator.GetCommunityWinningHand(communityCards);
+            // community.WinningHand = handEvaluator.GetCommunityWinningHand(communityCards);
 
             Helpers.DebugLog("\n--- 💭 Find Winners");
 
-            List<Player> winners = DetermineWinners(players, community);
+            List<Player> winners = DetermineWinners(players);
 
-            Debug.Assert(winners.Count >= 1, "Algo.GetWinners() - winners.Count < 1.");
+            // Debug.Assert(winners.Count >= 1, "Algo.GetWinners() - winners.Count < 1.");
 
+            // return winners;
             return winners;
         }
 
-        public static List<Player> DetermineWinners(List<Player> allPlayers, Player community)
+        private  static List<Player> DetermineWinners(List<Player> allPlayers)
         {
             // ! Temporary, shouldn't need this after proper testing. ???
-            if (community.WinningHand is null)
-            {
-                throw new Exception("⛔ Algo.FindWinners() - Community WinningHand is null.");
-            }
             foreach (Player p in allPlayers)
             {
                 if (p.WinningHand is null)
@@ -90,59 +63,9 @@ namespace PokerAlgo
             // ! Order from highest to lowest hand value
             List<Player> players = allPlayers.OrderByDescending(x => x.WinningHand.Type).ToList();
 
-            Helpers.DebugLogPlayers("Algo.FindWinners() - Players after sorting by WinningHand.Type", players, community);
+            Helpers.DebugLogPlayers("Algo.FindWinners() - Players after sorting by WinningHand.Type", players);
 
-            Helpers.DebugLog("", 2);
-
-            // ! If community is greater. 2 options:
-            if(community.WinningHand.Type > players.ElementAt(0).WinningHand.Type)
-            {
-                // ! If community has best 5 cards then tie among all players
-                if(_numberOfCardsOfHand[community.WinningHand.Type] == 5)
-                {
-                    Helpers.DebugLog("Algo.DetermineWinners() - Community Hand is Better | 5 Card Hand | Tie Among All Players\n", 1);
-
-                    return players;
-                }
-
-                // ! If community has less than 5 best cards then tie break players.
-                else
-                {
-                    Helpers.DebugLog($"Algo.DetermineWinners() - Community Hand is Better | {_numberOfCardsOfHand[community.WinningHand.Type]} Card Hand | Tie Break Players\n", 1);
-                    List<Player> winners = BreakTieCommunityLessThanFiveCards(players, community);
-
-                    return winners;
-                }
-            }
-
-            // ! If community and player are the same. Tie break everything. If community wins it's a tie
-            else if (community.WinningHand.Type == players.ElementAt(0).WinningHand.Type)
-            {
-                Helpers.DebugLog("Algo.DetermineWinners() - Community Hand is Equal | Tie Break Community + Players\n", 1);
-                players.Add(community);
-                List<Player> winners = BreakTies(players);
-
-                if(winners.Count == 1 && winners.Contains(community))
-                {
-                    Helpers.DebugLog("Algo.DetermineWinners() - Community Wins | Everyone Ties\n", 1);
-                }
-                else
-                {
-                    winners.Remove(community);
-
-                }
-                return winners;
-            }
-            
-            // ! If the community hand is worse then we proceed as normal
-            else
-            {
-                Helpers.DebugLog("Algo.DetermineWinners() - Players Best Hand is Better | Tie Break Players Only\n", 1);
-                List<Player> winners = BreakTies(players);
-
-                return winners;
-            }
-            
+            return BreakTies(players);            
         }
 
 
@@ -163,8 +86,19 @@ namespace PokerAlgo
 
                     if (result == -1)
                     {
-                        tempPlayers.Remove(winners.ElementAt(playerIndex + 1));
+                        if(winners[playerIndex].WinningHand.Type > winners[playerIndex + 1].WinningHand.Type)
+                        {
+                            for (int k = playerIndex + 1; k < winners.Count; k++)
+                            {
+                                tempPlayers.Remove(winners.ElementAt(k));
+                            }
+                        }
+                        else
+                        {
+                            tempPlayers.Remove(winners.ElementAt(playerIndex + 1));
+                        }
                         hasChangesBeenMade = true;
+                        break;
                     }
                     else if (result == 1)
                     {
@@ -176,62 +110,6 @@ namespace PokerAlgo
                     }
                     else{
                         throw new Exception("⛔ Algo.BreakTies() - ComparePlayerHands() returned something other than -1, 0, or 1.");
-                    }
-                }
-                winners = tempPlayers;
-            } while (hasChangesBeenMade && winners.Count > 1);
-
-            return winners;
-        }
-
-        private static List<Player> BreakTieCommunityLessThanFiveCards(List<Player> allPlayers, Player community)
-        {
-            int numberOfHand = _numberOfCardsOfHand[community.WinningHand.Type];
-            int numberRemaining = 5 - _numberOfCardsOfHand[community.WinningHand.Type];
-
-            List<Player> winners = allPlayers.ToList();
-
-            List<Card> winningCards = community.WinningHand.Cards.GetRange(5 - numberOfHand, numberOfHand);
-
-            List<Player> tempPlayers = allPlayers.ToList();
-
-            List<Card> tempLeft;
-            List<Card> tempRight;
-            bool hasChangesBeenMade;
-            do
-            {
-                hasChangesBeenMade = false;
-                for (int i = 0; i < winners.Count - 1; i++)
-                {
-                    Helpers.DebugLog($"Algo.BreakTieCommunityLessThanFiveCards() - {winners.ElementAt(i).Name} | Hand: {winners.ElementAt(i).WinningHand.Type}", 2);
-                    Helpers.DebugLog($"Algo.BreakTieCommunityLessThanFiveCards() - {winners.ElementAt(i+1).Name} | Hand: {winners.ElementAt(i + 1).WinningHand.Type}", 2);
-
-                    tempLeft = winners.ElementAt(i).WinningHand.Cards.ToList().Except(winningCards).ToList();
-                    tempLeft = tempLeft.GetRange(tempLeft.Count - numberRemaining, numberRemaining);
-
-                    tempRight = winners.ElementAt(i+1).WinningHand.Cards.ToList().Except(winningCards).ToList();
-                    tempRight = tempRight.GetRange(tempRight.Count - numberRemaining, numberRemaining);
-
-                    int result = CompareKickers(tempLeft, tempRight);
-                    Helpers.DebugLog($"Algo.BreakTieCommunityLessThanFiveCards() - " + (result == -1 ? winners[i].Name + " has better hand\n" : result == 1 ? winners[i + 1].Name + " has better hand\n" : "Players Tie"), 2);
-
-                    if (result == -1)
-                    {
-                        tempPlayers.Remove(winners.ElementAt(i + 1));
-                        hasChangesBeenMade = true;
-                    }
-                    else if (result == 1)
-                    {
-                        tempPlayers.Remove(winners.ElementAt(i));
-                        hasChangesBeenMade = true;
-                    }
-                    else if (result == 0)
-                    {
-
-                    }
-                    else
-                    {
-                        throw new Exception("⛔ Algo.Community_BreakTieLessFive2(): CompareKickers() returned something other than -1, 0, or 1.");
                     }
                 }
                 winners = tempPlayers;
@@ -282,10 +160,10 @@ namespace PokerAlgo
                     else return CompareKickers(new List<Card> { leftCards.ElementAt(0) }, new List<Card> { rightCards.ElementAt(0) });
 
                 case HandType.FullHouse:
-                    if (leftCards.ElementAt(0).Rank > rightCards.ElementAt(0).Rank) return -1;
+                    if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
+                    else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
+                    else if (leftCards.ElementAt(0).Rank > rightCards.ElementAt(0).Rank) return -1;
                     else if (rightCards.ElementAt(0).Rank > leftCards.ElementAt(0).Rank) return 1;
-                    else if (leftCards.ElementAt(3).Rank > rightCards.ElementAt(3).Rank) return -1;
-                    else if (rightCards.ElementAt(3).Rank > leftCards.ElementAt(3).Rank) return 1;
                     else return 0;
 
                 case HandType.Flush:

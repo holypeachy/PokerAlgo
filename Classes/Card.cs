@@ -41,7 +41,7 @@ namespace PokerAlgo
             {
                 Card? other = (Card?)obj;
 
-                return other is null ? false : ( this.Rank == other.Rank && this.Suit == other.Suit && this.IsPlayerCard == other.IsPlayerCard ); // ? Should I include IsPlayerCard?
+                return other is null ? false : ( this.Rank == other.Rank && this.Suit == other.Suit); // ? Should I include IsPlayerCard?
             }
             catch (Exception)
             {

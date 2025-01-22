@@ -5,6 +5,7 @@ namespace PokerAlgo
 	public class Program
 	{
 		private static int _debuVerbosity = Algo._debugVerbosity;
+		private static int _numOfCommunityCards = 5;
 
 		static void Main(string[] args)
 		{
@@ -58,7 +59,7 @@ namespace PokerAlgo
 					}
 				}
 
-				for (int i = 0; i < 5; i++)
+				for (int i = 0; i < _numOfCommunityCards; i++)
 				{
 					communityCards.Add(deck.NextCard());
 				}
@@ -99,27 +100,30 @@ namespace PokerAlgo
 				// 	}
 				// }
 
+				// ! Unit Testing
 				// Testing testing = new();
 
 				// ! Monte Carlo Simulation Test
-				Player targetPlayer = players[0];
-				// Console.WriteLine(targetPlayer);
-				// Console.WriteLine("Community Cards: " + string.Join(' ', communityCards));
-				// Console.WriteLine($"Winning Hand for Tom: {targetPlayer.Name}");
-				HandEvaluator handEvaluator = new();
-				List<Card> cards = new()
+				Console.WriteLine();
+				Algo._debugVerbosity = 0;
+				Algo.GetWinners(players, communityCards);
+				foreach (Player p in players)
 				{
-					targetPlayer.HoleCards.First,
-					targetPlayer.HoleCards.Second,
-				};
-				cards.AddRange(communityCards);
-				targetPlayer.WinningHand = handEvaluator.GetWinningHand(cards);
-				if(targetPlayer.WinningHand.Type >= HandType.RoyalFlush)
-				{
+					Console.WriteLine($"Player \'{p.Name}\'");
+					Player targetPlayer = p;
+					HandEvaluator handEvaluator = new();
+					List<Card> cards = new()
+					{
+						targetPlayer.HoleCards.First,
+						targetPlayer.HoleCards.Second,
+					};
+					cards.AddRange(communityCards);
+					targetPlayer.WinningHand = handEvaluator.GetWinningHand(cards);
 					Console.WriteLine(targetPlayer.WinningHand);
-					Console.WriteLine("\tChances of winning: " + (ChanceCalculator.CalculateChances(targetPlayer, communityCards) * 100d) + "%");
+					Console.WriteLine("\tChances of winning: " + (ChanceCalculator.CalculateChances(targetPlayer.HoleCards, communityCards, players.Count - 1) * 100d) + "%\n");
 				}
-				// !
+
+				// ! END
 			}
 
 			watch.Stop();
@@ -139,34 +143,31 @@ namespace PokerAlgo
 ! 
 
 TODO
-TODO: The community does not need to be involved at all for winner determination.
+TODO: Refactor ChanceCalculator.
 TODO: ComparePlayerHands doesn't need players, I can just CompareHands.
-TODO: Simulate multiple players in ChanceCalculator.
-TODO: Add early break to BreakTies(). "Split" the list to prevent useless loop runs.
-TODO: Update tests and create tests for other methods. (Use external dataset instead?)
 
 ? Future Ideas 
 ? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
-? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching. if (threeKinds.Count >= 3 && pairs.Count >= 2) { ... }
 ? Use SortedSet for storing cards when order matters to avoid additional sorting operations.
 ? Use method extensions for better code readability
 ? Use Debug.Assert() in spots where I've been throwing errors to assert that something should always be true.
 ? Should HandEvaluator return a nullable WinningHand object? It should never do so. Use the null-coalescing operator "??".
 ? ComparePlayerHands doesn't need players, I can just use CompareHands.
 
+? Update tests and create tests for other methods. (Use external dataset instead?)
+? Refactor Algo.BreakTies()
+? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching. if (threeKinds.Count >= 3 && pairs.Count >= 2) { ... }
+
 * Notes
 * "WinningHand nullable? It has been giving me a headache with the warnings." Turns out, it's a good programming pattern.
 * 
 
 * Changes
-* HandEvaluator class is now responsible for determining the winning hand given a list of cards for either a player or the community.
-* I combined the Algo class back into one file since it is not as large.
-* Player hand cards have been renamed to HoleCards.
-* Card Value has been renamed to Rank.
-* Added ChanceCalculator that uses a Monte Carlo Simulation to calculate the chances of a player winning.
-* I'll add this here because I can, I realize now that there is no need to find the winning hand in the community; When I designed the original
-	* structure of the algorithm I was wrong about how the winner in texas hold em is determined; So I'll be reworking this tomorrow because I'm tired as hell;
-	* I don't even know how many hours I've put into this by now. It's been like 2 months.
+* The logic has been vastly improved, the community cards is no longer being evaluated for a winning hand; this resulted a ton less code.
+* Consolidated HandEvaluator logic into a single method called EvaluateHand.
+* Added early break to BreakTies() which prevents unecessary loop iterations.
+* ChanceCalculator now simulates going against multiple players, need to refactor.
+* Card.Equals() no longer compares IsPlayerCard property.
 * 
 */
