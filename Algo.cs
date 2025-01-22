@@ -242,7 +242,7 @@ namespace PokerAlgo
 
 
         // ! -1 left wins, 0 tie, 1 right wins
-        private static int ComparePlayerHands(Player player1, Player player2)
+        public static int ComparePlayerHands(Player player1, Player player2)
         {
             if (player1.WinningHand is null || player2.WinningHand is null) throw new Exception("⛔ Algo.ComparePlayerHands(): A player's winning hand is null.");
 

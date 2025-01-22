@@ -10,7 +10,7 @@ namespace PokerAlgo
 		{
 			int executions = 1;
 			int inputVerbosity;
-			if(args.Length < 1){ Algo._debugVerbosity = 1; }
+			if(args.Length < 1){ Algo._debugVerbosity = 0; }
 			else if(args.Length == 2 && int.TryParse(args[1], out executions))
 			{
 				int.TryParse(args[0], out inputVerbosity);
@@ -75,30 +75,50 @@ namespace PokerAlgo
 
 
 				// ! Main Code Execution
-				List<Player> winners = Algo.GetWinners(players, communityCards);
+				// List<Player> winners = Algo.GetWinners(players, communityCards);
 
-				if (_debuVerbosity > 0)
-				{
-					Console.BackgroundColor = ConsoleColor.Blue;
-					Console.ForegroundColor = ConsoleColor.Black;
-					Console.Write("🥇 Program.Main() Winners:");
-					Console.ResetColor();
-					Console.WriteLine();
-					foreach (Player p in winners)
-					{
-						Console.BackgroundColor = ConsoleColor.Yellow;
-						Console.ForegroundColor = ConsoleColor.Black;
-						Console.Write($"\t {p.Name} ");
-						Console.BackgroundColor = ConsoleColor.Green;
-						Console.Write($" {p.WinningHand.Type} ");
-						Console.BackgroundColor = ConsoleColor.Gray;
-						Console.Write(string.Join(' ', p.WinningHand.Cards) + " ");
-						Console.ResetColor();
-						Console.WriteLine();
-						Console.WriteLine();
-					}
-				}
+				// if (_debuVerbosity > 0)
+				// {
+				// 	Console.BackgroundColor = ConsoleColor.Blue;
+				// 	Console.ForegroundColor = ConsoleColor.Black;
+				// 	Console.Write("🥇 Program.Main() Winners:");
+				// 	Console.ResetColor();
+				// 	Console.WriteLine();
+				// 	foreach (Player p in winners)
+				// 	{
+				// 		Console.BackgroundColor = ConsoleColor.Yellow;
+				// 		Console.ForegroundColor = ConsoleColor.Black;
+				// 		Console.Write($"\t {p.Name} ");
+				// 		Console.BackgroundColor = ConsoleColor.Green;
+				// 		Console.Write($" {p.WinningHand.Type} ");
+				// 		Console.BackgroundColor = ConsoleColor.Gray;
+				// 		Console.Write(string.Join(' ', p.WinningHand.Cards) + " ");
+				// 		Console.ResetColor();
+				// 		Console.WriteLine();
+				// 		Console.WriteLine();
+				// 	}
+				// }
+
 				// Testing testing = new();
+
+				// ! Monte Carlo Simulation Test
+				Player targetPlayer = players[0];
+				// Console.WriteLine(targetPlayer);
+				// Console.WriteLine("Community Cards: " + string.Join(' ', communityCards));
+				// Console.WriteLine($"Winning Hand for Tom: {targetPlayer.Name}");
+				HandEvaluator handEvaluator = new();
+				List<Card> cards = new()
+				{
+					targetPlayer.HoleCards.First,
+					targetPlayer.HoleCards.Second,
+				};
+				cards.AddRange(communityCards);
+				targetPlayer.WinningHand = handEvaluator.GetWinningHand(cards);
+				if(targetPlayer.WinningHand.Type >= HandType.RoyalFlush)
+				{
+					Console.WriteLine(targetPlayer.WinningHand);
+					Console.WriteLine("\tChances of winning: " + (ChanceCalculator.CalculateChances(targetPlayer, communityCards) * 100d) + "%");
+				}
 				// !
 			}
 
@@ -119,7 +139,10 @@ namespace PokerAlgo
 ! 
 
 TODO
-TODO: Add early break to BreakTies() and BreakTieCommunityLessThanFiveCards() when the winner is the one on the left. Split the list to prevent useless loop runs.
+TODO: The community does not need to be involved at all for winner determination.
+TODO: ComparePlayerHands doesn't need players, I can just CompareHands.
+TODO: Simulate multiple players in ChanceCalculator.
+TODO: Add early break to BreakTies(). "Split" the list to prevent useless loop runs.
 TODO: Update tests and create tests for other methods. (Use external dataset instead?)
 
 ? Future Ideas 
@@ -130,6 +153,7 @@ TODO: Update tests and create tests for other methods. (Use external dataset ins
 ? Use method extensions for better code readability
 ? Use Debug.Assert() in spots where I've been throwing errors to assert that something should always be true.
 ? Should HandEvaluator return a nullable WinningHand object? It should never do so. Use the null-coalescing operator "??".
+? ComparePlayerHands doesn't need players, I can just use CompareHands.
 
 * Notes
 * "WinningHand nullable? It has been giving me a headache with the warnings." Turns out, it's a good programming pattern.
@@ -140,5 +164,9 @@ TODO: Update tests and create tests for other methods. (Use external dataset ins
 * I combined the Algo class back into one file since it is not as large.
 * Player hand cards have been renamed to HoleCards.
 * Card Value has been renamed to Rank.
+* Added ChanceCalculator that uses a Monte Carlo Simulation to calculate the chances of a player winning.
+* I'll add this here because I can, I realize now that there is no need to find the winning hand in the community; When I designed the original
+	* structure of the algorithm I was wrong about how the winner in texas hold em is determined; So I'll be reworking this tomorrow because I'm tired as hell;
+	* I don't even know how many hours I've put into this by now. It's been like 2 months.
 * 
 */

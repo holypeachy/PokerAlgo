@@ -2,7 +2,7 @@ namespace PokerAlgo
 {
 	class Deck
 	{
-		private List<Card> Cards {get; set;}
+		public  List<Card> Cards {get; set;}
 
 		public Deck()
 		{
