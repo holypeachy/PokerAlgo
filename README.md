@@ -1,15 +1,17 @@
 # poker-algo
-#### An algorithm to determine the winner(s) of a Texas Hold 'em game. Might not be the most efficient one out there, but it's mine. It runs in under 40ms.
+#### An algorithm to determine the winner(s) of a Texas Hold 'em game. Might not be the most efficient one out there, but it's mine.
 
 ---
 - The core logic to a Texas Hold 'em game I'm working on.
 - Would like to release as nuget package so anyone can use it, and so I can easily reuse it in other projects.
 ## Quick Log and Ideas
-- 12/4/2024: First half is done. It detects the type of winning hands a player has. I need to optimize this now. Then I would need to see what winning hands are on the community cards. Then the last part is to compare the hands of each player as well as the community.
+- 1/22/2025: Because of how I had structured the algorithm since the beginning I can see a way of simplifying winner determination. In the beginning of this project I had the wrong idea about how the winner was Determined in Texas Hold 'em. After learning how it worked a little bit into the project I never stepped back and redesigned the algorithm. Should be a smooth ride from here, it feels like I have everything figured out I just need to refactor the code. I also added a Monte Carlo Simulation to predict how likely a player is to win. I've been thinking about using an external dataset instead of creating my own tests. Making tests for this by hand is very tedious.
+
+- 1/16/2025: Finished the algorithm. I can think of a few optimizations, I need to clean up debug logs. Need to look into testing frameworks or make my own, as well as test the code extensively. I would like to write custom exception classes, and document everything to package the project with nuget. I'm also thinking about including a simple probability model to predict how likely a player is to win (independent from other players); this number would allow me to make an enemy AI.
 
 - 12/28/2024: Added better debug logging as well as verbosity levels. Optimized the first part quite a bit but could still improve further. Players now only have 1 winning hand, and now the best 5 cards get stored including the winning hand. This is so kickers are easier to compare. Added method to determine the community's winning hand. Need to rewrite how the winner is determined, it should be easier now since we get the best 5 cards.
 
-- 1/16/2025: Finished the algorithm. I can think of a few optimizations, I need to clean up debug logs. Need to look into testing frameworks or make my own, as well as test the code extensively. I would like to write custom exception classes, and document everything to package the project with nuget. I'm also thinking about including a simple probability model to predict how likely a player is to win (independent from other players); this number would allow me to make an enemy AI.
+- 12/4/2024: First half is done. It detects the type of winning hands a player has. I need to optimize this now. Then I would need to see what winning hands are on the community cards. Then the last part is to compare the hands of each player as well as the community.
 
 ## Output Example:
 This is an example of the current output of the program that showcases its functionality.
