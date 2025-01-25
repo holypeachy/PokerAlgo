@@ -4,27 +4,27 @@ namespace PokerAlgo
 {
 	public class Program
 	{
-		private static int _debuVerbosity = Algo._debugVerbosity;
+		private static int _debuVerbosity = Algo.DebugVerbosity;
 		private static int _numOfCommunityCards = 5;
 
 		static void Main(string[] args)
 		{
 			int executions = 1;
 			int inputVerbosity;
-			if(args.Length < 1){ Algo._debugVerbosity = 0; }
+			if(args.Length < 1){ Algo.DebugVerbosity = 0; }
 			else if(args.Length == 2 && int.TryParse(args[1], out executions))
 			{
 				int.TryParse(args[0], out inputVerbosity);
 				if ((inputVerbosity == 0 || inputVerbosity == 1 || inputVerbosity == 2) && executions < 2)
 				{
-					Algo._debugVerbosity = inputVerbosity;
+					Algo.DebugVerbosity = inputVerbosity;
 				}
 			}
 			else if (args.Length == 1 && int.TryParse(args[0], out inputVerbosity))
 			{
 				if (inputVerbosity == 0 || inputVerbosity == 1 || inputVerbosity == 2)
 				{
-					Algo._debugVerbosity = inputVerbosity;
+					Algo.DebugVerbosity = inputVerbosity;
 				}
 			}
 			else
@@ -45,8 +45,8 @@ namespace PokerAlgo
 					new Player("Tom", deck.NextCard(), deck.NextCard()),
 					new Player("Matt", deck.NextCard(), deck.NextCard()),
 					new Player("Ben", deck.NextCard(), deck.NextCard()),
-					// new Player("Sam", deck.NextCard(), deck.NextCard()),
-					// new Player("Jim", deck.NextCard(), deck.NextCard()),
+					new Player("Sam", deck.NextCard(), deck.NextCard()),
+					new Player("Jim", deck.NextCard(), deck.NextCard()),
 				};
 
 				if (_debuVerbosity > 0)
@@ -76,52 +76,53 @@ namespace PokerAlgo
 
 
 				// ! Main Code Execution
-				// List<Player> winners = Algo.GetWinners(players, communityCards);
+				List<Player> winners = Algo.GetWinners(players, communityCards);
 
-				// if (_debuVerbosity > 0)
-				// {
-				// 	Console.BackgroundColor = ConsoleColor.Blue;
-				// 	Console.ForegroundColor = ConsoleColor.Black;
-				// 	Console.Write("🥇 Program.Main() Winners:");
-				// 	Console.ResetColor();
-				// 	Console.WriteLine();
-				// 	foreach (Player p in winners)
-				// 	{
-				// 		Console.BackgroundColor = ConsoleColor.Yellow;
-				// 		Console.ForegroundColor = ConsoleColor.Black;
-				// 		Console.Write($"\t {p.Name} ");
-				// 		Console.BackgroundColor = ConsoleColor.Green;
-				// 		Console.Write($" {p.WinningHand.Type} ");
-				// 		Console.BackgroundColor = ConsoleColor.Gray;
-				// 		Console.Write(string.Join(' ', p.WinningHand.Cards) + " ");
-				// 		Console.ResetColor();
-				// 		Console.WriteLine();
-				// 		Console.WriteLine();
-				// 	}
-				// }
+				if (_debuVerbosity > 0)
+				{
+					Console.BackgroundColor = ConsoleColor.Blue;
+					Console.ForegroundColor = ConsoleColor.Black;
+					Console.Write("🥇 Program.Main() Winners:");
+					Console.ResetColor();
+					Console.WriteLine();
+					foreach (Player p in winners)
+					{
+						Console.BackgroundColor = ConsoleColor.Yellow;
+						Console.ForegroundColor = ConsoleColor.Black;
+						Console.Write($"\t {p.Name} ");
+						Console.BackgroundColor = ConsoleColor.Green;
+						Console.Write($" {p.WinningHand.Type} ");
+						Console.BackgroundColor = ConsoleColor.Gray;
+						Console.Write(string.Join(' ', p.WinningHand.Cards) + " ");
+						Console.ResetColor();
+						Console.WriteLine();
+						Console.WriteLine();
+					}
+				}
 
 				// ! Unit Testing
 				// Testing testing = new();
 
 				// ! Monte Carlo Simulation Test
-				Console.WriteLine();
-				Algo._debugVerbosity = 0;
-				Algo.GetWinners(players, communityCards);
-				foreach (Player p in players)
-				{
-					Console.WriteLine($"Player \'{p.Name}\'");
-					Player targetPlayer = p;
-					HandEvaluator handEvaluator = new();
-					List<Card> cards = new()
-					{
-						targetPlayer.HoleCards.First,
-						targetPlayer.HoleCards.Second,
-					};
-					cards.AddRange(communityCards);
-					targetPlayer.WinningHand = handEvaluator.GetWinningHand(cards);
-					Console.WriteLine(targetPlayer.WinningHand);
-					Console.WriteLine("\tChances of winning: " + (ChanceCalculator.CalculateChances(targetPlayer.HoleCards, communityCards, players.Count - 1) * 100d) + "%\n");
-				}
+				// Algo._debugVerbosity = 0;
+				// HandEvaluator handEvaluator = new();
+				// Console.WriteLine($"Number of Simulations: {500}");
+				// Console.WriteLine("-----------------------------");
+				// foreach (Player p in players)
+				// {
+				// 	Player targetPlayer = p;
+				// 	List<Card> cards = new()
+				// 	{
+				// 		targetPlayer.HoleCards.First,
+				// 		targetPlayer.HoleCards.Second,
+				// 	};
+				// 	cards.AddRange(communityCards);
+				// 	targetPlayer.WinningHand = handEvaluator.GetWinningHand(cards);
+				// 	Console.WriteLine($"Player \'{p.Name}\'");
+				// 	Console.WriteLine(targetPlayer.WinningHand);
+				// 	string percentage = String.Format("{0:0}", ChanceCalculator.GetWinningChance(targetPlayer.HoleCards, communityCards, players.Count - 1, 500) * 100.0d);
+				// 	Console.WriteLine("\tChances of winning: " + percentage + "%\n");
+				// }
 
 				// ! END
 			}
@@ -143,31 +144,30 @@ namespace PokerAlgo
 ! 
 
 TODO
-TODO: Refactor ChanceCalculator.
-TODO: ComparePlayerHands doesn't need players, I can just CompareHands.
+TODO: Start testing.
+TODO: 
 
 ? Future Ideas 
 ? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
-? Use SortedSet for storing cards when order matters to avoid additional sorting operations.
 ? Use method extensions for better code readability
-? Use Debug.Assert() in spots where I've been throwing errors to assert that something should always be true.
-? Should HandEvaluator return a nullable WinningHand object? It should never do so. Use the null-coalescing operator "??".
-? ComparePlayerHands doesn't need players, I can just use CompareHands.
-
 ? Update tests and create tests for other methods. (Use external dataset instead?)
-? Refactor Algo.BreakTies()
+
+? Use Debug.Assert() in spots where I've been throwing errors to assert that something should always be true. ??
+? Use SortedSet for storing cards when order matters to avoid additional sorting operations. ??
 ? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching. if (threeKinds.Count >= 3 && pairs.Count >= 2) { ... }
+? Null-coalescing operator "??".
 
 * Notes
 * "WinningHand nullable? It has been giving me a headache with the warnings." Turns out, it's a good programming pattern.
 * 
 
 * Changes
-* The logic has been vastly improved, the community cards is no longer being evaluated for a winning hand; this resulted a ton less code.
-* Consolidated HandEvaluator logic into a single method called EvaluateHand.
-* Added early break to BreakTies() which prevents unecessary loop iterations.
-* ChanceCalculator now simulates going against multiple players, need to refactor.
-* Card.Equals() no longer compares IsPlayerCard property.
+* Card class now implements IEquatable.
+* Refactored ChanceCalculator.
+* In HandEvaluator.EvaluateHand() had forgotten to return after determining the hand was a Three of a Kind.
+* In Algo.CompareWinningHands() the method now returns 0 after a RoyalFlush tie because it is now possible.
+* ComparePlayerHands is now called ComparedWinningHands and takes WinningHand objects instead of players.
+* HandEvaluator.GetWinningHand() now returns a non-nullable object.
 * 
 */

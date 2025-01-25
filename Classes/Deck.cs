@@ -1,8 +1,8 @@
 namespace PokerAlgo
 {
-	class Deck
+	public class Deck
 	{
-		public  List<Card> Cards {get; set;}
+		private List<Card> Cards {get; set;}
 
 		public Deck()
 		{
@@ -14,11 +14,11 @@ namespace PokerAlgo
 			ShuffleDeck();
 		}
 
-		public void CreateDeck()
+		private void CreateDeck()
 		{
 			Cards = new List<Card>();
 
-			foreach (CardSuit suit in Enum.GetValues(typeof(CardSuit)).Cast<CardSuit>() )
+			foreach ( CardSuit suit in Enum.GetValues(typeof(CardSuit)).Cast<CardSuit>() )
 			{
 				for (int rank = 2; rank <= 14; rank++)
 				{
@@ -73,5 +73,11 @@ namespace PokerAlgo
 			Cards.RemoveAt(0);
 			return cardOnTop;
 		} 
+	
+		public void RemoveCards(List<Card> cardsToRemove)
+		{
+			Cards = Cards.Except(cardsToRemove).ToList();
+		}
+		
 	}
 }

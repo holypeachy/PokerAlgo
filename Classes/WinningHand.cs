@@ -2,8 +2,8 @@ namespace PokerAlgo
 {
     public class WinningHand
     {
-        public HandType Type { get; set; }
-        public List<Card> Cards { get; set; }
+        public HandType Type { get; }
+        public List<Card> Cards { get; }
 
         public WinningHand(HandType type, List<Card> cards)
         {
@@ -13,7 +13,7 @@ namespace PokerAlgo
 
         public override string ToString()
         {
-            return $"WinningHand | Type: {Type}" + $"| Cards: {string.Join(" ", Cards)}";
+            return $"Type: {Type}" + $"| Cards: {string.Join(" ", Cards)}";
         }
     }
 }

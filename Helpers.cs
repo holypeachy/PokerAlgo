@@ -2,7 +2,7 @@ namespace PokerAlgo
 {
     internal static class Helpers
     {
-        private static int _debugVerbosity = Algo._debugVerbosity;
+        private static int _debugVerbosity = Algo.DebugVerbosity;
 
 
         public static void DebugLog(string log = "", int verbosity = 1)
@@ -18,7 +18,8 @@ namespace PokerAlgo
             if (_debugVerbosity > 1)
             {
                 Console.WriteLine($"🤖 {description}: ");
-                Console.Write("\t" + string.Join(' ', cards) + "\n\n");
+                if(cards.Count > 0) Console.Write("\t" + string.Join(' ', cards) + "\n");
+                Console.WriteLine();
             }
         }
 
@@ -29,10 +30,9 @@ namespace PokerAlgo
                 Console.WriteLine($"🤖 {description}:");
                 foreach (Player p in players)
                 {
-                    Console.Write($"\t 🃏 Winning Hand ");
                     Console.BackgroundColor = ConsoleColor.Yellow;
                     Console.ForegroundColor = ConsoleColor.Black;
-                    Console.Write($" {p.Name} ");
+                    Console.Write($"\t {p.Name} ");
                     Console.BackgroundColor = ConsoleColor.Green;
                     Console.Write($" {p.WinningHand.Type} ");
                     Console.BackgroundColor = ConsoleColor.Gray;

@@ -51,7 +51,7 @@ namespace PokerAlgo {
 				};
 				cards.AddRange(test.CommunityCards);
 
-				Algo.SortCardsByValue(cards);
+				SortCardsByValue(cards);
 
 				function(cards, player);
 
@@ -123,5 +123,9 @@ namespace PokerAlgo {
 			Console.WriteLine($"- \"{pathToTest}\" has been created!");
 		}
 
+		private static void SortCardsByValue(List<Card> cards)
+		{
+			cards.Sort((x, y) => x.Rank.CompareTo(y.Rank));
+		}
 	}
 }

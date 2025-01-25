@@ -4,7 +4,7 @@ namespace PokerAlgo
 {
     public class HandEvaluator
     {
-        private static int _debugVerbosity = Algo._debugVerbosity;
+        private static int _debugVerbosity = Algo.DebugVerbosity;
 
         private WinningHand? _tempBestHand;
 
@@ -15,7 +15,7 @@ namespace PokerAlgo
         }
 
 
-        public WinningHand? GetWinningHand(List<Card> cards)
+        public WinningHand GetWinningHand(List<Card> cards)
         {
             _tempBestHand = null;
             List<Card> cardsCopy = cards.ToList();
@@ -31,6 +31,7 @@ namespace PokerAlgo
 
             EvaluateHand(cardsCopy);
 
+            if (_tempBestHand is null) throw new Exception("HandEvaluator.GetWinningHand() - _tempBestHand should never be null before returning.");
             Debug.Assert(_tempBestHand is not null, "HandEvaluator.GetWinningHand() - _tempBestHand should never be null before returning.");
 
             return _tempBestHand;
@@ -63,6 +64,7 @@ namespace PokerAlgo
             Helpers.DebugLogCards("HandEvaluator.EvaluateHand() - Four Kind Cards", fourKind);
             Helpers.DebugLogCards("HandEvaluator.EvaluateHand() - Three Kind Cards", threeKinds);
             Helpers.DebugLogCards("HandEvaluator.EvaluateHand() - Pair Cards", pairs);
+
 
             List<Card> bestFive = new();
 
@@ -201,9 +203,10 @@ namespace PokerAlgo
             if (threeKinds.Count == 3)
             {
                 SetWinningHand(HandType.ThreeKind, CompleteWinningHand(threeKinds, cards));
+                return;
             }
 
-            // ! 3 Pairs
+            // ! 2 Pairs or more
             else if (pairs.Count >= 4)
             {
                 List<Card> topPair = pairs.GetRange(pairs.Count - 2, 2);
@@ -234,7 +237,6 @@ namespace PokerAlgo
             List<Card> completeHand = winningCards.ToList();
             int neededNumberOfCards = 5 - winningCards.Count;
             List<Card> remainingCards = allCards.Except(winningCards).ToList();
-            Helpers.DebugLog("", 2);
             Helpers.DebugLogCards("HandEvaluator.CompleteWinningHand() - remainingCards", remainingCards);
 
             if (neededNumberOfCards < 1)

@@ -2,8 +2,8 @@ namespace PokerAlgo{
 
 	public class Player
 	{
-		public string Name { get; set; }
-		public Pair<Card, Card> HoleCards { get; set; }
+		public string Name { get; }
+		public Pair<Card, Card> HoleCards { get; }
 		
 		public WinningHand? WinningHand { get; set; }
 

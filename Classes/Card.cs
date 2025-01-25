@@ -2,22 +2,22 @@ using System.Text.Json.Serialization;
 
 namespace PokerAlgo
 {
-    public class Card
+    public class Card : IEquatable<Card>
     {
-        public int Rank {get; set;}
-        public CardSuit Suit {get; set;}
+        public int Rank {get;}
+        public CardSuit Suit {get;}
         public bool IsPlayerCard {get; set;}
 
-        private Dictionary<int, string> CardValueLookUp = new Dictionary<int, string>
+        private static readonly Dictionary<int, string> CardPrintLookUp = new Dictionary<int, string>
         {
             {1, "A"}, {11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
         };
 
 
         [JsonConstructor]
-        public Card(int value, CardSuit suit, bool isPlayerCard)
+        public Card(int rank, CardSuit suit, bool isPlayerCard)
         {
-            this.Rank = value;
+            this.Rank = rank;
             this.Suit = suit;
             this.IsPlayerCard = isPlayerCard;
         }
@@ -32,27 +32,28 @@ namespace PokerAlgo
 
         public override string ToString()
         {
-            return "[" + (Rank == 1 || Rank > 10 ? CardValueLookUp[Rank] : Rank) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
+            return "[" + (Rank == 1 || Rank > 10 ? CardPrintLookUp[Rank] : Rank) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
+        }
+
+        public bool Equals(Card? other)
+        {
+            if (other is null)
+                return false;
+
+            return Rank == other.Rank && Suit == other.Suit; // ? Should I include IsPlayerCard?
         }
 
         public override bool Equals(object? obj)
         {
-            try
-            {
-                Card? other = (Card?)obj;
-
-                return other is null ? false : ( this.Rank == other.Rank && this.Suit == other.Suit); // ? Should I include IsPlayerCard?
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            if (obj is Card other)
+                return Equals(other);
+            return false;
         }
 
-        public override int GetHashCode()   // Had to implement cus Equals override, for some reason
+        public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return HashCode.Combine(Rank, Suit);
         }
-
+        
     }
 }

@@ -1,10 +1,8 @@
-using System.Diagnostics;
-
 namespace PokerAlgo
 {
     public static class Algo
     {
-        public static int _debugVerbosity { get; set; } = 0; // * Verbosity Levels | 0 = Disabled | 1 = Progress Report | 2 = Everything
+        public static int DebugVerbosity { get; set; } = 0; // * Verbosity Levels | 0 = Disabled | 1 = Progress Report | 2 = Everything
 
         public static List<Player> GetWinners(List<Player> players, List<Card> communityCards)
         {
@@ -19,7 +17,7 @@ namespace PokerAlgo
 
             foreach (Player player in players)
             {
-                if (_debugVerbosity > 0)
+                if (DebugVerbosity > 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine();
@@ -49,7 +47,7 @@ namespace PokerAlgo
             return winners;
         }
 
-        private  static List<Player> DetermineWinners(List<Player> allPlayers)
+        private static List<Player> DetermineWinners(List<Player> allPlayers)
         {
             // ! Temporary, shouldn't need this after proper testing. ???
             foreach (Player p in allPlayers)
@@ -81,7 +79,7 @@ namespace PokerAlgo
                 hasChangesBeenMade = false;
                 for (int playerIndex = 0; playerIndex < winners.Count - 1; playerIndex++)
                 {
-                    int result = ComparePlayerHands(winners[playerIndex], winners[playerIndex + 1]);
+                    int result = CompareWinningHands(winners[playerIndex].WinningHand, winners[playerIndex + 1].WinningHand);
                     Helpers.DebugLog($"Algo.BreakTies() - " + (result == -1 ? winners[playerIndex].Name + " has better hand\n" : result == 1 ? winners[playerIndex + 1].Name + " has better hand\n" : "Players Tie"), 2);
 
                     if (result == -1)
@@ -120,18 +118,12 @@ namespace PokerAlgo
 
 
         // ! -1 left wins, 0 tie, 1 right wins
-        public static int ComparePlayerHands(Player player1, Player player2)
+        private static int CompareWinningHands(WinningHand? left, WinningHand? right)
         {
-            if (player1.WinningHand is null || player2.WinningHand is null) throw new Exception("⛔ Algo.ComparePlayerHands(): A player's winning hand is null.");
-
-            WinningHand left = player1.WinningHand;
-            WinningHand right = player2.WinningHand;
-
-            // * left.Type = HandType.RoyalFlush;
-            // * right.Type = HandType.RoyalFlush;
-
-            Helpers.DebugLog($"Algo.ComparePlayerHands() - {player1.Name} | Hand: {player1.WinningHand.Type}", 2);
-            Helpers.DebugLog($"Algo.ComparePlayerHands() - {player2.Name} | Hand: {player2.WinningHand.Type}", 2);
+            if (left is null || right is null) throw new Exception("⛔ Algo.ComparePlayerHands(): A passed winning hand argument is null.");
+            
+            Helpers.DebugLogCards("Algo.CompareWinningHands() - Left.Cards", left.Cards);
+            Helpers.DebugLogCards("Algo.CompareWinningHands() - Right.Cards", right.Cards);
 
             if (left.Type > right.Type)
             {
@@ -148,8 +140,7 @@ namespace PokerAlgo
             switch (left.Type)
             {
                 case HandType.RoyalFlush:
-                    throw new Exception("⛔ Algo.ComparePlayerHands(): Since only one player can have a royal flush it makes no sense that it would get to this point. "
-                                        + "Also since my code does not give community winning hands to the players, no two players can have a royal flush.");
+                    return 0;
 
                 case HandType.StraightFlush:
                     return CompareKickers(leftCards, rightCards);
@@ -230,12 +221,6 @@ namespace PokerAlgo
             Helpers.DebugLog("Algo.CompareKickers() - Tie", 2);
 
             return 0;
-        }
-
-
-        internal static void SortCardsByValue(List<Card> cards)
-        {
-            cards.Sort((x, y) => x.Rank.CompareTo(y.Rank));
         }
 
     }
