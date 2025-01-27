@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "poker-algo", "poker-algo.csproj", "{EB2AAC67-3D6F-4A78-B9E1-C54C6C114E42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerAlgo", "PokerAlgo.csproj", "{EB2AAC67-3D6F-4A78-B9E1-C54C6C114E42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

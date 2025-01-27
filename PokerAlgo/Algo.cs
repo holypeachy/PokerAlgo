@@ -2,7 +2,24 @@ namespace PokerAlgo
 {
     public static class Algo
     {
-        public static int DebugVerbosity { get; set; } = 0; // * Verbosity Levels | 0 = Disabled | 1 = Progress Report | 2 = Everything
+        private static int _debugVerbosity = 0;
+        public static int DebugVerbosity {
+            get
+            { 
+                return _debugVerbosity;
+            }
+            set
+            { 
+                if(value == 0 || value == 1 || value == 2)
+                {
+                    _debugVerbosity = value;
+                }
+                else
+                {
+                    _debugVerbosity = 0;
+                }
+            }
+        } // * Verbosity Levels | 0 = Disabled | 1 = Progress Report | 2 = Everything
 
         public static List<Player> GetWinners(List<Player> players, List<Card> communityCards)
         {
@@ -168,7 +185,7 @@ namespace PokerAlgo
                     else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
                     else return CompareKickers(leftCards.GetRange(0, 2), rightCards.GetRange(0, 2));
 
-                case HandType.TwoPairs:
+                case HandType.TwoPair:
                     if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
                     else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
                     if (leftCards.ElementAt(2).Rank > rightCards.ElementAt(2).Rank) return -1;

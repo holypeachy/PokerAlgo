@@ -8,7 +8,7 @@ namespace PokerAlgo
         public CardSuit Suit {get;}
         public bool IsPlayerCard {get; set;}
 
-        private static readonly Dictionary<int, string> CardPrintLookUp = new Dictionary<int, string>
+        private static readonly Dictionary<int, string> _cardPrintLookUp = new Dictionary<int, string>
         {
             {1, "A"}, {11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
         };
@@ -32,7 +32,7 @@ namespace PokerAlgo
 
         public override string ToString()
         {
-            return "[" + (Rank == 1 || Rank > 10 ? CardPrintLookUp[Rank] : Rank) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
+            return "[" + (Rank == 1 || Rank > 10 ? _cardPrintLookUp[Rank] : Rank) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
         }
 
         public bool Equals(Card? other)

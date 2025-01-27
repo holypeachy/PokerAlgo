@@ -1,6 +1,8 @@
 using System.Text.Json;
+using PokerAlgo;
 
-namespace PokerAlgo {
+namespace Project
+{
 	class Testing {
 		private delegate void AlgoFunction(List<Card> cards, Player player);
 

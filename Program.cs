@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
+using PokerAlgo;
 
-namespace PokerAlgo
+namespace Project
 {
 	public class Program
 	{
@@ -91,9 +92,9 @@ namespace PokerAlgo
 						Console.ForegroundColor = ConsoleColor.Black;
 						Console.Write($"\t {p.Name} ");
 						Console.BackgroundColor = ConsoleColor.Green;
-						Console.Write($" {p.WinningHand.Type} ");
+						Console.Write($" {Helpers.GetPrettyHandName(p.WinningHand)} ");
 						Console.BackgroundColor = ConsoleColor.Gray;
-						Console.Write(string.Join(' ', p.WinningHand.Cards) + " ");
+						Console.Write(" " + string.Join(' ', p.WinningHand.Cards) + " ");
 						Console.ResetColor();
 						Console.WriteLine();
 						Console.WriteLine();
@@ -104,7 +105,7 @@ namespace PokerAlgo
 				// Testing testing = new();
 
 				// ! Monte Carlo Simulation Test
-				// Algo._debugVerbosity = 0;
+				// Algo.DebugVerbosity = 0;
 				// HandEvaluator handEvaluator = new();
 				// Console.WriteLine($"Number of Simulations: {500}");
 				// Console.WriteLine("-----------------------------");
@@ -145,13 +146,11 @@ namespace PokerAlgo
 
 TODO
 TODO: Start testing.
-TODO: 
 
 ? Future Ideas 
 ? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
 ? Use method extensions for better code readability
-? Update tests and create tests for other methods. (Use external dataset instead?)
 
 ? Use Debug.Assert() in spots where I've been throwing errors to assert that something should always be true. ??
 ? Use SortedSet for storing cards when order matters to avoid additional sorting operations. ??
@@ -163,11 +162,7 @@ TODO:
 * 
 
 * Changes
-* Card class now implements IEquatable.
-* Refactored ChanceCalculator.
-* In HandEvaluator.EvaluateHand() had forgotten to return after determining the hand was a Three of a Kind.
-* In Algo.CompareWinningHands() the method now returns 0 after a RoyalFlush tie because it is now possible.
-* ComparePlayerHands is now called ComparedWinningHands and takes WinningHand objects instead of players.
-* HandEvaluator.GetWinningHand() now returns a non-nullable object.
+* Changed file structure based on the files to package.
+* Added method GetPrettyHandName().
 * 
 */

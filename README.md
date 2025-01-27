@@ -1,4 +1,4 @@
-# poker-algo
+# PokerAlgo
 #### An algorithm to determine the winner(s) of a Texas Hold 'em game. Might not be the most efficient one out there, but it's mine.
 
 ---

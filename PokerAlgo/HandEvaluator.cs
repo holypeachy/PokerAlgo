@@ -22,7 +22,7 @@ namespace PokerAlgo
 
             if (cards.Count < 5)
             {
-                throw new Exception("⛔ HandEvaluator.GetWinningHand() - cards argument < 5");
+                throw new Exception("⛔ HandEvaluator.GetWinningHand() - passed cards argument < 5, the list must have at least 5 cards");
             }
 
             SortCardsByValue(cardsCopy);
@@ -217,7 +217,7 @@ namespace PokerAlgo
                 twoPairs.AddRange(bottomPair);
                 twoPairs.AddRange(topPair);
 
-                SetWinningHand(HandType.TwoPairs, CompleteWinningHand(twoPairs, cards));
+                SetWinningHand(HandType.TwoPair, CompleteWinningHand(twoPairs, cards));
                 return;
             }
 
