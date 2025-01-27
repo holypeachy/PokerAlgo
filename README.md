@@ -14,8 +14,16 @@
 - 12/4/2024: First half is done. It detects the type of winning hands a player has. I need to optimize this now. Then I would need to see what winning hands are on the community cards. Then the last part is to compare the hands of each player as well as the community.
 
 ## Output Example:
-This is an example of the current output of the program that showcases its functionality.
+This is an example of the current output of the program that showcases its functionality. 
 
-![image](https://github.com/user-attachments/assets/24fa8de4-3f50-478b-95bc-74daebec9657)
-![image](https://github.com/user-attachments/assets/12d0f529-36f6-465a-a783-6224a4608a64)
-![image](https://github.com/user-attachments/assets/61567bc2-11a4-49cb-82c3-3a6cb3164e55)
+Input: State of the game. 
+
+![image](https://github.com/user-attachments/assets/d6fbd548-9e0c-4a90-9f9e-e8c2f83d443b) 
+
+Determine Winning Hand for each player and determine winner(s). 
+
+![image](https://github.com/user-attachments/assets/6cec15cc-ebd8-4bef-b509-95a5acb3fc0b)
+
+Determine chances of a player winning. 
+
+![image](https://github.com/user-attachments/assets/d83788f4-ac56-4005-9a69-8b8a00df574a)
