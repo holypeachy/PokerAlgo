@@ -1,28 +1,22 @@
+using System.Diagnostics;
 using System.Text.Json;
 using PokerAlgo;
 
 namespace Project
 {
 	class Testing {
-		private delegate void AlgoFunction(List<Card> cards, Player player);
-
-		// private string pathToFlush = @"C:\Users\Frank\Code\poker-algo\Tests\FlushTests.json";
-		// private string pathToStraight = @"C:\Users\Frank\Code\poker-algo\Tests\Tests\StraightTests.json";
-		// private string pathToMultiple = @"C:\Users\Frank\Code\poker-algo\Tests\Tests\MultipleTests.json";
-
 		private static bool _debugEnable = false;
 
 
-		public Testing() {
-			// ! PerformHandEvalTests("EvaluateFlush", pathToFlush, Algo.EvaluateFlush);
-			// ! PerformHandEvalTests("EvaluateStraight", pathToStraight, Algo.EvaluateStraight);
-			// ! PerformHandEvalTests("EvaluateMultiples", pathToMultiple, Algo.EvaluateMultiples);
+		public Testing(bool debugEnable = false) {
+			_debugEnable = debugEnable;
+			TestHandEvaluator();
 		}
 
-		private void PerformHandEvalTests(string testName, string pathToTest, AlgoFunction function)
+		private static void TestHandEvaluator(string pathToTest = @"./Tests/HandEvalUnitTests.json")
 		{
 			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine($"🧪 --{testName}---");
+			Console.WriteLine($"🧪 --Hand Evaluator Tests---");
 			Console.ResetColor();
 
 			string json = File.ReadAllText(pathToTest);
@@ -55,13 +49,13 @@ namespace Project
 
 				SortCardsByValue(cards);
 
-				function(cards, player);
+				HandEvaluator handEvaluator = new();
 
 				WinningHand? expectedHand = test.ExpectedHand;
-				WinningHand? actualHand = player.WinningHand;
+				WinningHand? actualHand = handEvaluator.GetWinningHand(cards);
 
-				if (expectedHand is null) expectedHand = new(HandType.Nothing, new List<Card>());
-				if (actualHand is null) actualHand = new(HandType.Nothing, new List<Card>());
+				Debug.Assert(expectedHand is not null, "expectedHand is not null");
+				Debug.Assert(actualHand is not null, "actualHand is not null");
 
 				if (expectedHand.Type != actualHand.Type) passed = false;
 				else if (!IsListOfCardsEqual(expectedHand.Cards, actualHand.Cards)) passed = false;
@@ -74,34 +68,17 @@ namespace Project
 				}
 				else
 				{
-					if (expectedHand is null) expectedHand = new( HandType.Nothing, new List<Card>());
-					if (actualHand is null) actualHand = new( HandType.Nothing, new List<Card>());
-
 					Console.ForegroundColor = ConsoleColor.Red;
 					Console.WriteLine($"TEST FAILED ❌");
-					Console.WriteLine($"\tExpected: {expectedHand.Type}" + (expectedHand.Type == HandType.Nothing ? "" : $"Cards: {string.Join(' ', expectedHand.Cards)}") );
-					Console.WriteLine($"\tActual: {actualHand.Type}" + (actualHand.Type == HandType.Nothing ? "" : $"Cards: {string.Join(' ', actualHand.Cards)}") );
+					Console.WriteLine($"\tExpected: {expectedHand.Type} " + $"Cards: {string.Join(' ', expectedHand.Cards)}");
+					Console.WriteLine($"\tActual: {actualHand.Type} " + $"Cards: {string.Join(' ', actualHand.Cards)}");
 					Console.ResetColor();
 				}
 			}
 		}
 
-		private bool IsListOfCardsEqual(List<Card> left, List<Card> right)
-		{
-			if (left.Count != right.Count) throw new Exception("⛔ Testing.AreCardsSame() - left.Count != right.Count");
 
-			for (int i = 0; i < left.Count; i++)
-			{
-				if (!left.ElementAt(i).Equals(right.ElementAt(i)))
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		private void MakeTemplateTestJson(string pathToTest){
+		private static void MakeTemplateHandEvalJson(string pathToTest){
 			Console.WriteLine($"- Making Tests JSON file for: \"{pathToTest}\"");
 			Deck deck = new();
 			HandEvalUnitTest[] testObjects = new HandEvalUnitTest[2];
@@ -117,12 +94,28 @@ namespace Project
 			WinningHand winning = new(HandType.Nothing, community);
 			HandEvalUnitTest test = new("My Description", community, playerHand, winning);
 			JsonSerializerOptions options = new();
-			options.WriteIndented = true;
+			options.WriteIndented = false;
 			testObjects[0] = test;
 			testObjects[1] = test;
 			string json = JsonSerializer.Serialize(testObjects, options);
 			File.WriteAllText(pathToTest, json);
 			Console.WriteLine($"- \"{pathToTest}\" has been created!");
+		}
+
+
+		private static bool IsListOfCardsEqual(List<Card> left, List<Card> right)
+		{
+			Debug.Assert(left.Count == right.Count,"⛔ Testing.AreCardsSame() - left.Count != right.Count");
+
+			for (int i = 0; i < left.Count; i++)
+			{
+				if (!left.ElementAt(i).Equals(right.ElementAt(i)))
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		private static void SortCardsByValue(List<Card> cards)

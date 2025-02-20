@@ -1,0 +1,938 @@
+[
+  {
+    "Description": "Royal Flush, No Player Card",
+    "PlayerCards": {
+      "First": {
+        "Rank": 9,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 7,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 14,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 12,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 11,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 13,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 10,
+        "Suit": 1,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 9,
+      "Cards": [
+        {
+          "Rank": 10,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 11,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 12,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 13,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 14,
+          "Suit": 1,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Royal Flush, 1 Player Card",
+    "PlayerCards": {
+      "First": {
+        "Rank": 14,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 9,
+        "Suit": 3,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 10,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 12,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 11,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 13,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 0,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 9,
+      "Cards": [
+        {
+          "Rank": 10,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 11,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 12,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 13,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 14,
+          "Suit": 1,
+          "IsPlayerCard": true
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Royal Flush, 2 Player Card",
+    "PlayerCards": {
+      "First": {
+        "Rank": 14,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 10,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 9,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 12,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 11,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 13,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 0,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 9,
+      "Cards": [
+        {
+          "Rank": 10,
+          "Suit": 1,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 11,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 12,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 13,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 14,
+          "Suit": 1,
+          "IsPlayerCard": true
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Straight Flush, Ace as Bottom Card",
+    "PlayerCards": {
+      "First": {
+        "Rank": 3,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 5,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 4,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 1,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 10,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 1,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 8,
+      "Cards": [
+        {
+          "Rank": 1,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 2,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 3,
+          "Suit": 2,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 4,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 5,
+          "Suit": 2,
+          "IsPlayerCard": true
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Straight Flush 3-7",
+    "PlayerCards": {
+      "First": {
+        "Rank": 3,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 6,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 4,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 11,
+        "Suit": 2,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 8,
+      "Cards": [
+        {
+          "Rank": 3,
+          "Suit": 1,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 4,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 5,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 6,
+          "Suit": 1,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 7,
+          "Suit": 1,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Four of a Kind",
+    "PlayerCards": {
+      "First": {
+        "Rank": 9,
+        "Suit": 0,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 9,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 9,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 2,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 7,
+      "Cards": [
+        {
+          "Rank": 7,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 9,
+          "Suit": 0,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 9,
+          "Suit": 1,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 9,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 9,
+          "Suit": 3,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Full House",
+    "PlayerCards": {
+      "First": {
+        "Rank": 10,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 10,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 11,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 3,
+        "Suit": 0,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 6,
+      "Cards": [
+        {
+          "Rank": 10,
+          "Suit": 3,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 10,
+          "Suit": 2,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 5,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 5,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 5,
+          "Suit": 3,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Flush",
+    "PlayerCards": {
+      "First": {
+        "Rank": 2,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 9,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 11,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 10,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 3,
+        "Suit": 2,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 5,
+      "Cards": [
+        {
+          "Rank": 2,
+          "Suit": 1,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 5,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 7,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 9,
+          "Suit": 1,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 11,
+          "Suit": 1,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Straight",
+    "PlayerCards": {
+      "First": {
+        "Rank": 6,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 8,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 7,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 11,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 0,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 4,
+      "Cards": [
+        {
+          "Rank": 5,
+          "Suit": 0,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 6,
+          "Suit": 3,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 7,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 8,
+          "Suit": 2,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 9,
+          "Suit": 3,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Three of a Kind",
+    "PlayerCards": {
+      "First": {
+        "Rank": 4,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 4,
+        "Suit": 3,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 4,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 6,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 10,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 0,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 3,
+      "Cards": [
+        {
+          "Rank": 9,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 10,
+          "Suit": 3,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 4,
+          "Suit": 2,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 4,
+          "Suit": 3,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 4,
+          "Suit": 1,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Two Pair",
+    "PlayerCards": {
+      "First": {
+        "Rank": 7,
+        "Suit": 0,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 10,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 7,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 10,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 8,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 0,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 2,
+      "Cards": [
+        {
+          "Rank": 8,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 7,
+          "Suit": 0,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 7,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 10,
+          "Suit": 2,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 10,
+          "Suit": 1,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  },
+  {
+    "Description": "Pair",
+    "PlayerCards": {
+      "First": {
+        "Rank": 6,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 3,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 6,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 1,
+      "Cards": [
+        {
+          "Rank": 5,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 7,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 9,
+          "Suit": 0,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 6,
+          "Suit": 1,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 6,
+          "Suit": 3,
+          "IsPlayerCard": false
+        }
+      ]
+    }
+  },
+  {
+    "Description": "High Card",
+    "PlayerCards": {
+      "First": {
+        "Rank": 11,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 8,
+        "Suit": 3,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 10,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 3,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    ],
+    "ExpectedHand": {
+      "Type": 0,
+      "Cards": [
+        {
+          "Rank": 5,
+          "Suit": 2,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 7,
+          "Suit": 0,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 8,
+          "Suit": 3,
+          "IsPlayerCard": true
+        },
+        {
+          "Rank": 10,
+          "Suit": 1,
+          "IsPlayerCard": false
+        },
+        {
+          "Rank": 11,
+          "Suit": 2,
+          "IsPlayerCard": true
+        }
+      ]
+    }
+  }
+]

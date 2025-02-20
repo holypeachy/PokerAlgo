@@ -1,10 +1,14 @@
+using System.Diagnostics;
+
 namespace PokerAlgo
 {
     public static class ChanceCalculator
     {
-        // Value from 0 to 1.0
+        // Returns Value from 0 to 1.0
         public static double GetWinningChance(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfPlayers, int numberOfSimulatedGames)
         {
+            Debug.Assert(communityCards.Count >= 3, "⛔ communityCards.Count is less than 3");
+
             Deck testDeck = new();
             int numberOfGames = numberOfSimulatedGames;
             int timesWon = 0;
@@ -42,6 +46,13 @@ namespace PokerAlgo
             }
 
             return timesWon / (double)numberOfGames;
+        }
+
+        // Returns Value from 0 to 1.0
+        public static double GetWinningChance(Pair<Card, Card> playerHoleCards, int numOfPlayers, int numberOfSimulatedGames)
+        {
+            // TODO: Add a lookup table for Pre-Flop chances of winning.
+            throw new NotImplementedException();
         }
     }
 }

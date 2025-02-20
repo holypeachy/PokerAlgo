@@ -7,12 +7,25 @@ namespace Project
 	{
 		private static int _debuVerbosity = Algo.DebugVerbosity;
 		private static int _numOfCommunityCards = 5;
+		private static int _numOfSims = 500;
+		private static bool _isTesting = false;
+		private static bool _isSim = false;
 
 		static void Main(string[] args)
 		{
 			int executions = 1;
 			int inputVerbosity;
+			int inputSims;
+			bool inputTestDebug = false;
+
 			if(args.Length < 1){ Algo.DebugVerbosity = 0; }
+			else if(args.Length == 2 && args[0] == "sim" && int.TryParse(args[1], out inputSims)){
+				_isSim = true;
+				_numOfSims = inputSims;
+			}
+			else if(args.Length == 2 && args[0] == "test" && bool.TryParse(args[1], out inputTestDebug)){
+				_isTesting = true;
+			}
 			else if(args.Length == 2 && int.TryParse(args[1], out executions))
 			{
 				int.TryParse(args[0], out inputVerbosity);
@@ -28,9 +41,24 @@ namespace Project
 					Algo.DebugVerbosity = inputVerbosity;
 				}
 			}
+			else if(args.Length == 1 && args[0] == "test"){
+				_isTesting = true;
+			}
+			else if(args.Length == 1 && args[0] == "sim"){
+				_isSim = true;
+			}
 			else
 			{
-				throw new Exception("Please Enter Valid Arguments {Number of Executions} {Verbosity Level}");
+				Console.WriteLine("Please Enter Valid Arguments:");
+				Console.WriteLine("Examples:");
+				Console.WriteLine("\tdotnet run");
+				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2}");
+				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2} {executions : int}");
+				Console.WriteLine("\tdotnet run sim");
+				Console.WriteLine("\tdotnet run sim {number of simulations : int}");
+				Console.WriteLine("\tdotnet run test");
+				Console.WriteLine("\tdotnet run test {enable debug : bool}");
+				Environment.Exit(1);
 			}
 
 			Stopwatch watch;
@@ -76,54 +104,63 @@ namespace Project
 				}
 
 
-				// ! Main Code Execution
-				List<Player> winners = Algo.GetWinners(players, communityCards);
-
-				if (_debuVerbosity > 0)
+				// ! Unit Testing
+				if(_isTesting)
 				{
-					Console.BackgroundColor = ConsoleColor.Blue;
-					Console.ForegroundColor = ConsoleColor.Black;
-					Console.Write("🥇 Program.Main() Winners:");
-					Console.ResetColor();
-					Console.WriteLine();
-					foreach (Player p in winners)
+					new Testing(inputTestDebug);
+				}
+
+				// ! Monte Carlo Simulation Test
+				else if(_isSim)
+				{
+					Algo.DebugVerbosity = 0;
+					HandEvaluator handEvaluator = new();
+					Console.WriteLine($"Number of Simulations: {_numOfSims}");
+					Console.WriteLine("-----------------------------");
+					foreach (Player p in players)
 					{
-						Console.BackgroundColor = ConsoleColor.Yellow;
-						Console.ForegroundColor = ConsoleColor.Black;
-						Console.Write($"\t {p.Name} ");
-						Console.BackgroundColor = ConsoleColor.Green;
-						Console.Write($" {Helpers.GetPrettyHandName(p.WinningHand)} ");
-						Console.BackgroundColor = ConsoleColor.Gray;
-						Console.Write(" " + string.Join(' ', p.WinningHand.Cards) + " ");
-						Console.ResetColor();
-						Console.WriteLine();
-						Console.WriteLine();
+						Player targetPlayer = p;
+						List<Card> cards = new()
+						{
+							targetPlayer.HoleCards.First,
+							targetPlayer.HoleCards.Second,
+						};
+						cards.AddRange(communityCards);
+						targetPlayer.WinningHand = handEvaluator.GetWinningHand(cards);
+						Console.WriteLine($"Player \'{p.Name}\'");
+						Console.WriteLine(targetPlayer.WinningHand);
+						string percentage = String.Format("{0:0.00}", ChanceCalculator.GetWinningChance(targetPlayer.HoleCards, communityCards, players.Count - 1, _numOfSims) * 100.0d);
+						Console.WriteLine("\tChances of winning: " + percentage + "%\n");
 					}
 				}
 
-				// ! Unit Testing
-				// Testing testing = new();
+				// ! Main Code Execution
+				else
+				{
+					List<Player> winners = Algo.GetWinners(players, communityCards);
 
-				// ! Monte Carlo Simulation Test
-				// Algo.DebugVerbosity = 0;
-				// HandEvaluator handEvaluator = new();
-				// Console.WriteLine($"Number of Simulations: {500}");
-				// Console.WriteLine("-----------------------------");
-				// foreach (Player p in players)
-				// {
-				// 	Player targetPlayer = p;
-				// 	List<Card> cards = new()
-				// 	{
-				// 		targetPlayer.HoleCards.First,
-				// 		targetPlayer.HoleCards.Second,
-				// 	};
-				// 	cards.AddRange(communityCards);
-				// 	targetPlayer.WinningHand = handEvaluator.GetWinningHand(cards);
-				// 	Console.WriteLine($"Player \'{p.Name}\'");
-				// 	Console.WriteLine(targetPlayer.WinningHand);
-				// 	string percentage = String.Format("{0:0}", ChanceCalculator.GetWinningChance(targetPlayer.HoleCards, communityCards, players.Count - 1, 500) * 100.0d);
-				// 	Console.WriteLine("\tChances of winning: " + percentage + "%\n");
-				// }
+					if (_debuVerbosity > 0)
+					{
+						Console.BackgroundColor = ConsoleColor.Blue;
+						Console.ForegroundColor = ConsoleColor.Black;
+						Console.Write("🥇 Program.Main() Winners:");
+						Console.ResetColor();
+						Console.WriteLine();
+						foreach (Player p in winners)
+						{
+							Console.BackgroundColor = ConsoleColor.Yellow;
+							Console.ForegroundColor = ConsoleColor.Black;
+							Console.Write($"\t {p.Name} ");
+							Console.BackgroundColor = ConsoleColor.Green;
+							Console.Write($" {Helpers.GetPrettyHandName(p.WinningHand)} ");
+							Console.BackgroundColor = ConsoleColor.Gray;
+							Console.Write(" " + string.Join(' ', p.WinningHand.Cards) + " ");
+							Console.ResetColor();
+							Console.WriteLine();
+							Console.WriteLine();
+						}
+					}
+				}
 
 				// ! END
 			}
@@ -145,24 +182,25 @@ namespace Project
 ! 
 
 TODO
-TODO: Start testing.
+TODO: Test Algo class.
+TODO: Add a lookup table for Pre-Flop chances of winning.
 
 ? Future Ideas 
+? Look into when to use Debug.Assert vs when to throw an Exception.
 ? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
-? Use method extensions for better code readability
+? Use method extensions for better code readability.
 
 ? Use Debug.Assert() in spots where I've been throwing errors to assert that something should always be true. ??
 ? Use SortedSet for storing cards when order matters to avoid additional sorting operations. ??
 ? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching. if (threeKinds.Count >= 3 && pairs.Count >= 2) { ... }
-? Null-coalescing operator "??".
 
 * Notes
 * "WinningHand nullable? It has been giving me a headache with the warnings." Turns out, it's a good programming pattern.
-* 
+* Null-coalescing operator "??".
 
 * Changes
-* Changed file structure based on the files to package.
-* Added method GetPrettyHandName().
+* Added sim and test input flags, with sim you can specify number of simulations per player.
+* Removed older tests and added HandEvalTests.json with Unit Tests for the HandEvaluator class.
 * 
 */

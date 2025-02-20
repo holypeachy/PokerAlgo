@@ -20,10 +20,8 @@ namespace PokerAlgo
             _tempBestHand = null;
             List<Card> cardsCopy = cards.ToList();
 
-            if (cards.Count < 5)
-            {
-                throw new Exception("⛔ HandEvaluator.GetWinningHand() - passed cards argument < 5, the list must have at least 5 cards");
-            }
+            // if (cards.Count < 5) throw new Exception("⛔ HandEvaluator.GetWinningHand() - passed cards argument < 5, the list must have at least 5 cards");
+            Debug.Assert(cards.Count >= 5, "⛔ HandEvaluator.GetWinningHand() - passed cards argument < 5, the list must have at least 5 cards");
 
             SortCardsByValue(cardsCopy);
 
@@ -31,7 +29,7 @@ namespace PokerAlgo
 
             EvaluateHand(cardsCopy);
 
-            if (_tempBestHand is null) throw new Exception("HandEvaluator.GetWinningHand() - _tempBestHand should never be null before returning.");
+            // if (_tempBestHand is null) throw new Exception("HandEvaluator.GetWinningHand() - _tempBestHand should never be null before returning.");
             Debug.Assert(_tempBestHand is not null, "HandEvaluator.GetWinningHand() - _tempBestHand should never be null before returning.");
 
             return _tempBestHand;
