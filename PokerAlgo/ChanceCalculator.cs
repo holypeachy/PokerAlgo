@@ -49,10 +49,60 @@ namespace PokerAlgo
         }
 
         // Returns Value from 0 to 1.0
-        public static double GetWinningChance(Pair<Card, Card> playerHoleCards, int numOfPlayers, int numberOfSimulatedGames)
+        public static double GetWinningChancePreFlop(Pair<Card, Card> playerHoleCards)
         {
-            // TODO: Add a lookup table for Pre-Flop chances of winning.
-            throw new NotImplementedException();
+            // ! Bill Chen Formula
+            double totalPoints = 0;
+            Card higherCard;
+            Card lowerCard;
+            if (playerHoleCards.First.Rank > playerHoleCards.Second.Rank)
+            {
+                higherCard = playerHoleCards.First;
+                lowerCard = playerHoleCards.Second;
+            }
+            else
+            {
+                higherCard = playerHoleCards.Second;
+                lowerCard = playerHoleCards.First;
+            }
+
+            switch (higherCard.Rank)
+            {
+                case 14:
+                    totalPoints += 10;
+                    break;
+                case 13:
+                    totalPoints += 8;
+                    break;
+                case 12:
+                    totalPoints += 7;
+                    break;
+                case 11:
+                    totalPoints += 6;
+                    break;
+                default:
+                    totalPoints+= (double)higherCard.Rank / 2 ;
+                    break;
+            }
+
+            if(higherCard.Rank == lowerCard.Rank)
+            {
+                totalPoints *= 2;
+                if(totalPoints < 5) totalPoints = 5;
+            }
+            if(higherCard.Suit == lowerCard.Suit) totalPoints += 2;
+            int gap = Math.Abs(higherCard.Rank - lowerCard.Rank);
+            
+            if(gap >= 4) totalPoints -= 5;
+            else if(gap == 3) totalPoints -= 4;
+            else if(gap == 1 || gap == 2) totalPoints -= gap;
+
+            if((gap == 0 || gap == 1) && higherCard.Rank < 12 && lowerCard.Rank < 12) totalPoints += 1;
+
+            totalPoints = Math.Round(totalPoints, MidpointRounding.AwayFromZero);
+            totalPoints += 5.4d;
+
+            return totalPoints / 25.4d * 0.85d;
         }
     }
 }

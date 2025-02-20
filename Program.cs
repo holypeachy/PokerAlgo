@@ -5,11 +5,12 @@ namespace Project
 {
 	public class Program
 	{
-		private static int _debuVerbosity = Algo.DebugVerbosity;
+		private static int _debugVerbosity = 0;
 		private static int _numOfCommunityCards = 5;
 		private static int _numOfSims = 500;
 		private static bool _isTesting = false;
 		private static bool _isSim = false;
+		private static bool _isPreflop = false;
 
 		static void Main(string[] args)
 		{
@@ -18,8 +19,7 @@ namespace Project
 			int inputSims;
 			bool inputTestDebug = false;
 
-			if(args.Length < 1){ Algo.DebugVerbosity = 0; }
-			else if(args.Length == 2 && args[0] == "sim" && int.TryParse(args[1], out inputSims)){
+			if(args.Length == 2 && args[0] == "sim" && int.TryParse(args[1], out inputSims)){
 				_isSim = true;
 				_numOfSims = inputSims;
 			}
@@ -47,19 +47,28 @@ namespace Project
 			else if(args.Length == 1 && args[0] == "sim"){
 				_isSim = true;
 			}
+			else if(args.Length == 1 && args[0] == "preflop"){
+				_isPreflop = true;
+			}
 			else
 			{
 				Console.WriteLine("Please Enter Valid Arguments:");
 				Console.WriteLine("Examples:");
-				Console.WriteLine("\tdotnet run");
-				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2}");
-				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2} {executions : int}");
-				Console.WriteLine("\tdotnet run sim");
-				Console.WriteLine("\tdotnet run sim {number of simulations : int}");
-				Console.WriteLine("\tdotnet run test");
+				Console.WriteLine("\tMain code execution.");
+				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2}  |  Runs once.");
+				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2} {executions : int}\n");
+				Console.WriteLine("\tRun Monte Carlo simulations on all players.");
+				Console.WriteLine("\tdotnet run sim  |  Default is 500 simulations.");
+				Console.WriteLine("\tdotnet run sim {number of simulations : int}\n");
+				Console.WriteLine("\tRuns all tests.");
+				Console.WriteLine("\tdotnet run test  |  No testing debug");
 				Console.WriteLine("\tdotnet run test {enable debug : bool}");
+				Console.WriteLine("\tPre-Flop chances.");
+				Console.WriteLine("\tdotnet run preflop");
 				Environment.Exit(1);
 			}
+
+			_debugVerbosity = Algo.DebugVerbosity;
 
 			Stopwatch watch;
 			watch = Stopwatch.StartNew();
@@ -78,7 +87,7 @@ namespace Project
 					new Player("Jim", deck.NextCard(), deck.NextCard()),
 				};
 
-				if (_debuVerbosity > 0)
+				if (_debugVerbosity > 0)
 				{
 					Console.WriteLine("--- 🚀 Game Starts");
 					Console.WriteLine("--- 😎 Players:");
@@ -93,7 +102,7 @@ namespace Project
 					communityCards.Add(deck.NextCard());
 				}
 
-				if (_debuVerbosity > 0)
+				if (_debugVerbosity > 0)
 				{
 					Console.Write("\n--- 🃏 Community Cards:\n\t\t");
 					foreach (Card c in communityCards)
@@ -119,19 +128,34 @@ namespace Project
 					Console.WriteLine("-----------------------------");
 					foreach (Player p in players)
 					{
-						Player targetPlayer = p;
 						List<Card> cards = new()
 						{
-							targetPlayer.HoleCards.First,
-							targetPlayer.HoleCards.Second,
+							p.HoleCards.First,
+							p.HoleCards.Second,
 						};
 						cards.AddRange(communityCards);
-						targetPlayer.WinningHand = handEvaluator.GetWinningHand(cards);
-						Console.WriteLine($"Player \'{p.Name}\'");
-						Console.WriteLine(targetPlayer.WinningHand);
-						string percentage = String.Format("{0:0.00}", ChanceCalculator.GetWinningChance(targetPlayer.HoleCards, communityCards, players.Count - 1, _numOfSims) * 100.0d);
+						p.WinningHand = handEvaluator.GetWinningHand(cards);
+                        Console.WriteLine($"Player \'{p.Name}\'");
+						Console.WriteLine(p.WinningHand);
+						string percentage = String.Format("{0:0.00}", ChanceCalculator.GetWinningChance(p.HoleCards, communityCards, players.Count - 1, _numOfSims) * 100.0d);
 						Console.WriteLine("\tChances of winning: " + percentage + "%\n");
 					}
+				}
+
+				// ! Pre-Flop Chances
+				else if(_isPreflop)
+				{
+					Algo.DebugVerbosity = 0;
+					Console.WriteLine($"Pre-Flop ");
+					Console.WriteLine("-----------------------------");
+					foreach (Player p in players)
+					{
+						Console.WriteLine(p);
+						Console.WriteLine("\tChances of winning: " + String.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100.0d) + "%");
+					}
+					Console.WriteLine("AA Chances of winning: " + String.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100.0d) + "%");
+					Console.WriteLine("KAs Chances of winning: " + String.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100.0d) + "%");
+					Console.WriteLine("27o Chances of winning: " + String.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100.0d) + "%");
 				}
 
 				// ! Main Code Execution
@@ -139,7 +163,7 @@ namespace Project
 				{
 					List<Player> winners = Algo.GetWinners(players, communityCards);
 
-					if (_debuVerbosity > 0)
+					if (_debugVerbosity > 0)
 					{
 						Console.BackgroundColor = ConsoleColor.Blue;
 						Console.ForegroundColor = ConsoleColor.Black;
@@ -183,7 +207,6 @@ namespace Project
 
 TODO
 TODO: Test Algo class.
-TODO: Add a lookup table for Pre-Flop chances of winning.
 
 ? Future Ideas 
 ? Look into when to use Debug.Assert vs when to throw an Exception.
@@ -200,7 +223,7 @@ TODO: Add a lookup table for Pre-Flop chances of winning.
 * Null-coalescing operator "??".
 
 * Changes
-* Added sim and test input flags, with sim you can specify number of simulations per player.
-* Removed older tests and added HandEvalTests.json with Unit Tests for the HandEvaluator class.
+* Running the CLI program without any arguments does not execute the program, it shows help instead.
+* Added GetWinningChancePreFlop function to ChanceCalculator class, this uses Bill Chen's formula and I adjusted with precomputed values for 27o and AA to get a percentage.
 * 
 */
