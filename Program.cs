@@ -137,7 +137,7 @@ namespace Project
 						p.WinningHand = handEvaluator.GetWinningHand(cards);
                         Console.WriteLine($"Player \'{p.Name}\'");
 						Console.WriteLine(p.WinningHand);
-						string percentage = String.Format("{0:0.00}", ChanceCalculator.GetWinningChance(p.HoleCards, communityCards, players.Count - 1, _numOfSims) * 100.0d);
+						string percentage = string.Format("{0:0.00}", ChanceCalculator.GetWinningChance(p.HoleCards, communityCards, players.Count - 1, _numOfSims) * 100.0d);
 						Console.WriteLine("\tChances of winning: " + percentage + "%\n");
 					}
 				}
@@ -151,11 +151,16 @@ namespace Project
 					foreach (Player p in players)
 					{
 						Console.WriteLine(p);
-						Console.WriteLine("\tChances of winning: " + String.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100.0d) + "%");
+						Console.WriteLine("\tBill Chen: " + ChanceCalculator.GetPreFlopChen(p.HoleCards));
+						Console.WriteLine("\tChances of winning: " + string.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100.0d) + "%");
 					}
-					Console.WriteLine("AA Chances of winning: " + String.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100.0d) + "%");
-					Console.WriteLine("KAs Chances of winning: " + String.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100.0d) + "%");
-					Console.WriteLine("27o Chances of winning: " + String.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100.0d) + "%");
+					Console.WriteLine();
+					Console.WriteLine("AA Chances of winning: " + string.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100.0d) + "%");
+					Console.WriteLine("\tBill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
+					Console.WriteLine("KAs Chances of winning: " + string.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100.0d) + "%");
+					Console.WriteLine("\tBill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))));
+					Console.WriteLine("27o Chances of winning: " + string.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100.0d) + "%");
+					Console.WriteLine("\tBill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))));
 				}
 
 				// ! Main Code Execution
@@ -223,7 +228,7 @@ TODO: Test Algo class.
 * Null-coalescing operator "??".
 
 * Changes
-* Running the CLI program without any arguments does not execute the program, it shows help instead.
-* Added GetWinningChancePreFlop function to ChanceCalculator class, this uses Bill Chen's formula and I adjusted with precomputed values for 27o and AA to get a percentage.
+* Abstracted out my implementation of Bill Chen's formula from GetWinningChancePreFlop in the GetPreFlopChen function which returns a value from -1 to 20.
+* Fixed some bugs in my implementation of the Bill Chen formula.
 * 
 */

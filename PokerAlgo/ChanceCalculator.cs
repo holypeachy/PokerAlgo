@@ -4,6 +4,8 @@ namespace PokerAlgo
 {
     public static class ChanceCalculator
     {
+        private static readonly double _magicNum = 4.25d;
+
         // Returns Value from 0 to 1.0
         public static double GetWinningChance(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfPlayers, int numberOfSimulatedGames)
         {
@@ -52,9 +54,21 @@ namespace PokerAlgo
         public static double GetWinningChancePreFlop(Pair<Card, Card> playerHoleCards)
         {
             // ! Bill Chen Formula
-            double totalPoints = 0;
+            double billChenScore = GetPreFlopChen(playerHoleCards);
+
+            // ! This is kinda nasty but 
+            billChenScore += _magicNum;
+
+            return billChenScore / (20d + _magicNum) * 0.85d;
+        }
+    
+        // Returns -1 to 20
+        public static double GetPreFlopChen(Pair<Card, Card> playerHoleCards)
+        {
+            double points = 0;
             Card higherCard;
             Card lowerCard;
+
             if (playerHoleCards.First.Rank > playerHoleCards.Second.Rank)
             {
                 higherCard = playerHoleCards.First;
@@ -66,43 +80,46 @@ namespace PokerAlgo
                 lowerCard = playerHoleCards.First;
             }
 
-            switch (higherCard.Rank)
+            points += higherCard.Rank switch
             {
-                case 14:
-                    totalPoints += 10;
-                    break;
-                case 13:
-                    totalPoints += 8;
-                    break;
-                case 12:
-                    totalPoints += 7;
-                    break;
-                case 11:
-                    totalPoints += 6;
-                    break;
-                default:
-                    totalPoints+= (double)higherCard.Rank / 2 ;
-                    break;
-            }
-
-            if(higherCard.Rank == lowerCard.Rank)
-            {
-                totalPoints *= 2;
-                if(totalPoints < 5) totalPoints = 5;
-            }
-            if(higherCard.Suit == lowerCard.Suit) totalPoints += 2;
-            int gap = Math.Abs(higherCard.Rank - lowerCard.Rank);
+                14 => 10,
+                13 => 8,
+                12 => 7,
+                11 => 6,
+                _ => (double)higherCard.Rank / 2,
+            };
             
-            if(gap >= 4) totalPoints -= 5;
-            else if(gap == 3) totalPoints -= 4;
-            else if(gap == 1 || gap == 2) totalPoints -= gap;
+            if (higherCard.Rank == lowerCard.Rank)
+            {
+                points *= 2;
+                if(points < 5) points = 5;
+            }
 
-            if((gap == 0 || gap == 1) && higherCard.Rank < 12 && lowerCard.Rank < 12) totalPoints += 1;
+            if(higherCard.Suit == lowerCard.Suit)
+            {
+                points += 2;
+            }
 
-            totalPoints = Math.Round(totalPoints, MidpointRounding.AwayFromZero);
-            totalPoints += 5.4d;
+            int gap = higherCard.Rank == lowerCard.Rank ? 0 : Math.Abs(higherCard.Rank - lowerCard.Rank - 1);
+            
+            if (gap >= 4) points -= 5;
+            else if(gap == 3) points -= 4;
+            else if(gap == 1 || gap == 2)
+            {
+                points -= gap;
+            }
 
-            return totalPoints / 25.4d * 0.85d;
+            if ( (gap == 0 || gap == 1) && higherCard.Rank != lowerCard.Rank && higherCard.Rank < 12 && lowerCard.Rank < 12)
+            {
+                points += 1;
+            }
+            
+            if(points == -1.5d) points = -1;
+            else if(points == -0.5d) points = 0;
+            else points = Math.Round(points, MidpointRounding.AwayFromZero);
+
+            Debug.Assert(points >= -1, "totalPoints should always be greater than -1");
+            return points;
         }
     }
 }
