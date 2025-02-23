@@ -45,13 +45,13 @@ namespace PokerAlgo
 			}
 		}
 
-		public void PrintDeck()
-		{
-			foreach (Card card in Cards)
-			{
-				Console.WriteLine(card);
-			}
-		}
+		// public void PrintDeck()
+		// {
+		// 	foreach (Card card in Cards)
+		// 	{
+		// 		Console.WriteLine(card);
+		// 	}
+		// }
 
 		public void ResetDeck()
 		{

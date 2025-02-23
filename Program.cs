@@ -207,7 +207,7 @@ namespace Project
 					{
 						Console.BackgroundColor = ConsoleColor.Blue;
 						Console.ForegroundColor = ConsoleColor.Black;
-						Console.Write("🥇 Program.Main() Winners:");
+						Console.Write("🥇 Program.Main() Winner(s):");
 						Console.ResetColor();
 						Console.WriteLine();
 						foreach (Player p in winners)
@@ -260,7 +260,8 @@ TODO: Implement custom Exceptions.
 * Null-coalescing operator "??".
 
 * Changes
-* Improved error handling.
-* Debug logging for PokerAlgo is now exclusively handled by the Helpers class.
+* Removed unecessary Console logs in Algo class.
+* Commented out PrintDeck method.
+* Added Conditional Attribute to DebugLog functions in the Helpers class to ensure Debug methods are not compiled on release.
 * 
 */

@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace PokerAlgo
 {
     public static class ChanceCalculator

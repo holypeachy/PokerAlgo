@@ -211,9 +211,7 @@ namespace PokerAlgo
 
             if (left.Count != right.Count)
             {
-                Console.WriteLine(string.Join(' ', left));
-                Console.WriteLine(string.Join(' ', right));
-                throw new Exception("⛔ Algo.CompareKickers(): left.Count != right.Count.");
+                throw new Exception("⛔ Algo.CompareKickers(): left.Count != right.Count." + "\nLeft: " + string.Join(' ', left) + "\nRight: " + string.Join(' ', right));
             }
 
             for (int i = left.Count - 1; i >= 0; i--)

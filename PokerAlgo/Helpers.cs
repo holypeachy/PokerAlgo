@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace PokerAlgo
 {
     public static class Helpers
@@ -64,6 +66,7 @@ namespace PokerAlgo
         }
 
 
+        [Conditional("DEBUG")]
         public static void DebugLog(string log = "", int verbosity = 1)
         {
             if (DebugVerbosity > verbosity - 1)
@@ -72,6 +75,7 @@ namespace PokerAlgo
             }
         }
 
+        [Conditional("DEBUG")]
         public static void DebugLogCards(string description, List<Card> cards)
         {
             if (DebugVerbosity > 1)
@@ -82,6 +86,7 @@ namespace PokerAlgo
             }
         }
 
+        [Conditional("DEBUG")]
         public static void DebugLogPlayers(string description, List<Player> players)
         {
             if (DebugVerbosity > 0)
@@ -103,6 +108,7 @@ namespace PokerAlgo
             }
         }
 
+        [Conditional("DEBUG")]
         public static void DebugLogWinners(List<Player> winners)
         {
             if (DebugVerbosity > 0)
@@ -127,6 +133,7 @@ namespace PokerAlgo
             }
         }
 
+        [Conditional("DEBUG")]
         public static void DebugLogDeterminingHand(string playerName)
         {
                 if (DebugVerbosity > 0)
@@ -138,6 +145,7 @@ namespace PokerAlgo
                 }
         }
 
+        [Conditional("DEBUG")]
         public static void DebugLogWinningHand(HandType handType, List<Card> cards)
         {
             if (DebugVerbosity > 0)
