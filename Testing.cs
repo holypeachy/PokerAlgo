@@ -17,6 +17,7 @@ namespace Project
 		{
 			Console.ForegroundColor = ConsoleColor.White;
 			Console.WriteLine($"🧪 --Hand Evaluator Tests---");
+			Console.WriteLine("-------------------------------------------");
 			Console.ResetColor();
 
 			string json = File.ReadAllText(pathToTest);
@@ -35,7 +36,6 @@ namespace Project
 				if (_debugEnable)
 				{
 					Console.WriteLine(test);
-					Console.WriteLine();
 				}
 
 				Player player = new("TestPlayer", test.PlayerCards.First, test.PlayerCards.Second);
@@ -74,7 +74,9 @@ namespace Project
 					Console.WriteLine($"\tActual: {actualHand.Type} " + $"Cards: {string.Join(' ', actualHand.Cards)}");
 					Console.ResetColor();
 				}
+				Console.WriteLine("-------------------------------------------");
 			}
+			Console.WriteLine($"🧪 End of Hand Evaluator Tests\n");
 		}
 
 

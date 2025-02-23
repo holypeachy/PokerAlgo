@@ -52,19 +52,19 @@ namespace Project
 			}
 			else
 			{
-				Console.WriteLine("Please Enter Valid Arguments:");
+				Console.WriteLine("⚠️ PokerAlgo: Please Enter Valid Arguments!\n");
 				Console.WriteLine("Examples:");
-				Console.WriteLine("\tMain code execution.");
+				Console.WriteLine(" Main code execution.");
 				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2}  |  Runs once.");
 				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2} {executions : int}\n");
-				Console.WriteLine("\tRun Monte Carlo simulations on all players.");
+				Console.WriteLine(" Run Monte Carlo simulations on all players.");
 				Console.WriteLine("\tdotnet run sim  |  Default is 500 simulations.");
 				Console.WriteLine("\tdotnet run sim {number of simulations : int}\n");
-				Console.WriteLine("\tRuns all tests.");
+				Console.WriteLine(" Pre-Flop chances.");
+				Console.WriteLine("\tdotnet run preflop\n");
+				Console.WriteLine(" Runs all tests.");
 				Console.WriteLine("\tdotnet run test  |  No testing debug");
-				Console.WriteLine("\tdotnet run test {enable debug : bool}\n");
-				Console.WriteLine("\tPre-Flop chances.");
-				Console.WriteLine("\tdotnet run preflop");
+				Console.WriteLine("\tdotnet run test {enable debug : bool}");
 				Environment.Exit(1);
 			}
 
@@ -87,7 +87,7 @@ namespace Project
 					new Player("Jim", deck.NextCard(), deck.NextCard()),
 				};
 
-				if (_debugVerbosity > 0)
+				if (_debugVerbosity > 0 || _isSim)
 				{
 					Console.WriteLine("--- 🚀 Game Starts");
 					Console.WriteLine("--- 😎 Players:");
@@ -103,7 +103,7 @@ namespace Project
 					communityCards.Add(deck.NextCard());
 				}
 
-				if (_debugVerbosity > 0)
+				if (_debugVerbosity > 0 || _isSim)
 				{
 					Console.Write("\n--- 🃏 Community Cards:\n\t\t");
 					foreach (Card c in communityCards)
@@ -125,6 +125,7 @@ namespace Project
 				{
 					Algo.DebugVerbosity = 0;
 					HandEvaluator handEvaluator = new();
+					Console.WriteLine();
 					Console.WriteLine($"Number of Simulations: {_numOfSims}");
 					Console.WriteLine("-----------------------------");
 					foreach (Player p in players)
@@ -230,7 +231,6 @@ TODO: Test Algo class.
 * Null-coalescing operator "??".
 
 * Changes
-* Replaced the magic number with a proper sigmoid equation to propely estimate real world probabilites for each pre-flop hand.
-* Main code execution now displays pre-flop probabilities for each player.
+* Improved console logs.
 * 
 */
