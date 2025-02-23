@@ -260,8 +260,7 @@ TODO: Implement custom Exceptions.
 * Null-coalescing operator "??".
 
 * Changes
-* Removed unecessary Console logs in Algo class.
-* Commented out PrintDeck method.
-* Added Conditional Attribute to DebugLog functions in the Helpers class to ensure Debug methods are not compiled on release.
+* Deck class rewritten, cards are no longer removed from the list, a counter is used instead.
+* ShuffleDeck method is now private.
 * 
 */
