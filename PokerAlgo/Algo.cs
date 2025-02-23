@@ -34,13 +34,7 @@ namespace PokerAlgo
 
             foreach (Player player in players)
             {
-                if (DebugVerbosity > 0)
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine();
-                    Console.WriteLine("💭 Determining Hand for \'" + player.Name + "\'");
-                    Console.ResetColor();
-                }
+                Helpers.DebugLogDeterminingHand(player.Name);
 
                 combinedCards = new()
                 {
@@ -58,9 +52,8 @@ namespace PokerAlgo
 
             List<Player> winners = DetermineWinners(players);
 
-            // Debug.Assert(winners.Count >= 1, "Algo.GetWinners() - winners.Count < 1.");
+            // Helpers.DebugLogWinners(winners);
 
-            // return winners;
             return winners;
         }
 
@@ -80,7 +73,11 @@ namespace PokerAlgo
 
             Helpers.DebugLogPlayers("Algo.DetermineWinners() - Players after sorting by WinningHand.Type", players);
 
-            return BreakTies(players);            
+            List<Player> winners =  BreakTies(players);
+
+            if (winners.Count < 1) throw new Exception("Algo.DetermineWinners() - winners.Count < 1. This should never happen.");
+
+            return winners;
         }
 
 
@@ -120,10 +117,9 @@ namespace PokerAlgo
                         tempPlayers.Remove(winners.ElementAt(playerIndex));
                         hasChangesBeenMade = true;
                     }
-                    else if (result == 0){
-
-                    }
-                    else{
+                    else if (result == 0){}
+                    else
+                    {
                         throw new Exception("⛔ Algo.BreakTies() - ComparePlayerHands() returned something other than -1, 0, or 1.");
                     }
                 }
@@ -203,10 +199,8 @@ namespace PokerAlgo
                     return CompareKickers(leftCards, rightCards);
 
                 default:
-                    throw new Exception("⛔ Algo.ComparePlayerHands(): Switch defaulted.");
+                    throw new Exception("⛔ Algo.ComparePlayerHands(): Switch defaulted. Was HandType enum changed?");
             }
-
-            throw new NotImplementedException();
         }
 
         // ! -1 left wins, 0 tie, 1 right wins

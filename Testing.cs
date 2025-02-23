@@ -8,7 +8,8 @@ namespace Project
 		private static bool _debugEnable = false;
 
 
-		public Testing(bool debugEnable = false) {
+		public Testing(bool debugEnable = false)
+		{
 			_debugEnable = debugEnable;
 			TestHandEvaluator();
 			TestAlgo();
@@ -28,7 +29,7 @@ namespace Project
 
 			if (testObjects is null)
 			{
-				throw new Exception($"testObjects array is null. is {pathToTest} is empty?");
+				throw new Exception($"testObjects array is null. is {pathToTest} empty?");
 			}
 
 			int testCount = 1;
@@ -58,8 +59,8 @@ namespace Project
 				WinningHand? expectedHand = test.ExpectedHand;
 				WinningHand? actualHand = handEvaluator.GetWinningHand(cards);
 
-				Debug.Assert(expectedHand is not null, "expectedHand is not null");
-				Debug.Assert(actualHand is not null, "actualHand is not null");
+				Debug.Assert(expectedHand is not null, "expectedHand is null");
+				Debug.Assert(actualHand is not null, "actualHand is null");
 
 				if (expectedHand.Type != actualHand.Type) passed = false;
 				else if (!IsListOfCardsEqual(expectedHand.Cards, actualHand.Cards)) passed = false;
@@ -101,7 +102,7 @@ namespace Project
 
 			if (testObjects is null)
 			{
-				throw new Exception($"testObjects array is null. is {pathToTest} is empty?");
+				throw new Exception($"testObjects array is null. is {pathToTest} empty?");
 			}
 
 			int testCount = 1;

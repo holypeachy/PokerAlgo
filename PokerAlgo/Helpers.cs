@@ -23,6 +23,47 @@ namespace PokerAlgo
         };
 
 
+        public static string GetPrettyHandName(WinningHand? hand)
+        {
+            if (hand is null) throw new Exception("Helpers.GetPrettyName() - \'hand\' argument must not be null.");
+
+            switch (hand.Type) {
+                case HandType.RoyalFlush:
+                    return "Royal Flush";
+
+                case HandType.StraightFlush:
+                    return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}-High Straight Flush";
+
+                case HandType.FourKind:
+                    return $"Four of a Kind, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s";
+
+                case HandType.FullHouse:
+                    return $"Full House, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s over {_cardPrintLookUp[hand.Cards.ElementAt(0).Rank]}s";
+
+                case HandType.Flush:
+                    return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}-High Flush";
+
+                case HandType.Straight:
+                    return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}-High Straight";
+
+                case HandType.ThreeKind:
+                    return $"Three of a Kind, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s";
+
+                case HandType.TwoPair:
+                    return $"Two Pair, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s and {_cardPrintLookUp[hand.Cards.ElementAt(2).Rank]}s";
+
+                case HandType.Pair:
+                    return $"Pair of {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s";
+
+                case HandType.Nothing:
+                    return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]} High Card";
+
+                default:
+                    throw new Exception("⛔ Helpers.GetPrettyName(): Switch defaulted, this should never happen. HandType enum was changed?");
+            }
+        }
+
+
         public static void DebugLog(string log = "", int verbosity = 1)
         {
             if (DebugVerbosity > verbosity - 1)
@@ -62,45 +103,60 @@ namespace PokerAlgo
             }
         }
 
-        public static string GetPrettyHandName(WinningHand? hand)
+        public static void DebugLogWinners(List<Player> winners)
         {
-            if (hand is null) throw new Exception("Helpers.GetPrettyName() - \'hand\' argument must not be null.");
-
-            switch (hand.Type) {
-                case HandType.RoyalFlush:
-                    return "Royal Flush";
-
-                case HandType.StraightFlush:
-                    return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}-High Straight Flush";
-
-                case HandType.FourKind:
-                    return $"Four of a Kind, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s";
-
-                case HandType.FullHouse:
-                    return $"Full House, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s over {_cardPrintLookUp[hand.Cards.ElementAt(0).Rank]}s";
-
-                case HandType.Flush:
-                    return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}-High Flush";
-
-                case HandType.Straight:
-                    return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}-High Straight";
-
-                case HandType.ThreeKind:
-                    return $"Three of a Kind, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s";
-
-                case HandType.TwoPair:
-                    return $"Two Pair, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s and {_cardPrintLookUp[hand.Cards.ElementAt(2).Rank]}s";
-
-                case HandType.Pair:
-                    return $"Pair of {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s";
-
-                case HandType.Nothing:
-                    return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]} High Card";
-
-                default:
-                    throw new Exception("⛔ Helpers.GetPrettyName(): Switch defaulted.");
+            if (DebugVerbosity > 0)
+            {
+                Console.BackgroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write("🥇 Winner(s):");
+                Console.ResetColor();
+                Console.WriteLine();
+                foreach (Player p in winners)
+                {
+                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.Write($"\t {p.Name} ");
+                    Console.BackgroundColor = ConsoleColor.Green;
+                    Console.Write($" {GetPrettyHandName(p.WinningHand)} ");
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.Write(" " + string.Join(' ', p.WinningHand.Cards) + " ");
+                    Console.ResetColor();
+                    Console.WriteLine();
+                }
             }
         }
 
+        public static void DebugLogDeterminingHand(string playerName)
+        {
+                if (DebugVerbosity > 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine();
+                    Console.WriteLine("💭 Determining Hand for \'" + playerName + "\'");
+                    Console.ResetColor();
+                }
+        }
+
+        public static void DebugLogWinningHand(HandType handType, List<Card> cards)
+        {
+            if (DebugVerbosity > 0)
+            {
+                Console.BackgroundColor = ConsoleColor.Green;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write($" {handType}: ");
+                Console.ResetColor();
+                Console.BackgroundColor = ConsoleColor.Gray;
+                Console.Write(" ");
+                foreach (Card c in cards)
+                {
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.Write($"{c} ");
+                    Console.ResetColor();
+                }
+                Console.WriteLine();
+            }
+        }
     }
 }

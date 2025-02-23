@@ -10,7 +10,8 @@ namespace PokerAlgo
         // Returns Win and Tie Values from 0 to 1.0
         public static Tuple<double, double> GetWinningChance(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfPlayers, int numberOfSimulatedGames)
         {
-            Debug.Assert(communityCards.Count >= 3, "⛔ communityCards.Count is less than 3");
+            if (communityCards.Count < 3) throw new Exception("⛔ communityCards.Count is less than 3");
+            // Debug.Assert(communityCards.Count >= 3, "⛔ communityCards.Count is less than 3");
 
             Deck testDeck = new();
             int numberOfGames = numberOfSimulatedGames;
@@ -114,7 +115,8 @@ namespace PokerAlgo
             else if(points == -0.5d) points = 0;
             else points = Math.Round(points, MidpointRounding.AwayFromZero);
 
-            Debug.Assert(points >= -1, "totalPoints should always be greater than -1");
+            if (points < -1) throw new Exception("ChanceCalculator.GetPreFlopChen() - totalPoints should always be greater than -1 before returning. Chen formula is not implemented correctly, contact package developer.");
+            // Debug.Assert(points >= -1, "totalPoints should always be greater than -1");
             return points;
         }
     }

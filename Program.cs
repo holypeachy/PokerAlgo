@@ -69,6 +69,7 @@ namespace Project
 			}
 
 			_debugVerbosity = Algo.DebugVerbosity;
+			// _debugVerbosity = 0;
 
 			Stopwatch watch;
 			watch = Stopwatch.StartNew();
@@ -243,11 +244,10 @@ namespace Project
 ! 
 
 TODO
-TODO: Look into when to use Debug.Assert vs when to throw an Exception.
+TODO: Implement custom Exceptions.
 
 ? Future Ideas
 ? Debug code for nuget package?! Performance impact / cleaner code.
-? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
 ? Use method extensions for better code readability.
 
@@ -260,8 +260,7 @@ TODO: Look into when to use Debug.Assert vs when to throw an Exception.
 * Null-coalescing operator "??".
 
 * Changes
-* Refactored some code in GetPreFlopChen and cleaned up some comments in Program.cs.
-* Made Helpers class public instead of internal.
-* The DebugVerbosity field of other classes now references Algo.DebugVerbosity directly.
+* Improved error handling.
+* Debug logging for PokerAlgo is now exclusively handled by the Helpers class.
 * 
 */
