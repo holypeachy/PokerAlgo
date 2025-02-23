@@ -62,7 +62,7 @@ namespace Project
 				Console.WriteLine("\tdotnet run sim {number of simulations : int}\n");
 				Console.WriteLine("\tRuns all tests.");
 				Console.WriteLine("\tdotnet run test  |  No testing debug");
-				Console.WriteLine("\tdotnet run test {enable debug : bool}");
+				Console.WriteLine("\tdotnet run test {enable debug : bool}\n");
 				Console.WriteLine("\tPre-Flop chances.");
 				Console.WriteLine("\tdotnet run preflop");
 				Environment.Exit(1);
@@ -93,7 +93,8 @@ namespace Project
 					Console.WriteLine("--- 😎 Players:");
 					foreach (Player p in players)
 					{
-						Console.WriteLine("\t" + p);
+						Console.Write("\t" +  string.Format("{0:0}%", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100));
+						Console.WriteLine(" - " + p);
 					}
 				}
 
@@ -137,8 +138,8 @@ namespace Project
 						p.WinningHand = handEvaluator.GetWinningHand(cards);
                         Console.WriteLine($"Player \'{p.Name}\'");
 						Console.WriteLine(p.WinningHand);
-						string percentage = string.Format("{0:0.00}", ChanceCalculator.GetWinningChance(p.HoleCards, communityCards, players.Count - 1, _numOfSims) * 100.0d);
-						Console.WriteLine("\tChances of winning: " + percentage + "%\n");
+						string percentage = string.Format("{0:0.00}%", ChanceCalculator.GetWinningChance(p.HoleCards, communityCards, players.Count - 1, _numOfSims) * 100);
+						Console.WriteLine($"\tChances of winning: {percentage}\n");
 					}
 				}
 
@@ -152,15 +153,15 @@ namespace Project
 					{
 						Console.WriteLine(p);
 						Console.WriteLine("\tBill Chen: " + ChanceCalculator.GetPreFlopChen(p.HoleCards));
-						Console.WriteLine("\tChances of winning: " + string.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100.0d) + "%");
+						Console.WriteLine("\tChances of winning: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100));
 					}
 					Console.WriteLine();
-					Console.WriteLine("AA Chances of winning: " + string.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100.0d) + "%");
-					Console.WriteLine("\tBill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
-					Console.WriteLine("KAs Chances of winning: " + string.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100.0d) + "%");
-					Console.WriteLine("\tBill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))));
-					Console.WriteLine("27o Chances of winning: " + string.Format("{0:0.00}", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100.0d) + "%");
-					Console.WriteLine("\tBill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))));
+					Console.WriteLine("AA Bill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
+					Console.WriteLine("\tChances of winning: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100) + "%");
+					Console.WriteLine("KAs Bill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))));
+					Console.WriteLine("\tChances of winning: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100) + "%");
+					Console.WriteLine("27o Bill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))));
+					Console.WriteLine("\tChances of winning: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100) + "%");
 				}
 
 				// ! Main Code Execution
@@ -213,7 +214,8 @@ namespace Project
 TODO
 TODO: Test Algo class.
 
-? Future Ideas 
+? Future Ideas
+? Add chances of ties to ChanceCalculator.
 ? Look into when to use Debug.Assert vs when to throw an Exception.
 ? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
@@ -228,7 +230,7 @@ TODO: Test Algo class.
 * Null-coalescing operator "??".
 
 * Changes
-* Abstracted out my implementation of Bill Chen's formula from GetWinningChancePreFlop in the GetPreFlopChen function which returns a value from -1 to 20.
-* Fixed some bugs in my implementation of the Bill Chen formula.
+* Replaced the magic number with a proper sigmoid equation to propely estimate real world probabilites for each pre-flop hand.
+* Main code execution now displays pre-flop probabilities for each player.
 * 
 */

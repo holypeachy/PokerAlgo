@@ -4,7 +4,8 @@ namespace PokerAlgo
 {
     public static class ChanceCalculator
     {
-        private static readonly double _magicNum = 4.25d;
+        private static readonly double _handStrengthSensitivity = 0.175d; // Logistic Growth Rate of sigmoid
+        private static readonly double _baselineWinRate = -1.85d; // Logistic Shift of sigmoid
 
         // Returns Value from 0 to 1.0
         public static double GetWinningChance(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfPlayers, int numberOfSimulatedGames)
@@ -50,16 +51,11 @@ namespace PokerAlgo
             return timesWon / (double)numberOfGames;
         }
 
-        // Returns Value from 0 to 1.0
+        // Returns Value from 0 to 1.0 | Realistically: 0.1166 to 0.8389
         public static double GetWinningChancePreFlop(Pair<Card, Card> playerHoleCards)
         {
-            // ! Bill Chen Formula
-            double billChenScore = GetPreFlopChen(playerHoleCards);
-
-            // ! This is kinda nasty but 
-            billChenScore += _magicNum;
-
-            return billChenScore / (20d + _magicNum) * 0.85d;
+            // ! Sigmoid adjustment
+            return 1 / (1 + Math.Exp(-(_handStrengthSensitivity * GetPreFlopChen(playerHoleCards) + _baselineWinRate)));
         }
     
         // Returns -1 to 20
