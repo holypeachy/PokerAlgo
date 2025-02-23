@@ -137,10 +137,35 @@ namespace Project
 						};
 						cards.AddRange(communityCards);
 						p.WinningHand = handEvaluator.GetWinningHand(cards);
-                        Console.WriteLine($"Player \'{p.Name}\'");
-						Console.WriteLine(p.WinningHand);
-						string percentage = string.Format("{0:0.00}%", ChanceCalculator.GetWinningChance(p.HoleCards, communityCards, players.Count - 1, _numOfSims) * 100);
-						Console.WriteLine($"\tChances of winning: {percentage}\n");
+
+						Console.BackgroundColor = ConsoleColor.Yellow;
+						Console.ForegroundColor = ConsoleColor.Black;
+						Console.Write($"\t {p.Name} ");
+						Console.BackgroundColor = ConsoleColor.Green;
+						Console.Write($" {Helpers.GetPrettyHandName(p.WinningHand)} ");
+						Console.BackgroundColor = ConsoleColor.Gray;
+						Console.Write(" " + string.Join(' ', p.WinningHand.Cards) + " ");
+						Console.ResetColor();
+						Console.WriteLine();
+						
+						Tuple<double, double> chanceTuple= ChanceCalculator.GetWinningChance(p.HoleCards, communityCards, players.Count - 1, _numOfSims);
+						string winPercentage = string.Format("{0:0.00}%", chanceTuple.Item1 * 100);
+						string tiePercentage = string.Format("{0:0.00}%", chanceTuple.Item2 * 100);
+
+						Console.Write($"\tWin:");
+						Console.ForegroundColor = ConsoleColor.Black;
+						Console.BackgroundColor = ConsoleColor.Blue;
+						Console.Write($" {winPercentage} ");
+						Console.ResetColor();
+						Console.WriteLine();
+
+						Console.Write($"\tTie:");
+						Console.ForegroundColor = ConsoleColor.Black;
+						Console.BackgroundColor = ConsoleColor.Blue;
+						Console.Write($" {tiePercentage} ");
+						Console.ResetColor();
+						Console.WriteLine();
+						Console.WriteLine();
 					}
 				}
 
@@ -153,16 +178,23 @@ namespace Project
 					foreach (Player p in players)
 					{
 						Console.WriteLine(p);
-						Console.WriteLine("\tBill Chen: " + ChanceCalculator.GetPreFlopChen(p.HoleCards));
-						Console.WriteLine("\tChances of winning: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100));
+						Console.WriteLine("\tChen: " + ChanceCalculator.GetPreFlopChen(p.HoleCards));
+						
+						Console.Write("\tWin: ");
+						Console.ForegroundColor = ConsoleColor.Black;
+						Console.BackgroundColor = ConsoleColor.Blue;
+						Console.Write(" " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100) + " ");
+						Console.ResetColor();
+						Console.WriteLine();
+						
 					}
 					Console.WriteLine();
-					Console.WriteLine("AA Bill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
-					Console.WriteLine("\tChances of winning: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100) + "%");
-					Console.WriteLine("KAs Bill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))));
-					Console.WriteLine("\tChances of winning: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100) + "%");
-					Console.WriteLine("27o Bill Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))));
-					Console.WriteLine("\tChances of winning: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100) + "%");
+					Console.WriteLine("AA\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
+					Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100) + "%");
+					Console.WriteLine("KAs\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))));
+					Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100) + "%");
+					Console.WriteLine("27o\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))));
+					Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100) + "%");
 				}
 
 				// ! Main Code Execution
@@ -213,16 +245,14 @@ namespace Project
 ! 
 
 TODO
-TODO: Test Algo class.
+TODO: 
 
 ? Future Ideas
-? Add chances of ties to ChanceCalculator.
 ? Look into when to use Debug.Assert vs when to throw an Exception.
 ? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
 ? Use method extensions for better code readability.
 
-? Use Debug.Assert() in spots where I've been throwing errors to assert that something should always be true. ??
 ? Use SortedSet for storing cards when order matters to avoid additional sorting operations. ??
 ? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching. if (threeKinds.Count >= 3 && pairs.Count >= 2) { ... }
 
@@ -231,6 +261,9 @@ TODO: Test Algo class.
 * Null-coalescing operator "??".
 
 * Changes
-* Improved console logs.
+* Added AlgoUnitTest class and AlgoUnitTests.json with 14 test cases.
+* Fixed a logical bug in Testing class.
+* Added more color to the logs and improved readability.
+* Added chances of ties to ChanceCalculator, the GetWinningChance function now returns a tuple with win and tie chances.
 * 
 */

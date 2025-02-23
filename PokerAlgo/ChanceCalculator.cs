@@ -7,14 +7,15 @@ namespace PokerAlgo
         private static readonly double _handStrengthSensitivity = 0.175d; // Logistic Growth Rate of sigmoid
         private static readonly double _baselineWinRate = -1.85d; // Logistic Shift of sigmoid
 
-        // Returns Value from 0 to 1.0
-        public static double GetWinningChance(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfPlayers, int numberOfSimulatedGames)
+        // Returns Win and Tie Values from 0 to 1.0
+        public static Tuple<double, double> GetWinningChance(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfPlayers, int numberOfSimulatedGames)
         {
             Debug.Assert(communityCards.Count >= 3, "⛔ communityCards.Count is less than 3");
 
             Deck testDeck = new();
             int numberOfGames = numberOfSimulatedGames;
             int timesWon = 0;
+            int timesTied = 0;
 
             Player player = new("Player", new Card(playerHoleCards.First), new Card(playerHoleCards.Second));
             List<Player> allPlayers;
@@ -46,9 +47,13 @@ namespace PokerAlgo
                 {
                     timesWon++;
                 }
+                else if(winners.Count > 1 && winners.Contains(player))
+                {
+                    timesTied++;
+                }
             }
 
-            return timesWon / (double)numberOfGames;
+            return new Tuple<double, double>(timesWon / (double)numberOfGames, timesTied / (double)numberOfGames);
         }
 
         // Returns Value from 0 to 1.0 | Realistically: 0.1166 to 0.8389

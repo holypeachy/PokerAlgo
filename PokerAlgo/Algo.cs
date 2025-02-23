@@ -71,14 +71,14 @@ namespace PokerAlgo
             {
                 if (p.WinningHand is null)
                 {
-                    throw new Exception($"⛔ Algo.FindWinners() - Player\'s \'{p.Name}\' WinningHand is null.");
+                    throw new Exception($"⛔ Algo.DetermineWinners() - Player\'s \'{p.Name}\' WinningHand is null.");
                 }
             }
 
             // ! Order from highest to lowest hand value
             List<Player> players = allPlayers.OrderByDescending(x => x.WinningHand.Type).ToList();
 
-            Helpers.DebugLogPlayers("Algo.FindWinners() - Players after sorting by WinningHand.Type", players);
+            Helpers.DebugLogPlayers("Algo.DetermineWinners() - Players after sorting by WinningHand.Type", players);
 
             return BreakTies(players);            
         }

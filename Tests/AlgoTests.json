@@ -1,0 +1,979 @@
+[
+  {
+    "Description": "Single Winner Test",
+    "Player1": {
+      "First": {
+        "Rank": 14,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 13,
+        "Suit": 3,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 12,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 11,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 10,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 9,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 14,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 3,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 2,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0
+    ]
+  },
+  {
+    "Description": "Tie Between Two Players",
+    "Player1": {
+      "First": {
+        "Rank": 10,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 9,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 10,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 9,
+        "Suit": 3,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 2,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 8,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 6,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 4,
+        "Suit": 0,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0,
+      1
+    ]
+  },
+  {
+    "Description": "Three-Way Tie",
+    "Player1": {
+      "First": {
+        "Rank": 4,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 6,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 4,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 6,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 4,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 6,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 9,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 3,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 1,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "Description": "Straight vs. Three of a Kind",
+    "Player1": {
+      "First": {
+        "Rank": 5,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 6,
+        "Suit": 3,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 8,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 8,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 10,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 3,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 7,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 4,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 8,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 1,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0
+    ]
+  },
+  {
+    "Description": "Flush vs. Full House",
+    "Player1": {
+      "First": {
+        "Rank": 10,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 5,
+        "Suit": 3,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 9,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 9,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 4,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 3,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 10,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 10,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0
+    ]
+  },
+  {
+    "Description": "High Card Win",
+    "Player1": {
+      "First": {
+        "Rank": 13,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 10,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 12,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 9,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 11,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 8,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 7,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 4,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 3,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0
+    ]
+  },
+  {
+    "Description": "Pocket Aces Losing",
+    "Player1": {
+      "First": {
+        "Rank": 14,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 14,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 8,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 7,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 6,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 9,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 8,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 6,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 0,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      2
+    ]
+  },
+  {
+    "Description": "Lowest Possible Winning Hand",
+    "Player1": {
+      "First": {
+        "Rank": 2,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 4,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 5,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 7,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 9,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 10,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 3,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 6,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 8,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 11,
+        "Suit": 1,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0
+    ]
+  },
+  {
+    "Description": "Royal Flush on Board",
+    "Player1": {
+      "First": {
+        "Rank": 2,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 3,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 5,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 7,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 9,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 10,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 10,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 11,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 12,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 13,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 14,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "Description": "Quads on the Board",
+    "Player1": {
+      "First": {
+        "Rank": 10,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 3,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 8,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 4,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 14,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 9,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 9,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      2
+    ]
+  },
+  {
+    "Description": "Straight on the Board",
+    "Player1": {
+      "First": {
+        "Rank": 2,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 4,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 5,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 6,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 10,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 3,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 7,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 6,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 4,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 3,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "Description": "Full House on the Board",
+    "Player1": {
+      "First": {
+        "Rank": 5,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 3,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 6,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 2,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 10,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 4,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 8,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 8,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 8,
+        "Suit": 1,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 6,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 6,
+        "Suit": 2,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "Description": "Three Players With the Same Pair",
+    "Player1": {
+      "First": {
+        "Rank": 10,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 5,
+        "Suit": 1,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 10,
+        "Suit": 3,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 4,
+        "Suit": 0,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 10,
+        "Suit": 1,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 3,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 9,
+        "Suit": 3,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 10,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 7,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 6,
+        "Suit": 0,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 3,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "Description": "Straight Flush vs. Lower Flush",
+    "Player1": {
+      "First": {
+        "Rank": 9,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 8,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player2": {
+      "First": {
+        "Rank": 7,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 6,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "Player3": {
+      "First": {
+        "Rank": 4,
+        "Suit": 2,
+        "IsPlayerCard": true
+      },
+      "Second": {
+        "Rank": 3,
+        "Suit": 2,
+        "IsPlayerCard": true
+      }
+    },
+    "CommunityCards": [
+      {
+        "Rank": 5,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 2,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 10,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 11,
+        "Suit": 2,
+        "IsPlayerCard": false
+      },
+      {
+        "Rank": 12,
+        "Suit": 2,
+        "IsPlayerCard": false
+      }
+    ],
+    "IndicesOfWinners": [
+      0
+    ]
+  }
+]
