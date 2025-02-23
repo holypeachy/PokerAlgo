@@ -239,31 +239,29 @@ namespace Project
 }
 
 /*
-! Current output: Players, Community, Winning Hand for each player.
-
 ! ISSUES:
 ! 
 
 TODO
-TODO: 
+TODO: Look into when to use Debug.Assert vs when to throw an Exception.
 
 ? Future Ideas
-? Look into when to use Debug.Assert vs when to throw an Exception.
+? Debug code for nuget package?! Performance impact / cleaner code.
 ? Implement custom Exceptions.
 ? I should make the Algo a nuget package and upload it.
 ? Use method extensions for better code readability.
 
 ? Use SortedSet for storing cards when order matters to avoid additional sorting operations. ??
 ? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching. if (threeKinds.Count >= 3 && pairs.Count >= 2) { ... }
+? Multithreading for Monte Carlo sim.
 
 * Notes
 * "WinningHand nullable? It has been giving me a headache with the warnings." Turns out, it's a good programming pattern.
 * Null-coalescing operator "??".
 
 * Changes
-* Added AlgoUnitTest class and AlgoUnitTests.json with 14 test cases.
-* Fixed a logical bug in Testing class.
-* Added more color to the logs and improved readability.
-* Added chances of ties to ChanceCalculator, the GetWinningChance function now returns a tuple with win and tie chances.
+* Refactored some code in GetPreFlopChen and cleaned up some comments in Program.cs.
+* Made Helpers class public instead of internal.
+* The DebugVerbosity field of other classes now references Algo.DebugVerbosity directly.
 * 
 */

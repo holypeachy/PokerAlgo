@@ -4,7 +4,7 @@ namespace PokerAlgo
 {
     public class HandEvaluator
     {
-        private static int _debugVerbosity = Algo.DebugVerbosity;
+        private static int DebugVerbosity => Algo.DebugVerbosity;
 
         private WinningHand? _tempBestHand;
 
@@ -272,7 +272,7 @@ namespace PokerAlgo
         {
             _tempBestHand = new WinningHand(handType, cards);
 
-            if (_debugVerbosity > 0)
+            if (DebugVerbosity > 0)
             {
                 Console.BackgroundColor = ConsoleColor.Green;
                 Console.ForegroundColor = ConsoleColor.Black;

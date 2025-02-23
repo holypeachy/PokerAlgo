@@ -103,12 +103,7 @@ namespace PokerAlgo
 
             int gap = higherCard.Rank == lowerCard.Rank ? 0 : Math.Abs(higherCard.Rank - lowerCard.Rank - 1);
             
-            if (gap >= 4) points -= 5;
-            else if(gap == 3) points -= 4;
-            else if(gap == 1 || gap == 2)
-            {
-                points -= gap;
-            }
+            points -= (gap >= 4) ? 5 : (gap == 3) ? 4 : gap;
 
             if ( (gap == 0 || gap == 1) && higherCard.Rank != lowerCard.Rank && higherCard.Rank < 12 && lowerCard.Rank < 12)
             {

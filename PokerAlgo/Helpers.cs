@@ -1,8 +1,8 @@
 namespace PokerAlgo
 {
-    internal static class Helpers
+    public static class Helpers
     {
-        private static int _debugVerbosity = Algo.DebugVerbosity;
+        private static int DebugVerbosity => Algo.DebugVerbosity;
 
         private static readonly Dictionary<int, string> _cardPrintLookUp = new Dictionary<int, string>
         {
@@ -25,7 +25,7 @@ namespace PokerAlgo
 
         public static void DebugLog(string log = "", int verbosity = 1)
         {
-            if (_debugVerbosity > verbosity - 1)
+            if (DebugVerbosity > verbosity - 1)
             {
                 Console.WriteLine(log);
             }
@@ -33,7 +33,7 @@ namespace PokerAlgo
 
         public static void DebugLogCards(string description, List<Card> cards)
         {
-            if (_debugVerbosity > 1)
+            if (DebugVerbosity > 1)
             {
                 Console.WriteLine($"🤖 {description}: ");
                 if(cards.Count > 0) Console.Write("\t" + string.Join(' ', cards) + "\n");
@@ -43,7 +43,7 @@ namespace PokerAlgo
 
         public static void DebugLogPlayers(string description, List<Player> players)
         {
-            if (_debugVerbosity > 0)
+            if (DebugVerbosity > 0)
             {
                 Console.WriteLine($"🤖 {description}:");
                 foreach (Player p in players)
