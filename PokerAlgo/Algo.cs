@@ -28,7 +28,7 @@ namespace PokerAlgo
                 throw new Exception("⛔ Algo.FindWinner() - players.Count < 2. There must be at least 2 players.");
             }
 
-            Helpers.DebugLog("\n--- 🔎 Algo Starts");
+            Helpers.DebugLog("--- 🔎 Algo Starts");
             HandEvaluator handEvaluator = new HandEvaluator();
             List<Card> combinedCards;
 

@@ -111,7 +111,7 @@ namespace Project
 					{
 						Console.Write($"{c} ");
 					}
-					Console.WriteLine();
+					Console.WriteLine("\n");
 				}
 
 
@@ -260,7 +260,5 @@ TODO: Implement custom Exceptions.
 * Null-coalescing operator "??".
 
 * Changes
-* Deck class rewritten, cards are no longer removed from the list, a counter is used instead.
-* ShuffleDeck method is now private.
 * 
 */

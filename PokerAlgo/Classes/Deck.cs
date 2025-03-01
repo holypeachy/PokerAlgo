@@ -8,6 +8,7 @@ namespace PokerAlgo
 		public Deck()
 		{
 			_cards = new List<Card>();
+			_nextCardIndex = 0;
 
 			CreateDeck();
 
