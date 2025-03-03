@@ -2,8 +2,6 @@ namespace PokerAlgo
 {
     public class HandEvaluator
     {
-        private static int DebugVerbosity => Algo.DebugVerbosity;
-
         private WinningHand? _tempBestHand;
 
 

@@ -83,7 +83,7 @@ namespace Project
 			}
 			Console.BackgroundColor = ConsoleColor.White;
 			Console.ForegroundColor = ConsoleColor.Black;
-			Console.Write($" ↪️ End of Hand Evaluator Tests ");
+			Console.Write($" ↪️  End of Hand Evaluator Tests ");
 			Console.ResetColor();
 			Console.WriteLine("\n");
 		}
@@ -159,7 +159,7 @@ namespace Project
 			}
 			Console.BackgroundColor = ConsoleColor.White;
 			Console.ForegroundColor = ConsoleColor.Black;
-			Console.Write($" ↪️ End of Algo Tests ");
+			Console.Write($" ↪️  End of Algo Tests ");
 			Console.ResetColor();
 			Console.WriteLine("\n");
 		}

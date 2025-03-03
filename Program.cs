@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using PokerAlgo;
 
 namespace Project
@@ -6,30 +7,46 @@ namespace Project
 	public class Program
 	{
 		private static int _debugVerbosity = 0;
+		private static int _executions = 1;
 		private static int _numOfCommunityCards = 5;
 		private static int _numOfSims = 500;
 		private static bool _isTesting = false;
+		private static bool _inputTestDebug = false;
 		private static bool _isSim = false;
 		private static bool _isPreflop = false;
+		private static bool _isCompute = false;
+		private static string _preflopFilePath = "";
+		private static int _numOfPreflopSimPlayers = 0;
+
+		private static readonly Dictionary<int, string> _cardPrintLookUp = new Dictionary<int, string>
+		{
+			{1, "A"}, {2, "2"}, {3, "3"}, {4, "4"}, {5, "5"}, {6, "6"}, {7, "7"}, {8, "8"}, {9, "9"}, {10, "10"},{11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
+		};
+
 
 		static void Main(string[] args)
 		{
-			int executions = 1;
 			int inputVerbosity;
 			int inputSims;
-			bool inputTestDebug = false;
 
-			if(args.Length == 2 && args[0] == "sim" && int.TryParse(args[1], out inputSims)){
+			if (args.Length == 4 && args[0] == "compute" && int.TryParse(args[1], out _numOfPreflopSimPlayers) && int.TryParse(args[2], out inputSims))
+			{
+				_isCompute = true;
+				_preflopFilePath = args[3];
+				_numOfSims = inputSims;
+			}
+			else if (args.Length == 2 && args[0] == "sim" && int.TryParse(args[1], out inputSims))
+			{
 				_isSim = true;
 				_numOfSims = inputSims;
 			}
-			else if(args.Length == 2 && args[0] == "test" && bool.TryParse(args[1], out inputTestDebug)){
+			else if (args.Length == 2 && args[0] == "test" && bool.TryParse(args[1], out _inputTestDebug))
+			{
 				_isTesting = true;
 			}
-			else if(args.Length == 2 && int.TryParse(args[1], out executions))
+			else if (args.Length == 2 && args[0] != "compute" && int.TryParse(args[0], out inputVerbosity) && int.TryParse(args[1], out _executions))
 			{
-				int.TryParse(args[0], out inputVerbosity);
-				if ((inputVerbosity == 0 || inputVerbosity == 1 || inputVerbosity == 2) && executions < 2)
+				if ((inputVerbosity == 0 || inputVerbosity == 1 || inputVerbosity == 2) && _executions < 2)
 				{
 					Algo.DebugVerbosity = inputVerbosity;
 				}
@@ -41,13 +58,16 @@ namespace Project
 					Algo.DebugVerbosity = inputVerbosity;
 				}
 			}
-			else if(args.Length == 1 && args[0] == "test"){
+			else if (args.Length == 1 && args[0] == "test")
+			{
 				_isTesting = true;
 			}
-			else if(args.Length == 1 && args[0] == "sim"){
+			else if (args.Length == 1 && args[0] == "sim")
+			{
 				_isSim = true;
 			}
-			else if(args.Length == 1 && args[0] == "preflop"){
+			else if (args.Length == 1 && args[0] == "preflop")
+			{
 				_isPreflop = true;
 			}
 			else
@@ -55,15 +75,17 @@ namespace Project
 				Console.WriteLine("⚠️ PokerAlgo: Please Enter Valid Arguments!\n");
 				Console.WriteLine("Examples:");
 				Console.WriteLine(" Main code execution.");
-				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2}  |  Runs once.");
+				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2}");
 				Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2} {executions : int}\n");
 				Console.WriteLine(" Run Monte Carlo simulations on all players.");
-				Console.WriteLine("\tdotnet run sim  |  Default is 500 simulations.");
+				Console.WriteLine("\tdotnet run sim");
 				Console.WriteLine("\tdotnet run sim {number of simulations : int}\n");
-				Console.WriteLine(" Pre-Flop chances.");
+				Console.WriteLine(" Pre-Flop Calculation using Chen's and Custom Sigmoid Equation Normalization.");
 				Console.WriteLine("\tdotnet run preflop\n");
+				Console.WriteLine(" Runs Pre-Flop Computations.");
+				Console.WriteLine("\tdotnet run compute {number of players : int} {number of simulations : int} {output file path : string}\n");
 				Console.WriteLine(" Runs all tests.");
-				Console.WriteLine("\tdotnet run test  |  No testing debug");
+				Console.WriteLine("\tdotnet run test");
 				Console.WriteLine("\tdotnet run test {enable debug : bool}");
 				Environment.Exit(1);
 			}
@@ -74,7 +96,7 @@ namespace Project
 			Stopwatch watch;
 			watch = Stopwatch.StartNew();
 
-			for (int execIndex = 0; execIndex < executions; execIndex++)
+			for (int execIndex = 0; execIndex < _executions; execIndex++)
 			{
 				Deck deck = new();
 				List<Card> communityCards = new List<Card>();
@@ -94,7 +116,7 @@ namespace Project
 					Console.WriteLine("--- 😎 Players:");
 					foreach (Player p in players)
 					{
-						Console.Write("\t" +  string.Format("{0:0}%", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100));
+						Console.Write("\t" + string.Format("{0:0}%", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100));
 						Console.WriteLine(" - " + p);
 					}
 				}
@@ -116,13 +138,13 @@ namespace Project
 
 
 				// ! Unit Testing
-				if(_isTesting)
+				if (_isTesting)
 				{
-					new Testing(inputTestDebug);
+					new Testing(_inputTestDebug);
 				}
 
 				// ! Monte Carlo Simulation Test
-				else if(_isSim)
+				else if (_isSim)
 				{
 					Algo.DebugVerbosity = 0;
 					HandEvaluator handEvaluator = new();
@@ -148,8 +170,8 @@ namespace Project
 						Console.Write(" " + string.Join(' ', p.WinningHand.Cards) + " ");
 						Console.ResetColor();
 						Console.WriteLine();
-						
-						Tuple<double, double> chanceTuple= ChanceCalculator.GetWinningChance(p.HoleCards, communityCards, players.Count - 1, _numOfSims);
+
+						Tuple<double, double> chanceTuple = ChanceCalculator.GetWinningChance(p.HoleCards, communityCards, players.Count - 1, _numOfSims);
 						string winPercentage = string.Format("{0:0.00}%", chanceTuple.Item1 * 100);
 						string tiePercentage = string.Format("{0:0.00}%", chanceTuple.Item2 * 100);
 
@@ -171,7 +193,7 @@ namespace Project
 				}
 
 				// ! Pre-Flop Chances
-				else if(_isPreflop)
+				else if (_isPreflop)
 				{
 					Algo.DebugVerbosity = 0;
 					Console.WriteLine($"Pre-Flop ");
@@ -180,14 +202,14 @@ namespace Project
 					{
 						Console.WriteLine(p);
 						Console.WriteLine("\tChen: " + ChanceCalculator.GetPreFlopChen(p.HoleCards));
-						
+
 						Console.Write("\tWin: ");
 						Console.ForegroundColor = ConsoleColor.Black;
 						Console.BackgroundColor = ConsoleColor.Blue;
 						Console.Write(" " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100) + " ");
 						Console.ResetColor();
 						Console.WriteLine();
-						
+
 					}
 					Console.WriteLine();
 					Console.WriteLine("AA\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
@@ -196,6 +218,73 @@ namespace Project
 					Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100) + "%");
 					Console.WriteLine("27o\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))));
 					Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100) + "%");
+				}
+
+				// ! Pre-Flop Computation
+				else if (_isCompute)
+				{
+					if (string.IsNullOrWhiteSpace(_preflopFilePath))
+					{
+						Console.WriteLine($"⛔ Please enter a valid file path. You entered: \"{_preflopFilePath}\"");
+						Environment.Exit(1);
+					}
+
+					Console.WriteLine("💭 Computing chances of winning for all starting hands...");
+
+					Dictionary<string, Pair<Card, Card>> startingHands = new();
+					Card first;
+					Card second;
+					for (int i = 2; i <= 14; i++)
+					{
+						for (int j = 2; j <= 14; j++)
+						{
+							first = new Card(i, CardSuit.Spades, true);
+							second = new Card(j, CardSuit.Hearts, true);
+							startingHands[$"{_cardPrintLookUp[first.Rank]} {_cardPrintLookUp[second.Rank]} o"] = new Pair<Card, Card>(first, second);
+						}
+					}
+					for (int i = 2; i <= 14; i++)
+					{
+						for (int j = 2; j <= 14; j++)
+						{
+							if (i == j)
+							{
+								continue;
+							}
+							first = new Card(i, CardSuit.Hearts, true);
+							second = new Card(j, CardSuit.Hearts, true);
+							startingHands[$"{_cardPrintLookUp[first.Rank]} {_cardPrintLookUp[second.Rank]} s"] = new Pair<Card, Card>(first, second);
+						}
+					}
+
+					try
+					{
+						File.Delete(_preflopFilePath);
+					}
+					catch
+					{
+						throw new IOException($"⛔ Issue when trying to delete before calculation \"{_preflopFilePath}\".");
+					}
+
+					StringBuilder results = new StringBuilder();
+					results.AppendLine($"Pre-Flop Computations | Opponents: {_numOfPreflopSimPlayers} | Simulations: {_numOfSims}\n");
+					
+					foreach (KeyValuePair<string, Pair<Card, Card>> keyValuePair in startingHands)
+					{
+						Tuple<double, double> chanceTuple = ChanceCalculator.GetWinningChancePreFlopSim(keyValuePair.Value, _numOfPreflopSimPlayers, _numOfSims);
+						results.AppendLine($"{keyValuePair.Key} {chanceTuple.Item1} {chanceTuple.Item2}");
+					}
+
+					try
+					{
+						File.AppendAllText(_preflopFilePath, results.ToString());
+					}
+					catch
+					{
+						throw new IOException($"⛔ Issue when writing to \"{_preflopFilePath}\".");
+					}
+
+					Console.WriteLine($"✅ Computations done. Data can be found in {_preflopFilePath}");
 				}
 
 				// ! Main Code Execution
@@ -233,7 +322,7 @@ namespace Project
 			Console.WriteLine();
 			Console.BackgroundColor = ConsoleColor.Blue;
 			Console.ForegroundColor = ConsoleColor.Black;
-			Console.Write(executions == 1 ? $" 🕜 Execution Time: {watch.ElapsedMilliseconds}ms " : $" 🕜 Execution Time ({executions} Execs): {watch.ElapsedMilliseconds}ms (Avg {watch.ElapsedMilliseconds/(float)executions}ms)");
+			Console.Write(_executions == 1 ? $" 🕜 Execution Time: {watch.ElapsedMilliseconds}ms " : $" 🕜 Execution Time ({_executions} Execs): {watch.ElapsedMilliseconds}ms (Avg {watch.ElapsedMilliseconds / (float)_executions}ms)");
 			Console.ResetColor();
 		}
 	}
@@ -244,6 +333,8 @@ namespace Project
 ! 
 
 TODO
+TODO: Don't deep copy cards in the ChanceCalculator. Instead just use the hole cards reference.
+TODO: Double check last commit's code.
 TODO: Implement custom Exceptions.
 
 ? Future Ideas
@@ -260,5 +351,7 @@ TODO: Implement custom Exceptions.
 * Null-coalescing operator "??".
 
 * Changes
+* Added GetWinningChancePreFlopSim function to ChanceCalculator which runs Monte Carlo simulations for a player's given cards.
+* Added compute flag to compute the winning chances of all possible preflop hands and output them to a file.
 * 
 */
