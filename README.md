@@ -18,14 +18,26 @@
 ## Output Example:
 This is an example of the current output of the program that showcases its functionality. 
 
-Input: State of the game. 
+Running the program. 
 
-![image](https://github.com/user-attachments/assets/d6fbd548-9e0c-4a90-9f9e-e8c2f83d443b) 
+![image](https://github.com/user-attachments/assets/200029eb-2308-4294-8a27-5fc63cc9811f)
 
 Determine Winning Hand for each player and determine winner(s). 
 
-![image](https://github.com/user-attachments/assets/6cec15cc-ebd8-4bef-b509-95a5acb3fc0b)
+![image](https://github.com/user-attachments/assets/003148af-ad38-4226-a662-4883522397ce)
 
-Determine chances of a player winning. 
+Determine chances of a players winning. 
 
-![image](https://github.com/user-attachments/assets/d83788f4-ac56-4005-9a69-8b8a00df574a)
+![image](https://github.com/user-attachments/assets/71f27aa0-46d0-4479-a658-fb89a1016015)
+
+Determine pre-flop chances of winning (Chen's + Custom Sigmoid Equation). 
+
+![image](https://github.com/user-attachments/assets/4e0983a0-8f57-471c-ad01-963ffda8b5ca)
+
+Compute pre-flop chances of winning (Monte Carlo) and output to a file. 
+
+![image](https://github.com/user-attachments/assets/c6192874-f9d5-4d9a-9238-f5e7f29af4e9)
+
+Output in data.txt. 
+
+![image](https://github.com/user-attachments/assets/9bca59ba-b4c8-43f3-bf86-e538222286ae)
