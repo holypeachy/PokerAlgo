@@ -1,6 +1,6 @@
-namespace PokerAlgo.Testing;
+namespace PokerAlgo.Sandbox;
 
-class AlgoUnitTest
+class AlgoTest
 {
     public string Description { get; set; }
     public Pair<Card, Card> Player1 {get; set;}
@@ -9,7 +9,7 @@ class AlgoUnitTest
     public List<Card> CommunityCards { get; set; }
     public int[] IndicesOfWinners { get; set; }
 
-    public AlgoUnitTest(string description, Pair<Card, Card> player1, Pair<Card, Card> player2, Pair<Card, Card> player3, List<Card> communityCards, int[] indicesOfWinners)
+    public AlgoTest(string description, Pair<Card, Card> player1, Pair<Card, Card> player2, Pair<Card, Card> player3, List<Card> communityCards, int[] indicesOfWinners)
     {
         Description = description;
         Player1 = player1;

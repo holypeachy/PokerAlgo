@@ -1,10 +1,10 @@
-namespace PokerAlgo.Testing;
+namespace PokerAlgo.Sandbox;
 
-class Testing {
+class LogicTests {
 	private static bool _debugEnable = false;
 
 
-	public Testing(bool debugEnable = false)
+	public LogicTests(bool debugEnable = false)
 	{
 		_debugEnable = debugEnable;
 		TestHandEvaluator();
@@ -21,7 +21,7 @@ class Testing {
 		Console.WriteLine("-------------------------------------------");
 
 		string json = File.ReadAllText(pathToTest);
-		HandEvalUnitTest[]? testObjects = JsonSerializer.Deserialize<HandEvalUnitTest[]>(json);
+		HandEvalTest[]? testObjects = JsonSerializer.Deserialize<HandEvalTest[]>(json);
 
 		if (testObjects is null)
 		{
@@ -30,7 +30,7 @@ class Testing {
 
 		int testCount = 1;
 		bool passed;
-		foreach (HandEvalUnitTest test in testObjects)
+		foreach (HandEvalTest test in testObjects)
 		{
 			passed = true;
 			Console.WriteLine($"Running Test {testCount++}: {test.Description}");
@@ -94,7 +94,7 @@ class Testing {
 		Console.WriteLine("-------------------------------------------");
 
 		string json = File.ReadAllText(pathToTest);
-		AlgoUnitTest[]? testObjects = JsonSerializer.Deserialize<AlgoUnitTest[]>(json);
+		AlgoTest[]? testObjects = JsonSerializer.Deserialize<AlgoTest[]>(json);
 
 		if (testObjects is null)
 		{
@@ -103,7 +103,7 @@ class Testing {
 
 		int testCount = 1;
 		bool passed;
-		foreach (AlgoUnitTest test in testObjects)
+		foreach (AlgoTest test in testObjects)
 		{
 			passed = true;
 			Console.WriteLine($"Running Test {testCount++}: {test.Description}");
@@ -164,7 +164,7 @@ class Testing {
 	private static void MakeTemplateHandEvalTestJson(string pathToTest = @"./Tests/HandEvalUnitTests.json"){
 		Console.WriteLine($"- Making Tests JSON file for: \"{pathToTest}\"");
 		Deck deck = new();
-		HandEvalUnitTest[] testObjects = new HandEvalUnitTest[2];
+		HandEvalTest[] testObjects = new HandEvalTest[2];
 		List<Card> community = new()
 		{
 			deck.NextCard(),
@@ -175,7 +175,7 @@ class Testing {
 		};
 		Pair<Card, Card> playerHand = new(deck.NextCard(), deck.NextCard());
 		WinningHand winning = new(HandType.Nothing, community);
-		HandEvalUnitTest test = new("My Description", community, playerHand, winning);
+		HandEvalTest test = new("My Description", community, playerHand, winning);
 		JsonSerializerOptions options = new();
 		options.WriteIndented = true;
 		testObjects[0] = test;
@@ -188,7 +188,7 @@ class Testing {
 	private static void MakeTemplateAlgoTestJson(string pathToTest = @"./Tests/AlgoTests.json"){
 		Console.WriteLine($"- Making Tests JSON file for: \"{pathToTest}\"");
 		Deck deck = new();
-		AlgoUnitTest[] testObjects = new AlgoUnitTest[2];
+		AlgoTest[] testObjects = new AlgoTest[2];
 		List<Card> community = new()
 		{
 			deck.NextCard(),
@@ -204,7 +204,7 @@ class Testing {
 			new Player("Test Player 2", new Card(14, CardSuit.Diamonds, true), new Card(14, CardSuit.Hearts, true)),
 			new Player("Test Player 3", new Card(13, CardSuit.Diamonds, true), new Card(13, CardSuit.Hearts, true)),
 		};
-		AlgoUnitTest test = new ("Test", players[0].HoleCards,  players[1].HoleCards,  players[2].HoleCards, community, new int[] {0, 1});
+		AlgoTest test = new ("Test", players[0].HoleCards,  players[1].HoleCards,  players[2].HoleCards, community, new int[] {0, 1});
 		JsonSerializerOptions options = new();
 		options.WriteIndented = true;
 		testObjects[0] = test;

@@ -5,15 +5,11 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerAlgo", "PokerAlgo\PokerAlgo.csproj", "{866FD2CD-E168-4F4E-86D9-3950406BE2E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerAlgo.Testing", "PokerAlgo.Testing\PokerAlgo.Testing.csproj", "{C2BE2424-C3F5-4B63-AEC4-55C71CC55A27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerAlgo.Sandbox", "PokerAlgo.Sandbox\PokerAlgo.Sandbox.csproj", "{C2BE2424-C3F5-4B63-AEC4-55C71CC55A27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerAlgo.Testing", "PokerAlgo.Testing\PokerAlgo.Testing.csproj", "{D51D79C2-4FD7-4A39-920A-848FDBD3A523}"
 EndProject
 Global
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {08AF6709-23F8-4F6A-BA0C-5FACEE9EA986}
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -47,5 +43,23 @@ Global
 		{C2BE2424-C3F5-4B63-AEC4-55C71CC55A27}.Release|x64.Build.0 = Release|Any CPU
 		{C2BE2424-C3F5-4B63-AEC4-55C71CC55A27}.Release|x86.ActiveCfg = Release|Any CPU
 		{C2BE2424-C3F5-4B63-AEC4-55C71CC55A27}.Release|x86.Build.0 = Release|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Debug|x64.Build.0 = Debug|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Debug|x86.Build.0 = Debug|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Release|x64.ActiveCfg = Release|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Release|x64.Build.0 = Release|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Release|x86.ActiveCfg = Release|Any CPU
+		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {08AF6709-23F8-4F6A-BA0C-5FACEE9EA986}
 	EndGlobalSection
 EndGlobal

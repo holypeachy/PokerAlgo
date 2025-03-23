@@ -1,13 +1,13 @@
-namespace PokerAlgo.Testing;
+namespace PokerAlgo.Sandbox;
 
-class HandEvalUnitTest
+class HandEvalTest
 {
     public string Description { get; set; }
     public Pair<Card, Card> PlayerCards { get; set; }
     public List<Card> CommunityCards { get; set; }
     public WinningHand ExpectedHand { get; set; }
 
-    public HandEvalUnitTest(string description, List<Card> communityCards, Pair<Card, Card> playerCards, WinningHand expectedHand)
+    public HandEvalTest(string description, List<Card> communityCards, Pair<Card, Card> playerCards, WinningHand expectedHand)
     {
         this.Description = description;
         this.CommunityCards = communityCards;
