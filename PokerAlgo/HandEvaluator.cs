@@ -14,6 +14,7 @@ public class HandEvaluator
     {
         if (cards.Count < 5) throw new Exception("⛔ HandEvaluator.GetWinningHand() - passed cards argument < 5, the list must have at least 5 cards. This probably means community cards < 3.");
         // Debug.Assert(cards.Count >= 5, "⛔ HandEvaluator.GetWinningHand() - passed cards argument < 5, the list must have at least 5 cards. This probably means community cards < 3.");
+        if (cards.Count > 7) throw new Exception("⛔ HandEvaluator.GetWinningHand() - passed cards argument > 7, the list must contain up to 7 cards. 2 hole cards + 5 community.");
 
         _tempBestHand = null;
         List<Card> cardsCopy = cards.ToList();

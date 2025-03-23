@@ -339,8 +339,6 @@ TODO: Implement custom Exceptions.
 * Null-coalescing operator "??".
 
 * Changes
-* UnitTests class is now LogicTests. PokerAlgo.Testing is now PokerAlgo.Sandbox.
-* Added PokerAlgo.Testing xunit project for unit testing.
-* Renamed AlgoUnitTest to AlgoTest and HandEvalUnitTest to HandEvalTest.
+* Added a few unit tests to make sure argument input errors are being handled properly.
 * 
 */
