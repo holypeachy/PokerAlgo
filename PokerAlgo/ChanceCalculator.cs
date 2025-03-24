@@ -11,7 +11,6 @@ public static class ChanceCalculator
         // Debug.Assert(communityCards.Count >= 3, "⛔ communityCards.Count is less than 3");
 
         Deck testDeck = new();
-        int numberOfGames = numberOfSimulatedGames;
         int timesWon = 0;
         int timesTied = 0;
 
@@ -19,7 +18,7 @@ public static class ChanceCalculator
         List<Player> allPlayers;
         List<Player> winners;
 
-        for (int i = 0; i < numberOfGames; i++)
+        for (int i = 0; i < numberOfSimulatedGames; i++)
         {
             testDeck.ResetDeck();
 
@@ -51,7 +50,7 @@ public static class ChanceCalculator
             }
         }
 
-        return new Tuple<double, double>(timesWon / (double)numberOfGames, timesTied / (double)numberOfGames);
+        return new Tuple<double, double>(timesWon / (double)numberOfSimulatedGames, timesTied / (double)numberOfSimulatedGames);
     }
 
     // Returns Win and Tie Values from 0 to 1.0
@@ -110,7 +109,7 @@ public static class ChanceCalculator
     }
 
     // Returns Value from 0 to 1.0 | Realistically: 0.1166 to 0.8389
-    public static double GetWinningChancePreFlop(Pair<Card, Card> playerHoleCards)
+    public static double GetWinningChancePreFlopChen(Pair<Card, Card> playerHoleCards)
     {
         // ! Sigmoid adjustment
         return 1 / (1 + Math.Exp(-(_handStrengthSensitivity * GetPreFlopChen(playerHoleCards) + _baselineWinRate)));

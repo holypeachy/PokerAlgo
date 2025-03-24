@@ -16,7 +16,7 @@ public class Program
 
 	private static readonly Dictionary<int, string> _cardPrintLookUp = new Dictionary<int, string>
 	{
-		{1, "A"}, {2, "2"}, {3, "3"}, {4, "4"}, {5, "5"}, {6, "6"}, {7, "7"}, {8, "8"}, {9, "9"}, {10, "10"},{11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
+		{1, "A"}, {2, "2"}, {3, "3"}, {4, "4"}, {5, "5"}, {6, "6"}, {7, "7"}, {8, "8"}, {9, "9"}, {10, "T"},{11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
 	};
 
 	private static Deck deck = new();
@@ -102,7 +102,7 @@ public class Program
 			Console.WriteLine("--- 😎 Players:");
 			foreach (Player p in players)
 			{
-				Console.Write("\t" + string.Format("{0:0}%", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100));
+				Console.Write("\t" + string.Format("{0:0}%", ChanceCalculator.GetWinningChancePreFlopChen(p.HoleCards) * 100));
 				Console.WriteLine(" - " + p);
 			}
 		}
@@ -207,18 +207,18 @@ public class Program
 			Console.Write("\tWin: ");
 			Console.ForegroundColor = ConsoleColor.Black;
 			Console.BackgroundColor = ConsoleColor.Blue;
-			Console.Write(" " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(p.HoleCards) * 100) + " ");
+			Console.Write(" " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(p.HoleCards) * 100) + " ");
 			Console.ResetColor();
 			Console.WriteLine();
 
 		}
 		Console.WriteLine();
 		Console.WriteLine("AA\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
-		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100) + "%");
+		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100) + "%");
 		Console.WriteLine("KAs\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))));
-		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100) + "%");
+		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100) + "%");
 		Console.WriteLine("27o\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))));
-		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlop(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100) + "%");
+		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100) + "%");
 	}
 
 	static void PreFlopComputation()
@@ -230,6 +230,7 @@ public class Program
 		}
 
 		Console.WriteLine("💭 Computing chances of winning for all starting hands...");
+		Console.WriteLine($"Simulations per Hand: {_numOfSims}");
 
 		Dictionary<string, Pair<Card, Card>> startingHands = new();
 		Card first;
@@ -240,7 +241,7 @@ public class Program
 			{
 				first = new Card(i, CardSuit.Spades, true);
 				second = new Card(j, CardSuit.Hearts, true);
-				startingHands[$"{_cardPrintLookUp[first.Rank]} {_cardPrintLookUp[second.Rank]} o"] = new Pair<Card, Card>(first, second);
+				startingHands[$"{_cardPrintLookUp[first.Rank]}{_cardPrintLookUp[second.Rank]}o"] = new Pair<Card, Card>(first, second);
 			}
 		}
 		for (int i = 2; i <= 14; i++)
@@ -253,9 +254,12 @@ public class Program
 				}
 				first = new Card(i, CardSuit.Hearts, true);
 				second = new Card(j, CardSuit.Hearts, true);
-				startingHands[$"{_cardPrintLookUp[first.Rank]} {_cardPrintLookUp[second.Rank]} s"] = new Pair<Card, Card>(first, second);
+				startingHands[$"{_cardPrintLookUp[first.Rank]}{_cardPrintLookUp[second.Rank]}s"] = new Pair<Card, Card>(first, second);
 			}
 		}
+
+		int progress = 0;
+		Console.Write($"Progress: {progress++}/{startingHands.Count}");
 
 		try
 		{
@@ -263,7 +267,7 @@ public class Program
 		}
 		catch
 		{
-			throw new IOException($"⛔ Issue when trying to delete before calculation \"{_preflopFilePath}\".");
+			throw new IOException($"⛔ There was an error when trying to delete \"{_preflopFilePath}\" before calculation.");
 		}
 
 		StringBuilder results = new StringBuilder();
@@ -273,7 +277,16 @@ public class Program
 		{
 			Tuple<double, double> chanceTuple = ChanceCalculator.GetWinningChancePreFlopSim(keyValuePair.Value, _numOfPreflopSimPlayers, _numOfSims);
 			results.AppendLine($"{keyValuePair.Key} {chanceTuple.Item1} {chanceTuple.Item2}");
+
+			int currentLineCursor = Console.CursorTop;
+			Console.SetCursorPosition(0, Console.CursorTop);
+			Console.Write(new string(' ', Console.WindowWidth));
+			Console.SetCursorPosition(0, currentLineCursor);
+
+			Console.Write($"Progress: {progress++}/{startingHands.Count}");
 		}
+
+		Console.WriteLine();
 
 		try
 		{
@@ -281,10 +294,10 @@ public class Program
 		}
 		catch
 		{
-			throw new IOException($"⛔ Issue when writing to \"{_preflopFilePath}\".");
+			throw new IOException($"⛔ There was an error when writing to \"{_preflopFilePath}\".");
 		}
 
-		Console.WriteLine($"✅ Computations done. Data can be found in {_preflopFilePath}");
+		Console.WriteLine($"✅ Computations done. Data can be found in: {_preflopFilePath}");
 	}
 
 	static void MainExecution()
@@ -320,7 +333,7 @@ public class Program
 ! 
 
 TODO
-TODO: Add unit tests
+TODO: Think about further unit testing
 TODO: Don't deep copy cards in the ChanceCalculator. Instead just use the hole cards reference.
 TODO: Load preflop_data files to dictionaries.
 TODO: Implement custom Exceptions.
@@ -329,6 +342,7 @@ TODO: Implement custom Exceptions.
 ? Debug code for nuget package?! Performance impact / cleaner code.
 ? I should make the Algo a nuget package and upload it.
 ? Use method extensions for better code readability.
+? Add preflop computation to PokerAlgo or as an additional package, or to the Helpers class.
 
 ? Use SortedSet for storing cards when order matters to avoid additional sorting operations. ??
 ? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching. if (threeKinds.Count >= 3 && pairs.Count >= 2) { ... }
@@ -339,6 +353,9 @@ TODO: Implement custom Exceptions.
 * Null-coalescing operator "??".
 
 * Changes
-* Added a few unit tests to make sure argument input errors are being handled properly.
+* Added Resources folder to hold shared data among all projects.
+* Removed unnecessary variable in the ChanceCalculator.GetWinningChance function.
+* Changed format of Pre-Flop Computation Files, A 2 o -> K5o, and rank 10 is now T which is proper poker notation.
+* Renamed GetWinningChancePreFlop to GetWinningChancePreFlopChen in ChanceCalculator.
 * 
 */
