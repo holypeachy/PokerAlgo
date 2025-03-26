@@ -5,10 +5,13 @@ public static class ChanceCalculator
     private static readonly double _baselineWinRate = -1.85d; // Logistic Shift of sigmoid
 
     // Returns Win and Tie Values from 0 to 1.0
-    public static Tuple<double, double> GetWinningChance(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
+    public static Tuple<double, double> GetWinningChanceSim(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
     {
-        if (communityCards.Count < 3) throw new Exception("⛔ communityCards.Count is less than 3");
-        // Debug.Assert(communityCards.Count >= 3, "⛔ communityCards.Count is less than 3");
+        if (communityCards.Count < 3) throw new ArgumentException("⛔ communityCards.Count is less than 3");
+        if (communityCards.Count > 5) throw new ArgumentException("⛔ communityCards.Count is more than 5");
+        if (numOfOpponents < 1) throw new ArgumentException("⛔ numOfOpponents is less than 2");
+        if (numberOfSimulatedGames < 100) throw new ArgumentException("⛔ numberOfSimulatedGames is less than 100. I recommend at least 100 simulated games for a better prediction.");
+
 
         Deck testDeck = new();
         int timesWon = 0;
@@ -18,16 +21,16 @@ public static class ChanceCalculator
         List<Player> allPlayers;
         List<Player> winners;
 
+        List<Card> cardsToRemove = new()
+        {
+            playerHoleCards.First,
+            playerHoleCards.Second
+        };
+        cardsToRemove.AddRange(communityCards);
+
         for (int i = 0; i < numberOfSimulatedGames; i++)
         {
             testDeck.ResetDeck();
-
-            List<Card> cardsToRemove = new List<Card>()
-            {
-                playerHoleCards.First,
-                playerHoleCards.Second
-            };
-            cardsToRemove.AddRange(communityCards);
 
             testDeck.RemoveCards(cardsToRemove);
 
@@ -56,8 +59,10 @@ public static class ChanceCalculator
     // Returns Win and Tie Values from 0 to 1.0
     public static Tuple<double, double> GetWinningChancePreFlopSim(Pair<Card, Card> playerHoleCards, int numOfOpponents, int numberOfSimulatedGames)
     {
+        if (numOfOpponents < 1) throw new ArgumentException("⛔ numOfOpponents is less than 2");
+        if (numberOfSimulatedGames < 100) throw new ArgumentException("⛔ numberOfSimulatedGames is less than 100. I recommend at least 100 simulated games for a better prediction.");
+
         Deck testDeck = new();
-        int numberOfGames = numberOfSimulatedGames;
         int timesWon = 0;
         int timesTied = 0;
 
@@ -65,15 +70,15 @@ public static class ChanceCalculator
         List<Player> allPlayers;
         List<Player> winners;
 
-        for (int i = 0; i < numberOfGames; i++)
+        List<Card> cardsToRemove = new()
+        {
+            playerHoleCards.First,
+            playerHoleCards.Second
+        };
+
+        for (int i = 0; i < numberOfSimulatedGames; i++)
         {
             testDeck.ResetDeck();
-
-            List<Card> cardsToRemove = new List<Card>()
-            {
-                playerHoleCards.First,
-                playerHoleCards.Second
-            };
 
             List<Card> communityCards = new()
             {
@@ -105,7 +110,7 @@ public static class ChanceCalculator
             }
         }
 
-        return new Tuple<double, double>(timesWon / (double)numberOfGames, timesTied / (double)numberOfGames);
+        return new Tuple<double, double>(timesWon / (double)numberOfSimulatedGames, timesTied / (double)numberOfSimulatedGames);
     }
 
     // Returns Value from 0 to 1.0 | Realistically: 0.1166 to 0.8389
@@ -118,6 +123,8 @@ public static class ChanceCalculator
     // Returns -1 to 20
     public static double GetPreFlopChen(Pair<Card, Card> playerHoleCards)
     {
+        if (playerHoleCards.First.Rank == playerHoleCards.Second.Rank && playerHoleCards.First.Suit == playerHoleCards.Second.Suit) throw new ArgumentException("⛔ Player hole cards are the same, this will never happen in a real game.");
+
         double points = 0;
         Card higherCard;
         Card lowerCard;

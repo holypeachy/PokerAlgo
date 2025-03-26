@@ -1,7 +1,7 @@
 namespace PokerAlgo;
 public class Deck
 {
-	private List<Card> _cards;
+	private readonly List<Card> _cards;
 	private int _nextCardIndex;
 
 	public Deck()
@@ -77,7 +77,7 @@ public class Deck
 		_nextCardIndex += cardsToRemove.Count;
 		foreach (Card card in cardsToRemove)
 		{
-			_cards.Remove(card);
+			if(_cards.Remove(card) == false) throw new Exception($"⛔ Deck.RemoveCards() - Card to remove {card} was not found in deck.");
 			_cards.Insert(0, card);
 		}
 	}

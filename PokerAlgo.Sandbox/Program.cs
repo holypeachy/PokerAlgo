@@ -173,7 +173,7 @@ public class Program
 			Console.ResetColor();
 			Console.WriteLine();
 
-			Tuple<double, double> chanceTuple = ChanceCalculator.GetWinningChance(p.HoleCards, communityCards, players.Count - 1, _numOfSims);
+			Tuple<double, double> chanceTuple = ChanceCalculator.GetWinningChanceSim(p.HoleCards, communityCards, players.Count - 1, _numOfSims);
 			string winPercentage = string.Format("{0:0.00}%", chanceTuple.Item1 * 100);
 			string tiePercentage = string.Format("{0:0.00}%", chanceTuple.Item2 * 100);
 
@@ -333,29 +333,30 @@ public class Program
 ! 
 
 TODO
-TODO: Think about further unit testing
-TODO: Don't deep copy cards in the ChanceCalculator. Instead just use the hole cards reference.
-TODO: Load preflop_data files to dictionaries.
 TODO: Implement custom Exceptions.
+TODO: Load preflop_data files to dictionaries.
 
 ? Future Ideas
+? Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
 ? Debug code for nuget package?! Performance impact / cleaner code.
 ? I should make the Algo a nuget package and upload it.
-? Use method extensions for better code readability.
-? Add preflop computation to PokerAlgo or as an additional package, or to the Helpers class.
+? Add preflop computation to PokerAlgo Helpers class or as an additional package.
 
+? Use method extensions for better code readability?
 ? Use SortedSet for storing cards when order matters to avoid additional sorting operations. ??
 ? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching. if (threeKinds.Count >= 3 && pairs.Count >= 2) { ... }
-? Multithreading for Monte Carlo sim.
 
 * Notes
 * "WinningHand nullable? It has been giving me a headache with the warnings." Turns out, it's a good programming pattern.
 * Null-coalescing operator "??".
 
 * Changes
-* Added Resources folder to hold shared data among all projects.
-* Removed unnecessary variable in the ChanceCalculator.GetWinningChance function.
-* Changed format of Pre-Flop Computation Files, A 2 o -> K5o, and rank 10 is now T which is proper poker notation.
-* Renamed GetWinningChancePreFlop to GetWinningChancePreFlopChen in ChanceCalculator.
+* Recomputed pre-flop data to use new format and using 200k simulations instead of 100k.
+* Refactored GetWinningChance and GetWinningChancePreFlopSim functions in ChanceCalculator class. GetWinningChance is now GetWinningChanceSim.
+* Separated Unit Tests for different classes into their own files.
+* Added tests for my implementation of Chen's formula.
+* Added FluentAssertions package to the Testing project.
+* Added more tests to make sure valid arguments are passed.
+* Deck.RemoveCards() now throws error if card is not found.
 * 
 */

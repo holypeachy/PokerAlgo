@@ -22,10 +22,9 @@ public static class Algo
 
     public static List<Player> GetWinners(List<Player> players, List<Card> communityCards)
     {
-        if(players.Count < 2)
-        {
-            throw new Exception("⛔ Algo.FindWinner() - players.Count < 2. There must be at least 2 players.");
-        }
+        if(players.Count < 2) throw new ArgumentException("⛔ Algo.FindWinner() - players.Count < 2. There must be at least 2 players.");
+        if(communityCards.Count < 3) throw new ArgumentException("⛔ Algo.FindWinner() - communityCards.Count < 3. There must be at least 3 community cards.");
+        if(communityCards.Count > 5) throw new ArgumentException("⛔ Algo.FindWinner() - communityCards.Count > 5. There must be no more than 5 community cards.");
 
         Helpers.DebugLog("--- 🔎 Algo Starts");
         HandEvaluator handEvaluator = new HandEvaluator();
