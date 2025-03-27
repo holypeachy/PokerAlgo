@@ -124,24 +124,13 @@ public class HandEvaluator
             return;
         }
 
-        // ! One, 3 of a kind and 2 pairs. Full House
-        else if (threeKinds.Count == 3 && pairs.Count == 4)
+        // ! One, 3 of a kind and 1 or 2 pairs. Full House
+        else if (threeKinds.Count == 3 && pairs.Count >= 2)
         {
-            List<Card> topPair = pairs.GetRange(2, 2);
+            List<Card> topPair = pairs.GetRange(pairs.Count - 2, 2);
             List<Card> fullHouse = new();
 
             fullHouse.AddRange(topPair);
-            fullHouse.AddRange(threeKinds);
-
-            SetWinningHand(HandType.FullHouse, fullHouse);
-            return;
-        }
-
-        // ! One,  3 of a kind and 1 pair. Full House
-        else if (threeKinds.Count == 3 && pairs.Count == 2)
-        {
-            List<Card> fullHouse = new();
-            fullHouse.AddRange(pairs);
             fullHouse.AddRange(threeKinds);
 
             SetWinningHand(HandType.FullHouse, fullHouse);

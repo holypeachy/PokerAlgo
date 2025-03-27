@@ -155,13 +155,40 @@ public class ChanceCalculatorTests
         ChanceCalculator.GetPreFlopChen(holeCards).Should().Be(20);
     }
 
-
     [Fact]
     public void GetPreFlopChen_Chen_value_for_AA_suited_is_22_but_should_throw_error_because_not_possible_in_game()
     {
         Pair<Card, Card> holeCards = new(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true));
 
         Assert.Throws<ArgumentException>(() => ChanceCalculator.GetPreFlopChen(holeCards));
+    }
+
+
+    [Fact]
+    public void GetWinningChancePreFlopLookUp_AAo_4_opponents_61413()
+    {
+        Pair<Card, Card> playerCards = new(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Clubs, true));
+        string path = @"C:/Users/Frank/Code/PokerAlgo/Resources/Preflop_data/4_200k.preflop";
+
+        ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 4, path).Item1.Should().Be(0.61413);
+    }
+
+    [Fact]
+    public void GetWinningChancePreFlopLookUp_AKs_4_opponents_41133()
+    {
+        Pair<Card, Card> playerCards = new(new Card(14, CardSuit.Spades, true), new Card(13, CardSuit.Spades, true));
+        string path = @"C:/Users/Frank/Code/PokerAlgo/Resources/Preflop_data/4_200k.preflop";
+
+        ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 4, path).Item1.Should().Be(0.41133);
+    }
+
+    [Fact]
+    public void GetWinningChancePreFlopLookUp_AKs_1_opponent_707155_directory()
+    {
+        Pair<Card, Card> playerCards = new(new Card(14, CardSuit.Spades, true), new Card(13, CardSuit.Spades, true));
+        string directoryPath = @"C:/Users/Frank/Code/PokerAlgo/Resources/Preflop_data/";
+
+        ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 1, directoryPath).Item1.Should().Be(0.707155);
     }
 
 }

@@ -11,11 +11,11 @@ public class Program
 	private static bool _isSim = false;
 	private static bool _isPreflop = false;
 	private static bool _isCompute = false;
-	private static string _preflopFilePath = "";
+	private static string _preflopFolderPath = "";
 	private static int _numOfPreflopSimPlayers = 0;
 
-	private static readonly Dictionary<int, string> _cardPrintLookUp = new Dictionary<int, string>
-	{
+	private static readonly Dictionary<int, string> _cardPrintLookUp = new()
+    {
 		{1, "A"}, {2, "2"}, {3, "3"}, {4, "4"}, {5, "5"}, {6, "6"}, {7, "7"}, {8, "8"}, {9, "9"}, {10, "T"},{11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
 	};
 
@@ -31,7 +31,7 @@ public class Program
 		if (args.Length == 4 && args[0] == "compute" && int.TryParse(args[1], out _numOfPreflopSimPlayers) && int.TryParse(args[2], out inputSims))
 		{
 			_isCompute = true;
-			_preflopFilePath = args[3];
+			_preflopFolderPath = args[3];
 			_numOfSims = inputSims;
 		}
 		else if (args.Length == 2 && args[0] == "sim" && int.TryParse(args[1], out inputSims))
@@ -74,7 +74,7 @@ public class Program
 			Console.WriteLine(" Pre-Flop Calculation using Chen's and Custom Sigmoid Equation Normalization.");
 			Console.WriteLine("\tdotnet run preflop\n");
 			Console.WriteLine(" Computes Pre-Flop winning chances for all hands using Monte Carlo simulations.");
-			Console.WriteLine("\tdotnet run compute {number of opponents : int} {number of simulations : int} {output file path : string}\n");
+			Console.WriteLine("\tdotnet run compute {number of opponents : int} {number of simulations : int} {output directory : string}\n");
 			Console.WriteLine(" Runs logic tests.");
 			Console.WriteLine("\tdotnet run test");
 			Console.WriteLine("\tdotnet run test {enable debug : bool}");
@@ -223,14 +223,16 @@ public class Program
 
 	static void PreFlopComputation()
 	{
-		if (string.IsNullOrWhiteSpace(_preflopFilePath))
+		if (string.IsNullOrWhiteSpace(_preflopFolderPath))
 		{
-			Console.WriteLine($"⛔ Please enter a valid file path. You entered: \"{_preflopFilePath}\"");
+			Console.WriteLine($"⛔ Please enter a valid directory path. You entered: \"{_preflopFolderPath}\"");
 			Environment.Exit(1);
 		}
 
 		Console.WriteLine("💭 Computing chances of winning for all starting hands...");
 		Console.WriteLine($"Simulations per Hand: {_numOfSims}");
+
+		string filePath = _preflopFolderPath + (_preflopFolderPath.Last() == '/' ? "" : '/') + $"{_numOfPreflopSimPlayers}_{_numOfSims}.preflop";
 
 		Dictionary<string, Pair<Card, Card>> startingHands = new();
 		Card first;
@@ -261,17 +263,7 @@ public class Program
 		int progress = 0;
 		Console.Write($"Progress: {progress++}/{startingHands.Count}");
 
-		try
-		{
-			File.Delete(_preflopFilePath);
-		}
-		catch
-		{
-			throw new IOException($"⛔ There was an error when trying to delete \"{_preflopFilePath}\" before calculation.");
-		}
-
 		StringBuilder results = new StringBuilder();
-		results.AppendLine($"Pre-Flop Computations | Opponents: {_numOfPreflopSimPlayers} | Simulations: {_numOfSims}");
 
 		foreach (KeyValuePair<string, Pair<Card, Card>> keyValuePair in startingHands)
 		{
@@ -290,14 +282,14 @@ public class Program
 
 		try
 		{
-			File.AppendAllText(_preflopFilePath, results.ToString());
+			File.WriteAllText(filePath, results.ToString());
 		}
 		catch
 		{
-			throw new IOException($"⛔ There was an error when writing to \"{_preflopFilePath}\".");
+			throw new IOException($"⛔ There was an error when writing to \"{filePath}\".");
 		}
 
-		Console.WriteLine($"✅ Computations done. Data can be found in: {_preflopFilePath}");
+		Console.WriteLine($"✅ Computations done. Data can be found in: {filePath}");
 	}
 
 	static void MainExecution()
@@ -333,30 +325,25 @@ public class Program
 ! 
 
 TODO
+TODO: Load preflop data files to dictionaries. WIP: need to think about the design of this more.
+TODO: Code Review.
 TODO: Implement custom Exceptions.
-TODO: Load preflop_data files to dictionaries.
+TODO: Add preflop computation to PokerAlgo Helpers class or as an additional package.
 
 ? Future Ideas
 ? Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
-? Debug code for nuget package?! Performance impact / cleaner code.
-? I should make the Algo a nuget package and upload it.
-? Add preflop computation to PokerAlgo Helpers class or as an additional package.
-
 ? Use method extensions for better code readability?
-? Use SortedSet for storing cards when order matters to avoid additional sorting operations. ??
-? Full House Logic: The check for Full House could be simplified by directly evaluating the number of threeKinds and pairs. Less branching. if (threeKinds.Count >= 3 && pairs.Count >= 2) { ... }
+? I should make the Algo a nuget package and upload it.
+
+? Precompute all chances of winning?
 
 * Notes
 * "WinningHand nullable? It has been giving me a headache with the warnings." Turns out, it's a good programming pattern.
 * Null-coalescing operator "??".
 
 * Changes
-* Recomputed pre-flop data to use new format and using 200k simulations instead of 100k.
-* Refactored GetWinningChance and GetWinningChancePreFlopSim functions in ChanceCalculator class. GetWinningChance is now GetWinningChanceSim.
-* Separated Unit Tests for different classes into their own files.
-* Added tests for my implementation of Chen's formula.
-* Added FluentAssertions package to the Testing project.
-* Added more tests to make sure valid arguments are passed.
-* Deck.RemoveCards() now throws error if card is not found.
+* Full House detection logic was simplified, less branching.
+* Precomputed files are now named automatically following a certain format.
+* Added GetWinningChancePreFlopLookUp and LoadDictionary to ChanceCalculator.
 * 
 */

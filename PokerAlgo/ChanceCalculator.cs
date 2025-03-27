@@ -4,6 +4,11 @@ public static class ChanceCalculator
     private static readonly double _handStrengthSensitivity = 0.175d; // Logistic Growth Rate of sigmoid
     private static readonly double _baselineWinRate = -1.85d; // Logistic Shift of sigmoid
 
+    private static readonly Dictionary<int, string> _cardPrintLookUp = new()
+    {
+        {1, "A"}, {2, "2"}, {3, "3"}, {4, "4"}, {5, "5"}, {6, "6"}, {7, "7"}, {8, "8"}, {9, "9"}, {10, "T"},{11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
+    };
+    
     // Returns Win and Tie Values from 0 to 1.0
     public static Tuple<double, double> GetWinningChanceSim(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
     {
@@ -178,4 +183,31 @@ public static class ChanceCalculator
         return points;
     }
 
+
+    // TODO
+    // ! Returns Pre-Computed Chances of winning
+    public static Tuple<double, double> GetWinningChancePreFlopLookUp(Pair<Card, Card> playerCards, int numOfOpponents, string dataPath)
+    {
+        Dictionary<string, Tuple<double, double>> PreFlopDictionary = LoadDictionary(dataPath);
+
+        string s = $"{_cardPrintLookUp[playerCards.First.Rank]}{_cardPrintLookUp[playerCards.Second.Rank]}" + (playerCards.First.Suit == playerCards.Second.Suit ? "s" : "o");
+        return PreFlopDictionary[s];
+    }
+
+    private static Dictionary<string, Tuple<double, double>>? LoadDictionary(string filePath)
+    {
+        string[] data;
+        Dictionary<string, Tuple<double, double>> dict = new();
+
+        data = File.ReadAllLines(filePath);
+
+        string[] line;
+        for (int index = 0; index < data.Length; index++)
+        {
+            line = data[index].Split(' ');
+            dict[line[0]] = new Tuple<double, double>(double.Parse(line[1]), double.Parse(line[2]));
+        }
+
+        return dict;
+    }
 }
