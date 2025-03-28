@@ -3,19 +3,21 @@
 public class Program
 {
 	private static int _debugVerbosity = 0;
-	private static int _executions = 1;
-	private static int _numOfCommunityCards = 5;
+	private static readonly int _numOfCommunityCards = 5;
 	private static int _numOfSims = 500;
 	private static bool _isTesting = false;
 	private static bool _inputTestDebug = false;
 	private static bool _isSim = false;
-	private static bool _isPreflop = false;
+	private static bool _isChenPreflop = false;
+	private static bool _isLookupPreflop = false;
 	private static bool _isCompute = false;
 	private static string _preflopFolderPath = "";
 	private static int _numOfPreflopSimPlayers = 0;
 
+	private static readonly string _pathToPreFlopDirectory = @"C:/Users/Frank/Code/PokerAlgo/Resources/preflop_data/";
+
 	private static readonly Dictionary<int, string> _cardPrintLookUp = new()
-    {
+	{
 		{1, "A"}, {2, "2"}, {3, "3"}, {4, "4"}, {5, "5"}, {6, "6"}, {7, "7"}, {8, "8"}, {9, "9"}, {10, "T"},{11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
 	};
 
@@ -58,9 +60,13 @@ public class Program
 		{
 			_isSim = true;
 		}
-		else if (args.Length == 1 && args[0] == "preflop")
+		else if (args.Length == 1 && args[0] == "chen")
 		{
-			_isPreflop = true;
+			_isChenPreflop = true;
+		}
+		else if (args.Length == 1 && args[0] == "lookup")
+		{
+			_isLookupPreflop = true;
 		}
 		else
 		{
@@ -71,9 +77,11 @@ public class Program
 			Console.WriteLine(" Run Monte Carlo simulations on all players.");
 			Console.WriteLine("\tdotnet run sim");
 			Console.WriteLine("\tdotnet run sim {number of simulations : int}\n");
-			Console.WriteLine(" Pre-Flop Calculation using Chen's and Custom Sigmoid Equation Normalization.");
-			Console.WriteLine("\tdotnet run preflop\n");
-			Console.WriteLine(" Computes Pre-Flop winning chances for all hands using Monte Carlo simulations.");
+			Console.WriteLine(" Pre-flop calculation using pre-computed values.");
+			Console.WriteLine("\tdotnet run lookup\n");
+			Console.WriteLine(" Pre-flop calculation using Chen's and Custom Sigmoid Equation Normalization.");
+			Console.WriteLine("\tdotnet run chen\n");
+			Console.WriteLine(" Computes Pre-flop winning chances for all hands using Monte Carlo simulations.");
 			Console.WriteLine("\tdotnet run compute {number of opponents : int} {number of simulations : int} {output directory : string}\n");
 			Console.WriteLine(" Runs logic tests.");
 			Console.WriteLine("\tdotnet run test");
@@ -89,20 +97,21 @@ public class Program
 
 		players = new List<Player>
 		{
-			new Player("Tom", deck.NextCard(), deck.NextCard()),
-			new Player("Matt", deck.NextCard(), deck.NextCard()),
-			new Player("Ben", deck.NextCard(), deck.NextCard()),
-			new Player("Sam", deck.NextCard(), deck.NextCard()),
-			new Player("Jim", deck.NextCard(), deck.NextCard()),
+			new("Tom", deck.NextCard(), deck.NextCard()),
+			new("Matt", deck.NextCard(), deck.NextCard()),
+			new("Ben", deck.NextCard(), deck.NextCard()),
+			new("Sam", deck.NextCard(), deck.NextCard()),
+			new("Jim", deck.NextCard(), deck.NextCard()),
 		};
 
 		if (_debugVerbosity > 0 || _isSim)
 		{
 			Console.WriteLine("--- 🚀 Game Starts");
 			Console.WriteLine("--- 😎 Players:");
+			FolderLoader folderLoader = new(_pathToPreFlopDirectory);
 			foreach (Player p in players)
 			{
-				Console.Write("\t" + string.Format("{0:0}%", ChanceCalculator.GetWinningChancePreFlopChen(p.HoleCards) * 100));
+				Console.Write("\t" + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopLookUp(p.HoleCards, players.Count - 1, folderLoader).winChance * 100));
 				Console.WriteLine(" - " + p);
 			}
 		}
@@ -127,9 +136,11 @@ public class Program
 
 		else if (_isSim) MonteCarloSim();
 
-		else if (_isPreflop) PreFlopChances();
+		else if (_isChenPreflop) ChenPreFlopChances();
 
 		else if (_isCompute) PreFlopComputation();
+
+		else if (_isLookupPreflop) LookUpPreFlopChances();
 
 		else MainExecution();
 
@@ -137,7 +148,7 @@ public class Program
 		Console.WriteLine();
 		Console.BackgroundColor = ConsoleColor.Blue;
 		Console.ForegroundColor = ConsoleColor.Black;
-		Console.Write(_executions == 1 ? $" 🕜 Execution Time: {watch.ElapsedMilliseconds}ms " : $" 🕜 Execution Time ({_executions} Execs): {watch.ElapsedMilliseconds}ms (Avg {watch.ElapsedMilliseconds / (float)_executions}ms)");
+		Console.Write($" 🕜 Execution Time: {watch.ElapsedMilliseconds}ms ");
 		Console.ResetColor();
 	}
 
@@ -173,9 +184,9 @@ public class Program
 			Console.ResetColor();
 			Console.WriteLine();
 
-			Tuple<double, double> chanceTuple = ChanceCalculator.GetWinningChanceSim(p.HoleCards, communityCards, players.Count - 1, _numOfSims);
-			string winPercentage = string.Format("{0:0.00}%", chanceTuple.Item1 * 100);
-			string tiePercentage = string.Format("{0:0.00}%", chanceTuple.Item2 * 100);
+			(double winChance, double tieChance) chanceTuple = ChanceCalculator.GetWinningChanceSim(p.HoleCards, communityCards, players.Count - 1, _numOfSims);
+			string winPercentage = string.Format("{0:0.00}%", chanceTuple.winChance * 100);
+			string tiePercentage = string.Format("{0:0.00}%", chanceTuple.tieChance * 100);
 
 			Console.Write($"\tWin:");
 			Console.ForegroundColor = ConsoleColor.Black;
@@ -194,7 +205,7 @@ public class Program
 		}
 	}
 
-	static void PreFlopChances()
+	static void ChenPreFlopChances()
 	{
 		Algo.DebugVerbosity = 0;
 		Console.WriteLine($"Pre-Flop ");
@@ -213,12 +224,42 @@ public class Program
 
 		}
 		Console.WriteLine();
-		Console.WriteLine("AA\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
+		Console.WriteLine("AAo\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
 		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100) + "%");
 		Console.WriteLine("KAs\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))));
 		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100) + "%");
 		Console.WriteLine("27o\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))));
 		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100) + "%");
+	}
+
+	static void LookUpPreFlopChances()
+	{
+		Algo.DebugVerbosity = 0;
+		FolderLoader folderLoader = new(_pathToPreFlopDirectory);
+
+		Console.WriteLine($"Pre-Flop ");
+		Console.WriteLine("-----------------------------");
+		foreach (Player p in players)
+		{
+			(double winChance, double tieChance) chances = ChanceCalculator.GetWinningChancePreFlopLookUp(p.HoleCards, players.Count - 1, folderLoader);
+
+			Console.WriteLine(p);
+			Console.Write("\tWin: ");
+			Console.ForegroundColor = ConsoleColor.Black;
+			Console.BackgroundColor = ConsoleColor.Blue;
+			Console.Write(" " + string.Format("{0:0.00}%", chances.winChance * 100) + " ");
+			Console.ResetColor();
+			Console.WriteLine();
+
+			Console.Write("\tTie: ");
+			Console.ForegroundColor = ConsoleColor.Black;
+			Console.BackgroundColor = ConsoleColor.Blue;
+			Console.Write(" " + string.Format("{0:0.00}%", chances.tieChance * 100) + " ");
+			Console.ResetColor();
+			Console.WriteLine();
+
+		}
+		Console.WriteLine();
 	}
 
 	static void PreFlopComputation()
@@ -267,8 +308,8 @@ public class Program
 
 		foreach (KeyValuePair<string, Pair<Card, Card>> keyValuePair in startingHands)
 		{
-			Tuple<double, double> chanceTuple = ChanceCalculator.GetWinningChancePreFlopSim(keyValuePair.Value, _numOfPreflopSimPlayers, _numOfSims);
-			results.AppendLine($"{keyValuePair.Key} {chanceTuple.Item1} {chanceTuple.Item2}");
+			(double winChance, double tieChance) chanceTuple = ChanceCalculator.GetWinningChancePreFlopSim(keyValuePair.Value, _numOfPreflopSimPlayers, _numOfSims);
+			results.AppendLine($"{keyValuePair.Key} {chanceTuple.winChance} {chanceTuple.tieChance}");
 
 			int currentLineCursor = Console.CursorTop;
 			Console.SetCursorPosition(0, Console.CursorTop);
@@ -318,6 +359,7 @@ public class Program
 			}
 		}
 	}
+
 }
 
 /*
@@ -325,10 +367,9 @@ public class Program
 ! 
 
 TODO
-TODO: Load preflop data files to dictionaries. WIP: need to think about the design of this more.
 TODO: Code Review.
 TODO: Implement custom Exceptions.
-TODO: Add preflop computation to PokerAlgo Helpers class or as an additional package.
+TODO: Add preflop computation to PokerAlgo Helpers class or as an additional package. Maybe also use dependency injection for custom data formats?
 
 ? Future Ideas
 ? Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
@@ -342,8 +383,9 @@ TODO: Add preflop computation to PokerAlgo Helpers class or as an additional pac
 * Null-coalescing operator "??".
 
 * Changes
-* Full House detection logic was simplified, less branching.
-* Precomputed files are now named automatically following a certain format.
-* Added GetWinningChancePreFlopLookUp and LoadDictionary to ChanceCalculator.
+* Added IPreFlopDataLoader for dependency injection in the ChanceCalculator.GetWinningChancePreFlopLookUp() function.
+* Implemented IPreFlopDataLoader in the FolderLoader to provide a default way of loading preflop data.
+* Replaced all Tuples with ValueTuples.
+* Renamed preflop argument to chen and added lookup argument to PokerAlgo.Sandbox.
 * 
 */

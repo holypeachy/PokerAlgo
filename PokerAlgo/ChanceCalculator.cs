@@ -8,9 +8,9 @@ public static class ChanceCalculator
     {
         {1, "A"}, {2, "2"}, {3, "3"}, {4, "4"}, {5, "5"}, {6, "6"}, {7, "7"}, {8, "8"}, {9, "9"}, {10, "T"},{11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
     };
-    
+
     // Returns Win and Tie Values from 0 to 1.0
-    public static Tuple<double, double> GetWinningChanceSim(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
+    public static (double winChance, double tieChance) GetWinningChanceSim(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
     {
         if (communityCards.Count < 3) throw new ArgumentException("⛔ communityCards.Count is less than 3");
         if (communityCards.Count > 5) throw new ArgumentException("⛔ communityCards.Count is more than 5");
@@ -58,11 +58,11 @@ public static class ChanceCalculator
             }
         }
 
-        return new Tuple<double, double>(timesWon / (double)numberOfSimulatedGames, timesTied / (double)numberOfSimulatedGames);
+        return (timesWon / (double)numberOfSimulatedGames, timesTied / (double)numberOfSimulatedGames);
     }
 
     // Returns Win and Tie Values from 0 to 1.0
-    public static Tuple<double, double> GetWinningChancePreFlopSim(Pair<Card, Card> playerHoleCards, int numOfOpponents, int numberOfSimulatedGames)
+    public static (double winChance, double tieChance) GetWinningChancePreFlopSim(Pair<Card, Card> playerHoleCards, int numOfOpponents, int numberOfSimulatedGames)
     {
         if (numOfOpponents < 1) throw new ArgumentException("⛔ numOfOpponents is less than 2");
         if (numberOfSimulatedGames < 100) throw new ArgumentException("⛔ numberOfSimulatedGames is less than 100. I recommend at least 100 simulated games for a better prediction.");
@@ -115,7 +115,27 @@ public static class ChanceCalculator
             }
         }
 
-        return new Tuple<double, double>(timesWon / (double)numberOfSimulatedGames, timesTied / (double)numberOfSimulatedGames);
+        return (timesWon / (double)numberOfSimulatedGames, timesTied / (double)numberOfSimulatedGames);
+    }
+
+    //  Returns Value from 0 to 1.0 from pre-computed data
+    public static (double winChance, double tieChance) GetWinningChancePreFlopLookUp(Pair<Card, Card> playerCards, int numOfOpponents, IPreFlopDataLoader preFlopDataLoader)
+    {
+        Dictionary<(string hand, int opponentCount), (double winChance, double tieChance)> PreFlopLookUpTable = preFlopDataLoader.Load();
+
+        string s = $"{_cardPrintLookUp[playerCards.First.Rank]}{_cardPrintLookUp[playerCards.Second.Rank]}" + (playerCards.First.Suit == playerCards.Second.Suit ? "s" : "o");
+
+        (double, double) result;
+        try
+        {
+            result = PreFlopLookUpTable[(s, numOfOpponents)];
+        }
+        catch (KeyNotFoundException)
+        {
+            throw new KeyNotFoundException($"There is most likely no matching data to that number of opponents. numOfOpponents = {numOfOpponents}");
+        }
+
+        return result;
     }
 
     // Returns Value from 0 to 1.0 | Realistically: 0.1166 to 0.8389
@@ -181,33 +201,5 @@ public static class ChanceCalculator
         if (points < -1) throw new Exception("ChanceCalculator.GetPreFlopChen() - totalPoints should always be greater than -1 before returning. Chen formula is not implemented correctly, contact package developer.");
         // Debug.Assert(points >= -1, "totalPoints should always be greater than -1");
         return points;
-    }
-
-
-    // TODO
-    // ! Returns Pre-Computed Chances of winning
-    public static Tuple<double, double> GetWinningChancePreFlopLookUp(Pair<Card, Card> playerCards, int numOfOpponents, string dataPath)
-    {
-        Dictionary<string, Tuple<double, double>> PreFlopDictionary = LoadDictionary(dataPath);
-
-        string s = $"{_cardPrintLookUp[playerCards.First.Rank]}{_cardPrintLookUp[playerCards.Second.Rank]}" + (playerCards.First.Suit == playerCards.Second.Suit ? "s" : "o");
-        return PreFlopDictionary[s];
-    }
-
-    private static Dictionary<string, Tuple<double, double>>? LoadDictionary(string filePath)
-    {
-        string[] data;
-        Dictionary<string, Tuple<double, double>> dict = new();
-
-        data = File.ReadAllLines(filePath);
-
-        string[] line;
-        for (int index = 0; index < data.Length; index++)
-        {
-            line = data[index].Split(' ');
-            dict[line[0]] = new Tuple<double, double>(double.Parse(line[1]), double.Parse(line[2]));
-        }
-
-        return dict;
     }
 }

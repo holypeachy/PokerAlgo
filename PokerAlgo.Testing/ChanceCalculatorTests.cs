@@ -2,6 +2,8 @@ namespace PokerAlgo.Testing;
 
 public class ChanceCalculatorTests
 {
+    public string pathToPreFlopDirectory = @"C:/Users/Frank/Code/PokerAlgo/Resources/preflop_data/";
+
     [Fact]
     public void GetWinningChanceSim_no_less_than_3_cummunity_cards()
     {
@@ -165,30 +167,62 @@ public class ChanceCalculatorTests
 
 
     [Fact]
-    public void GetWinningChancePreFlopLookUp_AAo_4_opponents_61413()
+    public void GetWinningChancePreFlopLookUp_AAo_4_opponents_win_should_be_61413()
     {
         Pair<Card, Card> playerCards = new(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Clubs, true));
-        string path = @"C:/Users/Frank/Code/PokerAlgo/Resources/Preflop_data/4_200k.preflop";
+        FolderLoader loader = new(pathToPreFlopDirectory);
 
-        ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 4, path).Item1.Should().Be(0.61413);
+        (double winChance, double tieChance) = ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 4, loader);
+
+        winChance.Should().Be(0.61413);
+        tieChance.Should().Be(0.00555);
     }
 
     [Fact]
-    public void GetWinningChancePreFlopLookUp_AKs_4_opponents_41133()
+    public void GetWinningChancePreFlopLookUp_AKs_4_opponents_opponents_win_should_be_41133()
     {
         Pair<Card, Card> playerCards = new(new Card(14, CardSuit.Spades, true), new Card(13, CardSuit.Spades, true));
-        string path = @"C:/Users/Frank/Code/PokerAlgo/Resources/Preflop_data/4_200k.preflop";
+        IPreFlopDataLoader loader = new FolderLoader(pathToPreFlopDirectory);
 
-        ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 4, path).Item1.Should().Be(0.41133);
+        (double winChance, double tieChance) = ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 4, loader);
+
+        winChance.Should().Be(0.41133);
+        tieChance.Should().Be(0.022495);
     }
 
     [Fact]
-    public void GetWinningChancePreFlopLookUp_AKs_1_opponent_707155_directory()
+    public void GetWinningChancePreFlopLookUp_4Ao_2_opponents_opponents_win_should_be_400275()
     {
-        Pair<Card, Card> playerCards = new(new Card(14, CardSuit.Spades, true), new Card(13, CardSuit.Spades, true));
-        string directoryPath = @"C:/Users/Frank/Code/PokerAlgo/Resources/Preflop_data/";
+        Pair<Card, Card> playerCards = new(new Card(4, CardSuit.Spades, true), new Card(14, CardSuit.Hearts, true));
+        IPreFlopDataLoader loader = new FolderLoader(pathToPreFlopDirectory);
 
-        ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 1, directoryPath).Item1.Should().Be(0.707155);
+        (double winChance, double tieChance) = ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 2, loader);
+
+
+        winChance.Should().Be(0.400275);
+        tieChance.Should().Be(0.043665);
     }
 
+    [Fact]
+    public void GetWinningChancePreFlopLookUp_AKs_1_opponent_opponents_win_should_be_707155()
+    {
+        Pair<Card, Card> playerCards = new(new Card(14, CardSuit.Spades, true), new Card(13, CardSuit.Spades, true));
+        IPreFlopDataLoader loader = new FolderLoader(pathToPreFlopDirectory);
+
+        (double winChance, double tieChance) = ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 1, loader);
+
+
+        winChance.Should().Be(0.707155);
+        tieChance.Should().Be(0.015345);
+    }
+
+    [Fact]
+    public void GetWinningChancePreFlopLookUp_AKs_10_opponents_throws_KeyNotFoundException()
+    {
+        Pair<Card, Card> playerCards = new(new Card(14, CardSuit.Spades, true), new Card(13, CardSuit.Spades, true));
+        IPreFlopDataLoader loader = new FolderLoader(pathToPreFlopDirectory);
+
+        Assert.Throws<KeyNotFoundException>(() => ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 10, loader));
+    }
+    
 }
