@@ -81,7 +81,7 @@ public class Program
 			Console.WriteLine("\tdotnet run lookup\n");
 			Console.WriteLine(" Pre-flop calculation using Chen's and Custom Sigmoid Equation Normalization.");
 			Console.WriteLine("\tdotnet run chen\n");
-			Console.WriteLine(" Computes Pre-flop winning chances for all hands using Monte Carlo simulations.");
+			Console.WriteLine(" Computes pre-flop winning chances for all hands using Monte Carlo simulations.");
 			Console.WriteLine("\tdotnet run compute {number of opponents : int} {number of simulations : int} {output directory : string}\n");
 			Console.WriteLine(" Runs logic tests.");
 			Console.WriteLine("\tdotnet run test");
@@ -208,7 +208,7 @@ public class Program
 	static void ChenPreFlopChances()
 	{
 		Algo.DebugVerbosity = 0;
-		Console.WriteLine($"Pre-Flop ");
+		Console.WriteLine($"Chen + Sigmoid Pre-Flop");
 		Console.WriteLine("-----------------------------");
 		foreach (Player p in players)
 		{
@@ -237,7 +237,7 @@ public class Program
 		Algo.DebugVerbosity = 0;
 		FolderLoader folderLoader = new(_pathToPreFlopDirectory);
 
-		Console.WriteLine($"Pre-Flop ");
+		Console.WriteLine($"Lookup Pre-Flop Chances");
 		Console.WriteLine("-----------------------------");
 		foreach (Player p in players)
 		{
@@ -367,15 +367,19 @@ public class Program
 ! 
 
 TODO
-TODO: Code Review.
+TODO: Code Review. Replace NextCard with NextCards when appropiate.
 TODO: Implement custom Exceptions.
+TODO: Identify testing areas for core library. Test GetWinningChanceSim and GetWinningChancePreFlopSim for approximate values.
+TODO: Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
 TODO: Add preflop computation to PokerAlgo Helpers class or as an additional package. Maybe also use dependency injection for custom data formats?
 
 ? Future Ideas
-? Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
-? Use method extensions for better code readability?
+? Instead of using tuples use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
 ? I should make the Algo a nuget package and upload it.
+? Use method extensions for better code readability?
 
+? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
+? Does ChanceCalculator give similar values for AKs and KAs? 
 ? Precompute all chances of winning?
 
 * Notes
@@ -383,9 +387,10 @@ TODO: Add preflop computation to PokerAlgo Helpers class or as an additional pac
 * Null-coalescing operator "??".
 
 * Changes
-* Added IPreFlopDataLoader for dependency injection in the ChanceCalculator.GetWinningChancePreFlopLookUp() function.
-* Implemented IPreFlopDataLoader in the FolderLoader to provide a default way of loading preflop data.
-* Replaced all Tuples with ValueTuples.
-* Renamed preflop argument to chen and added lookup argument to PokerAlgo.Sandbox.
+* Started code review and started implementing custom classes for cleaner error handling.
+* Fixed logical bug in Deck.RemoveCards.
+* Added NextCards method in Deck class to get multiple cards at once.
+* Added GetCopyOfListOfCards to Deck class.
+* Reviewed, tested, and implemented custom exceptions for Card and Deck classes.
 * 
 */
