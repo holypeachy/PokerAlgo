@@ -88,7 +88,7 @@ public class DeckTests
     }
 
     [Fact]
-    public void RemoveCards_only_moves_nextCardIndex_if_cards_are_after_original_index()
+    public void RemoveCards_only_moves_nextCardIndex_if_cards_are_not_removed()
     {
         Deck deck = new();
         List<Card> copyOfDeck = deck.GetCopyOfListOfCards();

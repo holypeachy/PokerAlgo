@@ -20,7 +20,7 @@ public class AlgoTests
             deck.NextCard(),
         };
 
-        Assert.Throws<ArgumentException>(() => Algo.GetWinners(players, communityCards));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Algo.GetWinners(players, communityCards));
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class AlgoTests
             deck.NextCard(),
         };
 
-        Assert.Throws<ArgumentException>(() => Algo.GetWinners(players, communityCards));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Algo.GetWinners(players, communityCards));
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class AlgoTests
             deck.NextCard(),
         };
 
-        Assert.Throws<ArgumentException>(() => Algo.GetWinners(players, communityCards));
+        Assert.Throws<ArgumentOutOfRangeException>(() => Algo.GetWinners(players, communityCards));
     }
 
     [Fact]

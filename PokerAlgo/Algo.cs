@@ -22,12 +22,12 @@ public static class Algo
 
     public static List<Player> GetWinners(List<Player> players, List<Card> communityCards)
     {
-        if(players.Count < 2) throw new ArgumentException("⛔ Algo.FindWinner() - players.Count < 2. There must be at least 2 players.");
-        if(communityCards.Count < 3) throw new ArgumentException("⛔ Algo.FindWinner() - communityCards.Count < 3. There must be at least 3 community cards.");
-        if(communityCards.Count > 5) throw new ArgumentException("⛔ Algo.FindWinner() - communityCards.Count > 5. There must be no more than 5 community cards.");
+        if(players.Count < 2) throw new ArgumentOutOfRangeException(nameof(players), "There must be at least 2 players.");
+        if(communityCards.Count < 3) throw new ArgumentOutOfRangeException(nameof(communityCards), "There must be at least 3 community cards.");
+        if(communityCards.Count > 5) throw new ArgumentOutOfRangeException(nameof(communityCards), "There must be no more than 5 community cards.");
 
         Helpers.DebugLog("--- 🔎 Algo Starts");
-        HandEvaluator handEvaluator = new HandEvaluator();
+        HandEvaluator handEvaluator = new();
         List<Card> combinedCards;
 
         foreach (Player player in players)
@@ -44,25 +44,20 @@ public static class Algo
             player.WinningHand = handEvaluator.GetWinningHand(combinedCards);
         }
 
-        // community.WinningHand = handEvaluator.GetCommunityWinningHand(communityCards);
-
         Helpers.DebugLog("\n--- 💭 Find Winners");
 
         List<Player> winners = DetermineWinners(players);
-
-        // Helpers.DebugLogWinners(winners);
 
         return winners;
     }
 
     private static List<Player> DetermineWinners(List<Player> allPlayers)
     {
-        // ! Temporary, shouldn't need this after proper testing. ???
         foreach (Player p in allPlayers)
         {
             if (p.WinningHand is null)
             {
-                throw new Exception($"⛔ Algo.DetermineWinners() - Player\'s \'{p.Name}\' WinningHand is null.");
+                throw new InternalPokerAlgoException($"Invariant violated: a player's hand is null. Player\'s \'{p.Name}\' WinningHand is null. ");
             }
         }
 
@@ -73,7 +68,7 @@ public static class Algo
 
         List<Player> winners =  BreakTies(players);
 
-        if (winners.Count < 1) throw new Exception("Algo.DetermineWinners() - winners.Count < 1. This should never happen.");
+        if (winners.Count < 1) throw new InternalPokerAlgoException("Invariant violated: winners.Count < 1. This should never happen.");
 
         return winners;
     }
@@ -82,10 +77,9 @@ public static class Algo
     private static List<Player> BreakTies(List<Player> players)
     {
         List<Player> winners = players.ToList();
+        List<Player> tempPlayers = winners.ToList();
 
         bool hasChangesBeenMade;
-
-        List<Player> tempPlayers = winners.ToList();
         do
         {
             hasChangesBeenMade = false;
@@ -118,7 +112,7 @@ public static class Algo
                 else if (result == 0){}
                 else
                 {
-                    throw new Exception("⛔ Algo.BreakTies() - ComparePlayerHands() returned something other than -1, 0, or 1.");
+                    throw new PokerAlgoException("Invariant violated: CompareWinningHands() returned something other than -1, 0, or 1.");
                 }
             }
             winners = tempPlayers;
@@ -131,7 +125,7 @@ public static class Algo
     // ! -1 left wins, 0 tie, 1 right wins
     private static int CompareWinningHands(WinningHand? left, WinningHand? right)
     {
-        if (left is null || right is null) throw new Exception("⛔ Algo.ComparePlayerHands(): A passed winning hand argument is null.");
+        if (left is null || right is null) throw new InternalPokerAlgoException($"Invariant violated: A passed winning hand argument is null.");
         
         Helpers.DebugLogCards("Algo.CompareWinningHands() - Left.Cards", left.Cards);
         Helpers.DebugLogCards("Algo.CompareWinningHands() - Right.Cards", right.Cards);
@@ -187,7 +181,6 @@ public static class Algo
 
                 else return CompareKickers(new List<Card> { leftCards.ElementAt(0) }, new List<Card> { rightCards.ElementAt(0) });
 
-
             case HandType.Pair:
                 if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
                 else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
@@ -197,7 +190,7 @@ public static class Algo
                 return CompareKickers(leftCards, rightCards);
 
             default:
-                throw new Exception("⛔ Algo.ComparePlayerHands(): Switch defaulted. Was HandType enum changed?");
+                throw new InternalPokerAlgoException("Invariant violated: switch defaulted. Was HandType enum changed?");
         }
     }
 
@@ -209,7 +202,7 @@ public static class Algo
 
         if (left.Count != right.Count)
         {
-            throw new Exception("⛔ Algo.CompareKickers(): left.Count != right.Count." + "\nLeft: " + string.Join(' ', left) + "\nRight: " + string.Join(' ', right));
+            throw new InternalPokerAlgoException($"Invariant violated: left.Count != right.Count." + "\nLeft: " + string.Join(' ', left) + "\nRight: " + string.Join(' ', right));
         }
 
         for (int i = left.Count - 1; i >= 0; i--)

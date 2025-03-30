@@ -12,10 +12,10 @@ public static class ChanceCalculator
     // Returns Win and Tie Values from 0 to 1.0
     public static (double winChance, double tieChance) GetWinningChanceSim(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
     {
-        if (communityCards.Count < 3) throw new ArgumentException("⛔ communityCards.Count is less than 3");
-        if (communityCards.Count > 5) throw new ArgumentException("⛔ communityCards.Count is more than 5");
-        if (numOfOpponents < 1) throw new ArgumentException("⛔ numOfOpponents is less than 2");
-        if (numberOfSimulatedGames < 100) throw new ArgumentException("⛔ numberOfSimulatedGames is less than 100. I recommend at least 100 simulated games for a better prediction.");
+        if (communityCards.Count < 3) throw new ArgumentOutOfRangeException(nameof(communityCards), "There should be no less than 3 community cards.");
+        if (communityCards.Count > 5) throw new ArgumentOutOfRangeException(nameof(communityCards), "There should be no more than 5 community cards.");
+        if (numOfOpponents < 1) throw new ArgumentOutOfRangeException(nameof(numOfOpponents), "There should be at least 1 opponent.");
+        if (numberOfSimulatedGames < 100) throw new ArgumentOutOfRangeException(nameof(numberOfSimulatedGames), "Number of simulated games is less than 100. I recommend at least 100 simulated games for a good prediction.");
 
 
         Deck testDeck = new();
@@ -64,8 +64,8 @@ public static class ChanceCalculator
     // Returns Win and Tie Values from 0 to 1.0
     public static (double winChance, double tieChance) GetWinningChancePreFlopSim(Pair<Card, Card> playerHoleCards, int numOfOpponents, int numberOfSimulatedGames)
     {
-        if (numOfOpponents < 1) throw new ArgumentException("⛔ numOfOpponents is less than 2");
-        if (numberOfSimulatedGames < 100) throw new ArgumentException("⛔ numberOfSimulatedGames is less than 100. I recommend at least 100 simulated games for a better prediction.");
+        if (numOfOpponents < 1) throw new ArgumentOutOfRangeException(nameof(numOfOpponents), "There should be at least 1 opponent.");
+        if (numberOfSimulatedGames < 100) throw new ArgumentOutOfRangeException(nameof(numberOfSimulatedGames), "Number of simulated games is less than 100. I recommend at least 100 simulated games for a good prediction.");
 
         Deck testDeck = new();
         int timesWon = 0;
@@ -132,7 +132,7 @@ public static class ChanceCalculator
         }
         catch (KeyNotFoundException)
         {
-            throw new KeyNotFoundException($"There is most likely no matching data to that number of opponents. numOfOpponents = {numOfOpponents}");
+            throw new KeyNotFoundException($"There is most likely no pre-computed data of that number of opponents. numOfOpponents = {numOfOpponents}");
         }
 
         return result;
@@ -198,8 +198,9 @@ public static class ChanceCalculator
         else if (points == -0.5d) points = 0;
         else points = Math.Round(points, MidpointRounding.AwayFromZero);
 
-        if (points < -1) throw new Exception("ChanceCalculator.GetPreFlopChen() - totalPoints should always be greater than -1 before returning. Chen formula is not implemented correctly, contact package developer.");
-        // Debug.Assert(points >= -1, "totalPoints should always be greater than -1");
+        if (points < -1) throw new InternalPokerAlgoException("Invariant violated: totalPoints should always be greater than -1 before returning.");
+
         return points;
     }
+    
 }

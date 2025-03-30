@@ -3,7 +3,7 @@ public class Player
 {
 	public string Name { get; }
 	public Pair<Card, Card> HoleCards { get; }
-	
+
 	public WinningHand? WinningHand { get; set; }
 
 
@@ -11,7 +11,7 @@ public class Player
 	{
 		this.Name = name;
 		this.HoleCards = new Pair<Card, Card>(first, second);
-		
+
 		this.HoleCards.First.IsPlayerCard = true;
 		this.HoleCards.Second.IsPlayerCard = true;
 
@@ -23,12 +23,4 @@ public class Player
 		return $"{Name}: {HoleCards.First} {HoleCards.Second}";
 	}
 	
-	public void SortHand(){
-		Card bufferCard;
-		if(HoleCards.First.Rank > HoleCards.Second.Rank){
-			bufferCard = HoleCards.Second;
-			HoleCards.Second = HoleCards.First;
-			HoleCards.First = bufferCard;
-		}
-	}
 }

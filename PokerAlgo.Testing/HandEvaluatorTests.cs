@@ -16,7 +16,7 @@ public class HandEvaluatorTests
         };
 
         HandEvaluator handEvaluator = new();
-        Assert.Throws<Exception>(() => handEvaluator.GetWinningHand(cards));
+        Assert.Throws<ArgumentOutOfRangeException>(() => handEvaluator.GetWinningHand(cards));
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class HandEvaluatorTests
         };
 
         HandEvaluator handEvaluator = new();
-        Assert.Throws<Exception>(() => handEvaluator.GetWinningHand(cards));
+        Assert.Throws<ArgumentOutOfRangeException>(() => handEvaluator.GetWinningHand(cards));
     }
 
     [Fact]

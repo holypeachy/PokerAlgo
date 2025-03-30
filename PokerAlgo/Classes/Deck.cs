@@ -11,12 +11,12 @@ public class Deck
 		_cards = new List<Card>();
 		_nextCardIndex = 0;
 
-		CreateDeck();
+		Create();
 
-		ShuffleDeck();
+		Shuffle();
 	}
 
-	private void CreateDeck()
+	private void Create()
 	{
 		foreach (CardSuit suit in Enum.GetValues(typeof(CardSuit)))
 		{
@@ -27,7 +27,7 @@ public class Deck
 		}
 	}
 
-	private void ShuffleDeck()
+	private void Shuffle()
 	{
 		Random rand = new();
 		Card tempCard;
@@ -54,7 +54,7 @@ public class Deck
 		}
 		_nextCardIndex = 0;
 
-		ShuffleDeck();
+		Shuffle();
 	}
 
 	// Returns the first card, and then removes it from the deck
@@ -67,7 +67,7 @@ public class Deck
 
 	public List<Card> NextCards(int numberOfCards)
 	{
-		if (numberOfCards < 1) throw new ArgumentOutOfRangeException("The number of cards passed must be greater than 0.");
+		if (numberOfCards < 1) throw new ArgumentOutOfRangeException(nameof(numberOfCards),"The number of cards passed must be greater than 0.");
 		if (_nextCardIndex >= _cards.Count) throw new DeckEmptyException("No More Cards in The Deck");
 		if (_nextCardIndex - 1 + numberOfCards >= _cards.Count) throw new NotEnoughCardsInDeckException($"Cards Left: {_cards.Count - (_nextCardIndex - 1)}. Cards Requested: {numberOfCards}");
 

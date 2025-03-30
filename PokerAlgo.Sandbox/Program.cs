@@ -364,22 +364,29 @@ public class Program
 
 /*
 ! ISSUES:
-! 
+! Finish reviewing and testing Deck class.
 
 TODO
-TODO: Code Review. Replace NextCard with NextCards when appropiate.
+TODO: Code Review.
+!	- Replace NextCard with NextCards when appropiate.
+!	- Can I replace Pair with Value Tuples? The issue for me was that Tuples were immutable, but I'm not sure I need it anymore.
+!	- 
 TODO: Implement custom Exceptions.
 TODO: Identify testing areas for core library. Test GetWinningChanceSim and GetWinningChancePreFlopSim for approximate values.
 TODO: Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
 TODO: Add preflop computation to PokerAlgo Helpers class or as an additional package. Maybe also use dependency injection for custom data formats?
 
 ? Future Ideas
-? Instead of using tuples use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
+! Make sure all cards are unique in Algo.
+! Algo should never have any low aces as input.
+? Also use dependency injection for preflop file creation?
+? Instead of using tuples, use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
 ? I should make the Algo a nuget package and upload it.
 ? Use method extensions for better code readability?
 
 ? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
-? Does ChanceCalculator give similar values for AKs and KAs? 
+? Does ChanceCalculator give similar values for AKs and KAs?
+? Guard Clause. Helper class to handle input validation.
 ? Precompute all chances of winning?
 
 * Notes
@@ -387,10 +394,7 @@ TODO: Add preflop computation to PokerAlgo Helpers class or as an additional pac
 * Null-coalescing operator "??".
 
 * Changes
-* Started code review and started implementing custom classes for cleaner error handling.
-* Fixed logical bug in Deck.RemoveCards.
-* Added NextCards method in Deck class to get multiple cards at once.
-* Added GetCopyOfListOfCards to Deck class.
-* Reviewed, tested, and implemented custom exceptions for Card and Deck classes.
+* Removed SortHand method in Player class.
+* Added more custom exceptions and started using them.
 * 
 */

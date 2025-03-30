@@ -15,7 +15,7 @@ public class ChanceCalculatorTests
             deck.NextCard(),
         };
 
-        Assert.Throws<ArgumentException>(() => ChanceCalculator.GetWinningChanceSim(playerCards, communityCards, 2, 500));
+        Assert.Throws<ArgumentOutOfRangeException>(() => ChanceCalculator.GetWinningChanceSim(playerCards, communityCards, 2, 500));
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class ChanceCalculatorTests
             deck.NextCard(),
         };
 
-        Assert.Throws<ArgumentException>(() => ChanceCalculator.GetWinningChanceSim(playerCards, communityCards, 2, 500));
+        Assert.Throws<ArgumentOutOfRangeException>(() => ChanceCalculator.GetWinningChanceSim(playerCards, communityCards, 2, 500));
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class ChanceCalculatorTests
             deck.NextCard(),
         };
 
-        Assert.Throws<ArgumentException>(() => ChanceCalculator.GetWinningChanceSim(playerCards, communityCards, 0, 500));
+        Assert.Throws<ArgumentOutOfRangeException>(() => ChanceCalculator.GetWinningChanceSim(playerCards, communityCards, 0, 500));
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class ChanceCalculatorTests
             deck.NextCard(),
         };
 
-        Assert.Throws<ArgumentException>(() => ChanceCalculator.GetWinningChanceSim(playerCards, communityCards, 4, 10));
+        Assert.Throws<ArgumentOutOfRangeException>(() => ChanceCalculator.GetWinningChanceSim(playerCards, communityCards, 4, 10));
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class ChanceCalculatorTests
             deck.NextCard(),
         };
 
-        Assert.Throws<ArgumentException>(() => ChanceCalculator.GetWinningChancePreFlopSim(playerCards, 0, 500));
+        Assert.Throws<ArgumentOutOfRangeException>(() => ChanceCalculator.GetWinningChancePreFlopSim(playerCards, 0, 500));
     }
 
     [Fact]

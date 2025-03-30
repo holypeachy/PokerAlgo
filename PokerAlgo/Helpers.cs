@@ -26,7 +26,7 @@ public static class Helpers
 
     public static string GetPrettyHandName(WinningHand? hand)
     {
-        if (hand is null) throw new Exception("Helpers.GetPrettyName() - \'hand\' argument must not be null.");
+        if (hand is null) throw new ArgumentException("\'hand\' argument must not be null.", nameof(hand));
 
         switch (hand.Type) {
             case HandType.RoyalFlush:
@@ -60,7 +60,7 @@ public static class Helpers
                 return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]} High Card";
 
             default:
-                throw new Exception("⛔ Helpers.GetPrettyName(): Switch defaulted, this should never happen. HandType enum was changed?");
+                throw new InternalPokerAlgoException("Invariant violated: switch defaulted, this should never happen. Was HandType enum changed?");
         }
     }
 

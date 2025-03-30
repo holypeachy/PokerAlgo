@@ -12,9 +12,7 @@ public class HandEvaluator
 
     public WinningHand GetWinningHand(List<Card> cards)
     {
-        if (cards.Count < 5) throw new Exception("⛔ HandEvaluator.GetWinningHand() - passed cards argument < 5, the list must have at least 5 cards. This probably means community cards < 3.");
-        // Debug.Assert(cards.Count >= 5, "⛔ HandEvaluator.GetWinningHand() - passed cards argument < 5, the list must have at least 5 cards. This probably means community cards < 3.");
-        if (cards.Count > 7) throw new Exception("⛔ HandEvaluator.GetWinningHand() - passed cards argument > 7, the list must contain up to 7 cards. 2 hole cards + 5 community.");
+        if (cards.Count < 5 || cards.Count > 7) throw new ArgumentOutOfRangeException(nameof(cards), "The list must have at least 5 cards and no more than 7.");
 
         _tempBestHand = null;
         List<Card> cardsCopy = cards.ToList();
@@ -25,8 +23,7 @@ public class HandEvaluator
 
         EvaluateHand(cardsCopy);
 
-        if (_tempBestHand is null) throw new Exception("HandEvaluator.GetWinningHand() - _tempBestHand should never be null before returning");
-        // Debug.Assert(_tempBestHand is not null, "HandEvaluator.GetWinningHand() - _tempBestHand should never be null before returning");
+        if (_tempBestHand is null) throw new InternalPokerAlgoException("Invariant violated: _tempBestHand should never be null before returning. No winning hand was found.");
 
         return _tempBestHand;
     }
@@ -293,7 +290,6 @@ public class HandEvaluator
                 {
                     return false;
                 }
-                // startingValue++;
             }
         }
         return true;
