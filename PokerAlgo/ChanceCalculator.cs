@@ -85,9 +85,9 @@ public static class ChanceCalculator
         {
             testDeck.ResetDeck();
 
-            List<Card> communityCards = testDeck.NextCards(5);
-
             testDeck.RemoveCards(cardsToRemove);
+
+            List<Card> communityCards = testDeck.NextCards(5);
 
             allPlayers = new() { player };
 
@@ -110,6 +110,7 @@ public static class ChanceCalculator
 
         return (timesWon / (double)numberOfSimulatedGames, timesTied / (double)numberOfSimulatedGames);
     }
+
 
     //  Returns Value from 0 to 1.0 from pre-computed data
     public static (double winChance, double tieChance) GetWinningChancePreFlopLookUp(Pair playerCards, int numOfOpponents, IPreFlopDataLoader preFlopDataLoader)

@@ -188,5 +188,34 @@ public class ChanceCalculatorTests
 
         Assert.Throws<KeyNotFoundException>(() => ChanceCalculator.GetWinningChancePreFlopLookUp(playerCards, 10, loader));
     }
+
+
+    [Fact]
+    public void GetWinningChanceSim_Probabilities_Are_In_Valid_Range()
+    {
+        Deck deck = new();
+        Pair holeCards = new(deck.NextCard(), deck.NextCard());
+        List<Card> community = deck.NextCards(5);
+
+        var (win, tie) = ChanceCalculator.GetWinningChanceSim(holeCards, community, 4, 1000);
+
+        win.Should().BeInRange(0.0, 1.0);
+        tie.Should().BeInRange(0.0, 1.0);
+        (win + tie).Should().BeLessThanOrEqualTo(1.0);
+    }
+
+    [Fact]
+    public void GetWinningChancePreFlopSim_Probabilities_Are_In_Valid_Range()
+    {
+        Deck deck = new();
+        Pair holeCards = new Pair(deck.NextCard(), deck.NextCard());
+
+        var (win, tie) = ChanceCalculator.GetWinningChancePreFlopSim(holeCards, 4, 1000);
+
+        win.Should().BeInRange(0.0, 1.0);
+        tie.Should().BeInRange(0.0, 1.0);
+        (win + tie).Should().BeLessThanOrEqualTo(1.0);
+    }
+
     
 }

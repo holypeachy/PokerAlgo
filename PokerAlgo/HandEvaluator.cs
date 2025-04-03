@@ -12,7 +12,7 @@ public class HandEvaluator
 
     public WinningHand GetWinningHand(List<Card> cards)
     {
-        if (cards.Count < 5 || cards.Count > 7) throw new ArgumentOutOfRangeException(nameof(cards), "The list must have 5-7 cards.");
+        Helpers.GuardGetWinningHand(cards);
 
         _tempBestHand = null;
         List<Card> cardsCopy = cards.ToList();

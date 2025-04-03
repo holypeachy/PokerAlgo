@@ -35,4 +35,42 @@ public class HandEvaluatorTests
         handEvaluator.GetWinningHand(cards);
     }
 
+
+    [Fact]
+    public void GetWinningHand_no_duplicate_cards()
+    {
+        HandEvaluator handEvaluator = new();
+
+        List<Card> cards = new()
+        {
+            new Card(5, CardSuit.Spades, false),
+            new Card(5, CardSuit.Spades, false),
+            new Card(6, CardSuit.Spades, false),
+            new Card(7, CardSuit.Spades, false),
+            new Card(8, CardSuit.Spades, false),
+            new Card(9, CardSuit.Spades, false),
+            new Card(10, CardSuit.Spades, false),
+        };
+
+        Assert.Throws<DuplicateCardException>(() => handEvaluator.GetWinningHand(cards));
+    }
+
+    [Fact]
+    public void GetWinningHand_no_low_aces()
+    {
+        HandEvaluator handEvaluator = new();
+
+        List<Card> cards = new()
+        {
+            new Card(1, CardSuit.Spades, false),
+            new Card(5, CardSuit.Spades, false),
+            new Card(6, CardSuit.Spades, false),
+            new Card(7, CardSuit.Spades, false),
+            new Card(8, CardSuit.Spades, false),
+            new Card(9, CardSuit.Spades, false),
+            new Card(10, CardSuit.Spades, false),
+        };
+
+        Assert.Throws<LowAcesException>(() => handEvaluator.GetWinningHand(cards));
+    }
 }

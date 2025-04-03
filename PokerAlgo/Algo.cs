@@ -22,9 +22,7 @@ public static class Algo
 
     public static List<Player> GetWinners(List<Player> players, List<Card> communityCards)
     {
-        if(players.Count < 2) throw new ArgumentOutOfRangeException(nameof(players), "There must be at least 2 players.");
-        if(communityCards.Count < 3) throw new ArgumentOutOfRangeException(nameof(communityCards), "There must be at least 3 community cards.");
-        if(communityCards.Count > 5) throw new ArgumentOutOfRangeException(nameof(communityCards), "There must be no more than 5 community cards.");
+        Helpers.GuardGetWinners(players, communityCards);
 
         Helpers.DebugLog("--- 🔎 Algo Starts");
         HandEvaluator handEvaluator = new();
@@ -61,7 +59,7 @@ public static class Algo
             }
         }
 
-        // ! Order from highest to lowest hand value
+        // Order from highest to lowest hand value
         List<Player> players = allPlayers.OrderByDescending(x => x.WinningHand.Type).ToList();
 
         Helpers.DebugLogPlayers("Algo.DetermineWinners() - Players after sorting by WinningHand.Type", players);
@@ -122,7 +120,7 @@ public static class Algo
     }
 
 
-    // ! -1 left wins, 0 tie, 1 right wins
+    // -1 left wins, 0 tie, 1 right wins
     private static int CompareWinningHands(WinningHand? left, WinningHand? right)
     {
         if (left is null || right is null) throw new InternalPokerAlgoException($"Invariant violated: A passed winning hand argument is null.");
@@ -194,7 +192,7 @@ public static class Algo
         }
     }
 
-    // ! -1 left wins, 0 tie, 1 right wins
+    // -1 left wins, 0 tie, 1 right wins
     private static int CompareKickers(List<Card> left, List<Card> right)
     {
         Helpers.DebugLogCards("Algo.CompareKickers() - Left", left);

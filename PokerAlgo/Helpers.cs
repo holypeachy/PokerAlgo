@@ -64,6 +64,43 @@ public static class Helpers
         }
     }
 
+    public static void GuardGetWinners(List<Player> players, List<Card> communityCards)
+    {
+        if (players.Count < 2) throw new ArgumentOutOfRangeException(nameof(players), "There must be at least 2 players.");
+        if (communityCards.Count < 3) throw new ArgumentOutOfRangeException(nameof(communityCards), "There must be at least 3 community cards.");
+        if (communityCards.Count > 5) throw new ArgumentOutOfRangeException(nameof(communityCards), "There must be no more than 5 community cards.");
+
+        List<Card> allCards = new();
+        allCards.AddRange(communityCards);
+        foreach (Player p in players)
+        {
+            allCards.Add(p.HoleCards.First);
+            allCards.Add(p.HoleCards.Second);
+        }
+
+        bool areUnique = allCards.Count == allCards.Distinct().Count();
+        if (areUnique == false) throw new DuplicateCardException($"Either {nameof(players)} or {nameof(communityCards)} arguments have duplicate cards.");
+
+        foreach (Card c in allCards)
+        {
+            if (c.Rank == 1) throw new LowAcesException("When instantiating Ace cards use rank 14 no 1.");
+        }
+    }
+
+    public static void GuardGetWinningHand(List<Card> cards)
+    {
+        if (cards.Count < 5 || cards.Count > 7) throw new ArgumentOutOfRangeException(nameof(cards), "The list must have 5-7 cards.");
+
+        bool areUnique = cards.Count == cards.Distinct().Count();
+        if (areUnique == false) throw new DuplicateCardException($"{nameof(cards)} argument has duplicate cards.");
+
+
+        foreach (Card c in cards)
+        {
+            if (c.Rank == 1) throw new LowAcesException("When instantiating Ace cards use rank 14 not 1.");
+        }
+    }
+
 
     [Conditional("DEBUG")]
     public static void DebugLog(string log = "", int verbosity = 1)
