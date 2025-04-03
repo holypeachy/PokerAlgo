@@ -10,7 +10,7 @@ public static class ChanceCalculator
     };
 
     // Returns Win and Tie Values from 0 to 1.0
-    public static (double winChance, double tieChance) GetWinningChanceSim(Pair<Card, Card> playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
+    public static (double winChance, double tieChance) GetWinningChanceSim(Pair playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
     {
         if (communityCards.Count < 3) throw new ArgumentOutOfRangeException(nameof(communityCards), "There should be no less than 3 community cards.");
         if (communityCards.Count > 5) throw new ArgumentOutOfRangeException(nameof(communityCards), "There should be no more than 5 community cards.");
@@ -62,7 +62,7 @@ public static class ChanceCalculator
     }
 
     // Returns Win and Tie Values from 0 to 1.0
-    public static (double winChance, double tieChance) GetWinningChancePreFlopSim(Pair<Card, Card> playerHoleCards, int numOfOpponents, int numberOfSimulatedGames)
+    public static (double winChance, double tieChance) GetWinningChancePreFlopSim(Pair playerHoleCards, int numOfOpponents, int numberOfSimulatedGames)
     {
         if (numOfOpponents < 1) throw new ArgumentOutOfRangeException(nameof(numOfOpponents), "There should be at least 1 opponent.");
         if (numberOfSimulatedGames < 100) throw new ArgumentOutOfRangeException(nameof(numberOfSimulatedGames), "Number of simulated games is less than 100. I recommend at least 100 simulated games for a good prediction.");
@@ -85,14 +85,7 @@ public static class ChanceCalculator
         {
             testDeck.ResetDeck();
 
-            List<Card> communityCards = new()
-            {
-                testDeck.NextCard(),
-                testDeck.NextCard(),
-                testDeck.NextCard(),
-                testDeck.NextCard(),
-                testDeck.NextCard()
-            };
+            List<Card> communityCards = testDeck.NextCards(5);
 
             testDeck.RemoveCards(cardsToRemove);
 
@@ -119,7 +112,7 @@ public static class ChanceCalculator
     }
 
     //  Returns Value from 0 to 1.0 from pre-computed data
-    public static (double winChance, double tieChance) GetWinningChancePreFlopLookUp(Pair<Card, Card> playerCards, int numOfOpponents, IPreFlopDataLoader preFlopDataLoader)
+    public static (double winChance, double tieChance) GetWinningChancePreFlopLookUp(Pair playerCards, int numOfOpponents, IPreFlopDataLoader preFlopDataLoader)
     {
         Dictionary<(string hand, int opponentCount), (double winChance, double tieChance)> PreFlopLookUpTable = preFlopDataLoader.Load();
 
@@ -139,14 +132,14 @@ public static class ChanceCalculator
     }
 
     // Returns Value from 0 to 1.0 | Realistically: 0.1166 to 0.8389
-    public static double GetWinningChancePreFlopChen(Pair<Card, Card> playerHoleCards)
+    public static double GetWinningChancePreFlopChen(Pair playerHoleCards)
     {
         // ! Sigmoid adjustment
         return 1 / (1 + Math.Exp(-(_handStrengthSensitivity * GetPreFlopChen(playerHoleCards) + _baselineWinRate)));
     }
 
     // Returns -1 to 20
-    public static double GetPreFlopChen(Pair<Card, Card> playerHoleCards)
+    public static double GetPreFlopChen(Pair playerHoleCards)
     {
         if (playerHoleCards.First.Rank == playerHoleCards.Second.Rank && playerHoleCards.First.Suit == playerHoleCards.Second.Suit) throw new ArgumentException("⛔ Player hole cards are the same, this will never happen in a real game.");
 

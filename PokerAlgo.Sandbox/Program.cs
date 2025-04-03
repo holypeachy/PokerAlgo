@@ -224,12 +224,12 @@ public class Program
 
 		}
 		Console.WriteLine();
-		Console.WriteLine("AAo\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
-		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair<Card, Card>(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100) + "%");
-		Console.WriteLine("KAs\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))));
-		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair<Card, Card>(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100) + "%");
-		Console.WriteLine("27o\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))));
-		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair<Card, Card>(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100) + "%");
+		Console.WriteLine("AAo\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))));
+		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Diamonds, true))) * 100) + "%");
+		Console.WriteLine("KAs\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))));
+		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair(new Card(13, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true))) * 100) + "%");
+		Console.WriteLine("27o\n  Chen: " + ChanceCalculator.GetPreFlopChen(new Pair(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))));
+		Console.WriteLine("  Win: " + string.Format("{0:0.00}%", ChanceCalculator.GetWinningChancePreFlopChen(new Pair(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Diamonds, true))) * 100) + "%");
 	}
 
 	static void LookUpPreFlopChances()
@@ -275,7 +275,7 @@ public class Program
 
 		string filePath = _preflopFolderPath + (_preflopFolderPath.Last() == '/' ? "" : '/') + $"{_numOfPreflopSimPlayers}_{_numOfSims}.preflop";
 
-		Dictionary<string, Pair<Card, Card>> startingHands = new();
+		Dictionary<string, Pair> startingHands = new();
 		Card first;
 		Card second;
 		for (int i = 2; i <= 14; i++)
@@ -284,7 +284,7 @@ public class Program
 			{
 				first = new Card(i, CardSuit.Spades, true);
 				second = new Card(j, CardSuit.Hearts, true);
-				startingHands[$"{_cardPrintLookUp[first.Rank]}{_cardPrintLookUp[second.Rank]}o"] = new Pair<Card, Card>(first, second);
+				startingHands[$"{_cardPrintLookUp[first.Rank]}{_cardPrintLookUp[second.Rank]}o"] = new Pair(first, second);
 			}
 		}
 		for (int i = 2; i <= 14; i++)
@@ -297,7 +297,7 @@ public class Program
 				}
 				first = new Card(i, CardSuit.Hearts, true);
 				second = new Card(j, CardSuit.Hearts, true);
-				startingHands[$"{_cardPrintLookUp[first.Rank]}{_cardPrintLookUp[second.Rank]}s"] = new Pair<Card, Card>(first, second);
+				startingHands[$"{_cardPrintLookUp[first.Rank]}{_cardPrintLookUp[second.Rank]}s"] = new Pair(first, second);
 			}
 		}
 
@@ -306,7 +306,7 @@ public class Program
 
 		StringBuilder results = new StringBuilder();
 
-		foreach (KeyValuePair<string, Pair<Card, Card>> keyValuePair in startingHands)
+		foreach (KeyValuePair<string, Pair> keyValuePair in startingHands)
 		{
 			(double winChance, double tieChance) chanceTuple = ChanceCalculator.GetWinningChancePreFlopSim(keyValuePair.Value, _numOfPreflopSimPlayers, _numOfSims);
 			results.AppendLine($"{keyValuePair.Key} {chanceTuple.winChance} {chanceTuple.tieChance}");
@@ -364,21 +364,16 @@ public class Program
 
 /*
 ! ISSUES:
-! Finish reviewing and testing Deck class.
+! 
 
 TODO
-TODO: Code Review.
-!	- Replace NextCard with NextCards when appropiate.
-!	- Can I replace Pair with Value Tuples? The issue for me was that Tuples were immutable, but I'm not sure I need it anymore.
-!	- 
-TODO: Implement custom Exceptions.
 TODO: Identify testing areas for core library. Test GetWinningChanceSim and GetWinningChancePreFlopSim for approximate values.
 TODO: Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
 TODO: Add preflop computation to PokerAlgo Helpers class or as an additional package. Maybe also use dependency injection for custom data formats?
 
 ? Future Ideas
-! Make sure all cards are unique in Algo.
-! Algo should never have any low aces as input.
+! Make sure all cards are unique in Algo and HandEvaluator. Add helpers to do this.
+! HandEvaluator (and Algo) should never have any low aces as input.
 ? Also use dependency injection for preflop file creation?
 ? Instead of using tuples, use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
 ? I should make the Algo a nuget package and upload it.
@@ -394,7 +389,8 @@ TODO: Add preflop computation to PokerAlgo Helpers class or as an additional pac
 * Null-coalescing operator "??".
 
 * Changes
-* Removed SortHand method in Player class.
-* Added more custom exceptions and started using them.
+* Pair class is no longer generic.
+* Replaced NextCard with NextCards when appropiate.
+* Finished code review and implemented custom Exceptions.
 * 
 */

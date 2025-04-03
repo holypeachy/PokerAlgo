@@ -1,10 +1,10 @@
 namespace PokerAlgo;
-public class Pair<T1, T2>
+public class Pair
 {
-    public T1 First { get; }
-    public T2 Second { get; }
+    public Card First { get; }
+    public Card Second { get; }
     
-    public Pair(T1 First, T2 Second)
+    public Pair(Card First, Card Second)
     {
         this.First = First;
         this.Second = Second;

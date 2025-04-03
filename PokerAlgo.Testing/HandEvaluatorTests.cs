@@ -7,13 +7,7 @@ public class HandEvaluatorTests
     {
         Deck deck = new();
 
-        List<Card> cards = new()
-        {
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-        };
+        List<Card> cards = deck.NextCards(4);
 
         HandEvaluator handEvaluator = new();
         Assert.Throws<ArgumentOutOfRangeException>(() => handEvaluator.GetWinningHand(cards));
@@ -24,17 +18,7 @@ public class HandEvaluatorTests
     {
         Deck deck = new();
 
-        List<Card> cards = new()
-        {
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-        };
+        List<Card> cards = deck.NextCards(8);
 
         HandEvaluator handEvaluator = new();
         Assert.Throws<ArgumentOutOfRangeException>(() => handEvaluator.GetWinningHand(cards));
@@ -45,15 +29,7 @@ public class HandEvaluatorTests
     {
         Deck deck = new();
 
-        List<Card> cards = new()
-        {
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-            deck.NextCard(),
-        };
+        List<Card> cards = deck.NextCards(6);
 
         HandEvaluator handEvaluator = new();
         handEvaluator.GetWinningHand(cards);

@@ -82,7 +82,7 @@ public class Deck
 		foreach (Card card in cardsToRemove)
 		{
 			int index = _cards.IndexOf(card);
-			if (index == -1) throw new CardNotInDeckException($"Internal error: unreachable code path. Card to remove {card} was not found in deck.");
+			if (index == -1) throw new CardNotInDeckException($"Invariant violated: card to remove {card} was not found in deck.");
 
 			if (index > _nextCardIndex - 1)
 			{

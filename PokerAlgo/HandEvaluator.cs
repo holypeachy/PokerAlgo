@@ -12,7 +12,7 @@ public class HandEvaluator
 
     public WinningHand GetWinningHand(List<Card> cards)
     {
-        if (cards.Count < 5 || cards.Count > 7) throw new ArgumentOutOfRangeException(nameof(cards), "The list must have at least 5 cards and no more than 7.");
+        if (cards.Count < 5 || cards.Count > 7) throw new ArgumentOutOfRangeException(nameof(cards), "The list must have 5-7 cards.");
 
         _tempBestHand = null;
         List<Card> cardsCopy = cards.ToList();
@@ -219,10 +219,8 @@ public class HandEvaluator
         List<Card> remainingCards = allCards.Except(winningCards).ToList();
         Helpers.DebugLogCards("HandEvaluator.CompleteWinningHand() - remainingCards", remainingCards);
 
-        if (neededNumberOfCards < 1)
-        {
-            throw new Exception("⛔ HandEvaluator.CompleteWinningHand(): neededNumberOfCards is less than 1. Something is very wrong.");
-        }
+        if (neededNumberOfCards < 1) throw new InternalPokerAlgoException("Invariant violation: neededNumberOfCards is less than 1");
+
 
         while (neededNumberOfCards > 0)
         {
@@ -233,14 +231,14 @@ public class HandEvaluator
 
         if (completeHand.Count != 5)
         {
-            throw new Exception("⛔ HandEvaluator.CompleteWinningHand(): completeHand.Count != 5. Logic is wrong.");
+            throw new InternalPokerAlgoException("Invariant violation: completeHand.Count != 5. Logic is wrong.");
         }
         return completeHand;
     }
 
     private static List<Card> GetBestFiveCards(List<Card> cards)
     {
-        if(cards.Count < 5) throw new Exception("⛔ HandEvaluator.GetBestFiveCards(): The List<Card> passed has less than 5 cards.");
+        if(cards.Count < 5) throw new InternalPokerAlgoException("Invariant violation: list of cards passed has less than 5 cards.");
         
         return cards.GetRange(cards.Count - 5, 5);
     }

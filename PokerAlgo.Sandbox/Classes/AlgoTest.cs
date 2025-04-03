@@ -3,13 +3,13 @@ namespace PokerAlgo.Sandbox;
 class AlgoTest
 {
     public string Description { get; set; }
-    public Pair<Card, Card> Player1 {get; set;}
-    public Pair<Card, Card> Player2 {get; set;}
-    public Pair<Card, Card> Player3 {get; set;}
+    public Pair Player1 {get; set;}
+    public Pair Player2 {get; set;}
+    public Pair Player3 {get; set;}
     public List<Card> CommunityCards { get; set; }
     public int[] IndicesOfWinners { get; set; }
 
-    public AlgoTest(string description, Pair<Card, Card> player1, Pair<Card, Card> player2, Pair<Card, Card> player3, List<Card> communityCards, int[] indicesOfWinners)
+    public AlgoTest(string description, Pair player1, Pair player2, Pair player3, List<Card> communityCards, int[] indicesOfWinners)
     {
         Description = description;
         Player1 = player1;

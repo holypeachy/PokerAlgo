@@ -112,7 +112,7 @@ public static class Algo
                 else if (result == 0){}
                 else
                 {
-                    throw new PokerAlgoException("Invariant violated: CompareWinningHands() returned something other than -1, 0, or 1.");
+                    throw new InternalPokerAlgoException("Invariant violated: CompareWinningHands() returned something other than -1, 0, or 1.");
                 }
             }
             winners = tempPlayers;

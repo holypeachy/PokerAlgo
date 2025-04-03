@@ -2,7 +2,7 @@ namespace PokerAlgo;
 public class Player
 {
 	public string Name { get; }
-	public Pair<Card, Card> HoleCards { get; }
+	public Pair HoleCards { get; }
 
 	public WinningHand? WinningHand { get; set; }
 
@@ -10,7 +10,7 @@ public class Player
 	public Player(string name, Card first, Card second)
 	{
 		this.Name = name;
-		this.HoleCards = new Pair<Card, Card>(first, second);
+		this.HoleCards = new Pair(first, second);
 
 		this.HoleCards.First.IsPlayerCard = true;
 		this.HoleCards.Second.IsPlayerCard = true;

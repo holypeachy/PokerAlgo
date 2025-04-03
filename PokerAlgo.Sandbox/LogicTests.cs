@@ -165,15 +165,8 @@ class LogicTests {
 		Console.WriteLine($"- Making Tests JSON file for: \"{pathToTest}\"");
 		Deck deck = new();
 		HandEvalTest[] testObjects = new HandEvalTest[2];
-		List<Card> community = new()
-		{
-			deck.NextCard(),
-			deck.NextCard(),
-			deck.NextCard(),
-			deck.NextCard(),
-			deck.NextCard()
-		};
-		Pair<Card, Card> playerHand = new(deck.NextCard(), deck.NextCard());
+		List<Card> community = deck.NextCards(5);
+		Pair playerHand = new(deck.NextCard(), deck.NextCard());
 		WinningHand winning = new(HandType.Nothing, community);
 		HandEvalTest test = new("My Description", community, playerHand, winning);
 		JsonSerializerOptions options = new();
@@ -189,15 +182,9 @@ class LogicTests {
 		Console.WriteLine($"- Making Tests JSON file for: \"{pathToTest}\"");
 		Deck deck = new();
 		AlgoTest[] testObjects = new AlgoTest[2];
-		List<Card> community = new()
-		{
-			deck.NextCard(),
-			deck.NextCard(),
-			deck.NextCard(),
-			deck.NextCard(),
-			deck.NextCard()
-		};
-		Pair<Card, Card> playerHand = new(deck.NextCard(), deck.NextCard());
+		List<Card> community = deck.NextCards(5);
+
+		Pair playerHand = new(deck.NextCard(), deck.NextCard());
 		WinningHand winning = new(HandType.Nothing, community);
 		List<Player> players = new(){
 			new Player("Test Player 1", new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Clubs, true)),
