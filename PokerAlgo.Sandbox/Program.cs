@@ -367,13 +367,11 @@ public class Program
 ! 
 
 TODO
-TODO: Identify testing areas for core library. Test GetWinningChanceSim and GetWinningChancePreFlopSim for approximate values.
+TODO: Validate ChanceCalculator input using a guard clause pattern
 TODO: Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
 TODO: Add preflop computation to PokerAlgo Helpers class or as an additional package. Maybe also use dependency injection for custom data formats?
 
 ? Future Ideas
-! Make sure all cards are unique in Algo and HandEvaluator. Add helpers to do this.
-! HandEvaluator (and Algo) should never have any low aces as input.
 ? Also use dependency injection for preflop file creation?
 ? Instead of using tuples, use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
 ? I should make the Algo a nuget package and upload it.
@@ -389,8 +387,8 @@ TODO: Add preflop computation to PokerAlgo Helpers class or as an additional pac
 * Null-coalescing operator "??".
 
 * Changes
-* Pair class is no longer generic.
-* Replaced NextCard with NextCards when appropiate.
-* Finished code review and implemented custom Exceptions.
+* Added tests to validate ChanceCalculator simulation chance ranges from 0.0 to 1.0.
+* Holy moly, second super bug I catch thanks to testing; in ChanceCalculator.GetWinningChancePreFlopSim() the deck was used before removing known cards meaning a chance of having duplicate cards. Because of this preflop data needs to be recomputed.
+* Added Guard methods for input validation of Algo and HandEvaluator to Helpers class.
 * 
 */
