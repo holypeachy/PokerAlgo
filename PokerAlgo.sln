@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerAlgo.Sandbox", "PokerA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerAlgo.Testing", "PokerAlgo.Testing\PokerAlgo.Testing.csproj", "{D51D79C2-4FD7-4A39-920A-848FDBD3A523}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerAlgo.Compute", "PokerAlgo.Compute\PokerAlgo.Compute.csproj", "{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Release|x64.Build.0 = Release|Any CPU
 		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Release|x86.ActiveCfg = Release|Any CPU
 		{D51D79C2-4FD7-4A39-920A-848FDBD3A523}.Release|x86.Build.0 = Release|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Debug|x64.Build.0 = Debug|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Debug|x86.Build.0 = Debug|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Release|x64.ActiveCfg = Release|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Release|x64.Build.0 = Release|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Release|x86.ActiveCfg = Release|Any CPU
+		{A4A5FB45-B0F1-4EE4-AA85-73E082E0E97B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

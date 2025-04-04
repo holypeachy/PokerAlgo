@@ -1,6 +1,6 @@
 ﻿namespace PokerAlgo.Sandbox;
 
-public class Program
+class Program
 {
 	private static int _debugVerbosity = 0;
 	private static readonly int _numOfCommunityCards = 5;
@@ -308,8 +308,8 @@ public class Program
 
 		foreach (KeyValuePair<string, Pair> keyValuePair in startingHands)
 		{
-			(double winChance, double tieChance) chanceTuple = ChanceCalculator.GetWinningChancePreFlopSim(keyValuePair.Value, _numOfPreflopSimPlayers, _numOfSims);
-			results.AppendLine($"{keyValuePair.Key} {chanceTuple.winChance} {chanceTuple.tieChance}");
+			(double winChance, double tieChance) = ChanceCalculator.GetWinningChancePreFlopSim(keyValuePair.Value, _numOfPreflopSimPlayers, _numOfSims);
+			results.AppendLine($"{keyValuePair.Key} {winChance} {tieChance}");
 
 			int currentLineCursor = Console.CursorTop;
 			Console.SetCursorPosition(0, Console.CursorTop);
@@ -367,7 +367,6 @@ public class Program
 ! 
 
 TODO
-TODO: Use dependency injection for preflop file creation. PokerAlgo.Compute additional package.
 TODO: Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
 TODO: Add test, does ChanceCalculator give similar values for AKs and KAs
 
@@ -384,8 +383,6 @@ TODO: Make PokerAlgo a nuget package and upload it.
 * Null-coalescing operator "??".
 
 * Changes
-* refactor: use indexer operator instead of LINQ ElementAt() for the entire project.
-* refactor: move guard clause methods to Guards class.
-* feat: add internal Guards class to handle input validation, Guards class methods now handle validation for ChanceCalculator.
+* feat: add PokerAlgo.Compute CLI project to compute preflop data.
 * 
 */

@@ -20,7 +20,6 @@ public class FolderLoader : IPreFlopDataLoader
 
             string fileName;
             string[] splitFileName;
-            int numberOfOpponents;
             string[] fileData;
             string[] currentLine;
 
@@ -29,7 +28,7 @@ public class FolderLoader : IPreFlopDataLoader
                 fileName = Path.GetFileName(file);
                 splitFileName = fileName.Split('_');
 
-                if (splitFileName.Length != 2 || !int.TryParse(splitFileName[0], out numberOfOpponents))
+                if (splitFileName.Length != 2 || !int.TryParse(splitFileName[0], out int numberOfOpponents))
                     throw new FormatException($"Unexpected file name format: \"{fileName}\"");
 
                 fileData = File.ReadAllLines(file);
