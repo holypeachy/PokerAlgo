@@ -22,7 +22,7 @@ public static class Algo
 
     public static List<Player> GetWinners(List<Player> players, List<Card> communityCards)
     {
-        Helpers.GuardGetWinners(players, communityCards);
+        Guards.ArgsGetWinners(players, communityCards);
 
         Helpers.DebugLog("--- 🔎 Algo Starts");
         HandEvaluator handEvaluator = new();
@@ -84,27 +84,29 @@ public static class Algo
             for (int playerIndex = 0; playerIndex < winners.Count - 1; playerIndex++)
             {
                 int result = CompareWinningHands(winners[playerIndex].WinningHand, winners[playerIndex + 1].WinningHand);
-                Helpers.DebugLog($"Algo.BreakTies() - " + (result == -1 ? winners[playerIndex].Name + " has better hand\n" : result == 1 ? winners[playerIndex + 1].Name + " has better hand\n" : "Players Tie"), 2);
+                Helpers.DebugLog($"Algo.BreakTies() - " + (result == -1 ? winners[playerIndex].Name + " has the better hand\n" : result == 1 ? winners[playerIndex + 1].Name + " has the better hand\n" : "Players Tie"), 2);
 
                 if (result == -1)
                 {
                     if(winners[playerIndex].WinningHand.Type > winners[playerIndex + 1].WinningHand.Type)
                     {
+                        Helpers.DebugLog("Algo.BreakTies() - Winning hand type difference, early break\n", 2);
+
                         for (int k = playerIndex + 1; k < winners.Count; k++)
                         {
-                            tempPlayers.Remove(winners.ElementAt(k));
+                            tempPlayers.Remove(winners[k]);
                         }
                     }
                     else
                     {
-                        tempPlayers.Remove(winners.ElementAt(playerIndex + 1));
+                        tempPlayers.Remove(winners[playerIndex + 1]);
                     }
                     hasChangesBeenMade = true;
                     break;
                 }
                 else if (result == 1)
                 {
-                    tempPlayers.Remove(winners.ElementAt(playerIndex));
+                    tempPlayers.Remove(winners[playerIndex]);
                     hasChangesBeenMade = true;
                 }
                 else if (result == 0){}
@@ -149,15 +151,15 @@ public static class Algo
                 return CompareKickers(leftCards, rightCards);
 
             case HandType.FourKind:
-                if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
-                else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
-                else return CompareKickers(new List<Card> { leftCards.ElementAt(0) }, new List<Card> { rightCards.ElementAt(0) });
+                if (leftCards[4].Rank > rightCards[4].Rank) return -1;
+                else if (rightCards[4].Rank > leftCards[4].Rank) return 1;
+                else return CompareKickers(new List<Card> { leftCards[0] }, new List<Card> { rightCards[0] });
 
             case HandType.FullHouse:
-                if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
-                else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
-                else if (leftCards.ElementAt(0).Rank > rightCards.ElementAt(0).Rank) return -1;
-                else if (rightCards.ElementAt(0).Rank > leftCards.ElementAt(0).Rank) return 1;
+                if (leftCards[4].Rank > rightCards[4].Rank) return -1;
+                else if (rightCards[4].Rank > leftCards[4].Rank) return 1;
+                else if (leftCards[0].Rank > rightCards[0].Rank) return -1;
+                else if (rightCards[0].Rank > leftCards[0].Rank) return 1;
                 else return 0;
 
             case HandType.Flush:
@@ -167,21 +169,21 @@ public static class Algo
                 return CompareKickers(leftCards, rightCards);
 
             case HandType.ThreeKind:
-                if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
-                else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
+                if (leftCards[4].Rank > rightCards[4].Rank) return -1;
+                else if (rightCards[4].Rank > leftCards[4].Rank) return 1;
                 else return CompareKickers(leftCards.GetRange(0, 2), rightCards.GetRange(0, 2));
 
             case HandType.TwoPair:
-                if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
-                else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
-                if (leftCards.ElementAt(2).Rank > rightCards.ElementAt(2).Rank) return -1;
-                else if (rightCards.ElementAt(2).Rank > leftCards.ElementAt(2).Rank) return 1;
+                if (leftCards[4].Rank > rightCards[4].Rank) return -1;
+                else if (rightCards[4].Rank > leftCards[4].Rank) return 1;
+                if (leftCards[2].Rank > rightCards[2].Rank) return -1;
+                else if (rightCards[2].Rank > leftCards[2].Rank) return 1;
 
-                else return CompareKickers(new List<Card> { leftCards.ElementAt(0) }, new List<Card> { rightCards.ElementAt(0) });
+                else return CompareKickers(new List<Card> { leftCards[0] }, new List<Card> { rightCards[0] });
 
             case HandType.Pair:
-                if (leftCards.ElementAt(4).Rank > rightCards.ElementAt(4).Rank) return -1;
-                else if (rightCards.ElementAt(4).Rank > leftCards.ElementAt(4).Rank) return 1;
+                if (leftCards[4].Rank > rightCards[4].Rank) return -1;
+                else if (rightCards[4].Rank > leftCards[4].Rank) return 1;
                 else return CompareKickers(leftCards.GetRange(0, 3), rightCards.GetRange(0, 3));
 
             case HandType.Nothing:
@@ -205,12 +207,12 @@ public static class Algo
 
         for (int i = left.Count - 1; i >= 0; i--)
         {
-            if (left.ElementAt(i).Rank > right.ElementAt(i).Rank)
+            if (left[i].Rank > right[i].Rank)
             {
                 Helpers.DebugLog("Algo.CompareKickers() - Left Wins", 2);
                 return -1;
             }
-            else if (right.ElementAt(i).Rank > left.ElementAt(i).Rank)
+            else if (right[i].Rank > left[i].Rank)
             {
                 Helpers.DebugLog("Algo.CompareKickers() - Right Wins", 2);
                 return 1;

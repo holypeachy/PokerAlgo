@@ -126,7 +126,7 @@ public class ChanceCalculatorTests
     {
         Pair holeCards = new(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true));
 
-        Assert.Throws<ArgumentException>(() => ChanceCalculator.GetPreFlopChen(holeCards));
+        Assert.Throws<DuplicateCardException>(() => ChanceCalculator.GetPreFlopChen(holeCards));
     }
 
 
@@ -217,5 +217,64 @@ public class ChanceCalculatorTests
         (win + tie).Should().BeLessThanOrEqualTo(1.0);
     }
 
+
+    [Fact]
+    public void GetWinningChanceSim_no_duplicate_cards()
+    {
+        // Given
+        Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(2, CardSuit.Spades, true));
+        List<Card> communityCards = new()
+        {
+            new Card(4, CardSuit.Spades, false),
+            new Card(5, CardSuit.Spades, false),
+            new Card(6, CardSuit.Spades, false),
+            new Card(7, CardSuit.Spades, false),
+            new Card(8, CardSuit.Spades, false),
+        };
+
+        // Then
+        Assert.Throws<DuplicateCardException>(() => ChanceCalculator.GetWinningChanceSim(holeCards, communityCards, 4, 500));
+    }
+
+    [Fact]
+    public void GetWinningChancePreFlopSim_no_duplicate_cards()
+    {
+        // Given
+        Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(2, CardSuit.Spades, true));
+
+        // Then
+        Assert.Throws<DuplicateCardException>(() => ChanceCalculator.GetWinningChancePreFlopSim(holeCards, 4, 500));
+    }
+
+    [Fact]
+    public void GetWinningChancePreFlopLookUp_no_duplicate_cards()
+    {
+        // Given
+        Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(2, CardSuit.Spades, true));
+        FolderLoader folderLoader = new(pathToPreFlopDirectory);
+
+        // Then
+        Assert.Throws<DuplicateCardException>(() => ChanceCalculator.GetWinningChancePreFlopLookUp(holeCards, 4, folderLoader));
+    }
+
+    [Fact]
+    public void GetWinningChancePreFlopChen_no_duplicate_cards()
+    {
+        // Given
+        Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(2, CardSuit.Spades, true));
+
+        // Then
+        Assert.Throws<DuplicateCardException>(() => ChanceCalculator.GetWinningChancePreFlopChen(holeCards));
+    }
+
+    [Fact]
+    public void GetPreFlopChen_no_duplicate_cards()
+    {
+        // Given
+        Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(2, CardSuit.Spades, true));
+
+        // Then
+        Assert.Throws<DuplicateCardException>(() => ChanceCalculator.GetPreFlopChen(holeCards));
+    }
     
 }

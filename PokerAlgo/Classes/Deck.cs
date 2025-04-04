@@ -40,8 +40,8 @@ public class Deck
 			{
 				continue;
 			}
-			tempCard = _cards.ElementAt(currentIndex);
-			_cards[currentIndex] = _cards.ElementAt(targetIndex);
+			tempCard = _cards[currentIndex];
+			_cards[currentIndex] = _cards[targetIndex];
 			_cards[targetIndex] = tempCard;
 		}
 	}
@@ -62,7 +62,7 @@ public class Deck
 	{
 		if (_nextCardIndex >= _cards.Count) throw new DeckEmptyException("No More Cards in The Deck");
 
-		return _cards.ElementAt(_nextCardIndex++);
+		return _cards[_nextCardIndex++];
 	}
 
 	public List<Card> NextCards(int numberOfCards)

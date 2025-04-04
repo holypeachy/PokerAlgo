@@ -28,77 +28,30 @@ public static class Helpers
     {
         if (hand is null) throw new ArgumentException("\'hand\' argument must not be null.", nameof(hand));
 
-        switch (hand.Type) {
-            case HandType.RoyalFlush:
-                return "Royal Flush";
-
-            case HandType.StraightFlush:
-                return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}-High Straight Flush";
-
-            case HandType.FourKind:
-                return $"Four of a Kind, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s";
-
-            case HandType.FullHouse:
-                return $"Full House, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s over {_cardPrintLookUp[hand.Cards.ElementAt(0).Rank]}s";
-
-            case HandType.Flush:
-                return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}-High Flush";
-
-            case HandType.Straight:
-                return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}-High Straight";
-
-            case HandType.ThreeKind:
-                return $"Three of a Kind, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s";
-
-            case HandType.TwoPair:
-                return $"Two Pair, {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s and {_cardPrintLookUp[hand.Cards.ElementAt(2).Rank]}s";
-
-            case HandType.Pair:
-                return $"Pair of {_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]}s";
-
-            case HandType.Nothing:
-                return $"{_cardPrintLookUp[hand.Cards.ElementAt(4).Rank]} High Card";
-
-            default:
-                throw new InternalPokerAlgoException("Invariant violated: switch defaulted, this should never happen. Was HandType enum changed?");
-        }
-    }
-
-    public static void GuardGetWinners(List<Player> players, List<Card> communityCards)
-    {
-        if (players.Count < 2) throw new ArgumentOutOfRangeException(nameof(players), "There must be at least 2 players.");
-        if (communityCards.Count < 3) throw new ArgumentOutOfRangeException(nameof(communityCards), "There must be at least 3 community cards.");
-        if (communityCards.Count > 5) throw new ArgumentOutOfRangeException(nameof(communityCards), "There must be no more than 5 community cards.");
-
-        List<Card> allCards = new();
-        allCards.AddRange(communityCards);
-        foreach (Player p in players)
+        return hand.Type switch
         {
-            allCards.Add(p.HoleCards.First);
-            allCards.Add(p.HoleCards.Second);
-        }
+            HandType.RoyalFlush => "Royal Flush",
 
-        bool areUnique = allCards.Count == allCards.Distinct().Count();
-        if (areUnique == false) throw new DuplicateCardException($"Either {nameof(players)} or {nameof(communityCards)} arguments have duplicate cards.");
+            HandType.StraightFlush => $"{_cardPrintLookUp[hand.Cards[4].Rank]}-High Straight Flush",
 
-        foreach (Card c in allCards)
-        {
-            if (c.Rank == 1) throw new LowAcesException("When instantiating Ace cards use rank 14 no 1.");
-        }
-    }
+            HandType.FourKind => $"Four of a Kind, {_cardPrintLookUp[hand.Cards[4].Rank]}s",
 
-    public static void GuardGetWinningHand(List<Card> cards)
-    {
-        if (cards.Count < 5 || cards.Count > 7) throw new ArgumentOutOfRangeException(nameof(cards), "The list must have 5-7 cards.");
+            HandType.FullHouse => $"Full House, {_cardPrintLookUp[hand.Cards[4].Rank]}s over {_cardPrintLookUp[hand.Cards[0].Rank]}s",
 
-        bool areUnique = cards.Count == cards.Distinct().Count();
-        if (areUnique == false) throw new DuplicateCardException($"{nameof(cards)} argument has duplicate cards.");
+            HandType.Flush => $"{_cardPrintLookUp[hand.Cards[4].Rank]}-High Flush",
 
+            HandType.Straight => $"{_cardPrintLookUp[hand.Cards[4].Rank]}-High Straight",
 
-        foreach (Card c in cards)
-        {
-            if (c.Rank == 1) throw new LowAcesException("When instantiating Ace cards use rank 14 not 1.");
-        }
+            HandType.ThreeKind => $"Three of a Kind, {_cardPrintLookUp[hand.Cards[4].Rank]}s",
+
+            HandType.TwoPair => $"Two Pair, {_cardPrintLookUp[hand.Cards[4].Rank]}s and {_cardPrintLookUp[hand.Cards[2].Rank]}s",
+
+            HandType.Pair => $"Pair of {_cardPrintLookUp[hand.Cards[4].Rank]}s",
+
+            HandType.Nothing => $"{_cardPrintLookUp[hand.Cards[4].Rank]} High Card",
+
+            _ => throw new InternalPokerAlgoException("Invariant violated: switch defaulted. Was HandType enum changed?"),
+        };
     }
 
 

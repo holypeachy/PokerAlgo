@@ -128,7 +128,7 @@ class LogicTests {
 			{
 				foreach (int index in test.IndicesOfWinners)
 				{
-					if(!winners.Contains( players.ElementAt(index) ) ) passed = false;
+					if(!winners.Contains( players[index] ) ) passed = false;
 				}
 			}
 
@@ -208,7 +208,7 @@ class LogicTests {
 
 		for (int i = 0; i < left.Count; i++)
 		{
-			if (!left.ElementAt(i).Equals(right.ElementAt(i)))
+			if (!left[i].Equals(right[i]))
 			{
 				return false;
 			}

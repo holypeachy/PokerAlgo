@@ -12,7 +12,7 @@ public class HandEvaluator
 
     public WinningHand GetWinningHand(List<Card> cards)
     {
-        Helpers.GuardGetWinningHand(cards);
+        Guards.ArgsGetWinningHand(cards);
 
         _tempBestHand = null;
         List<Card> cardsCopy = cards.ToList();
@@ -63,7 +63,7 @@ public class HandEvaluator
         if(flushCards.Count >= 5)
         {
             bestFive = GetBestFiveCards(flushCards);
-            if (bestFive.ElementAt(0).Rank == 10 && HasConsecutiveValues(bestFive))
+            if (bestFive[0].Rank == 10 && HasConsecutiveValues(bestFive))
             {
                 SetWinningHand(HandType.RoyalFlush, bestFive);
                 return;
@@ -224,7 +224,7 @@ public class HandEvaluator
 
         while (neededNumberOfCards > 0)
         {
-            completeHand.Insert(0, remainingCards.ElementAt(remainingCards.Count - 1));
+            completeHand.Insert(0, remainingCards[remainingCards.Count - 1]);
             remainingCards.RemoveAt(remainingCards.Count - 1);
             neededNumberOfCards--;
         }

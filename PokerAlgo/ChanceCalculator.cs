@@ -12,11 +12,7 @@ public static class ChanceCalculator
     // Returns Win and Tie Values from 0 to 1.0
     public static (double winChance, double tieChance) GetWinningChanceSim(Pair playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
     {
-        if (communityCards.Count < 3) throw new ArgumentOutOfRangeException(nameof(communityCards), "There should be no less than 3 community cards.");
-        if (communityCards.Count > 5) throw new ArgumentOutOfRangeException(nameof(communityCards), "There should be no more than 5 community cards.");
-        if (numOfOpponents < 1) throw new ArgumentOutOfRangeException(nameof(numOfOpponents), "There should be at least 1 opponent.");
-        if (numberOfSimulatedGames < 100) throw new ArgumentOutOfRangeException(nameof(numberOfSimulatedGames), "Number of simulated games is less than 100. I recommend at least 100 simulated games for a good prediction.");
-
+        Guards.ArgsWinningChanceSim(playerHoleCards, communityCards, numOfOpponents, numberOfSimulatedGames);
 
         Deck testDeck = new();
         int timesWon = 0;
@@ -48,7 +44,7 @@ public static class ChanceCalculator
 
             winners = Algo.GetWinners(allPlayers, communityCards);
 
-            if (winners.Count == 1 && winners.ElementAt(0) == player)
+            if (winners.Count == 1 && winners[0] == player)
             {
                 timesWon++;
             }
@@ -64,8 +60,7 @@ public static class ChanceCalculator
     // Returns Win and Tie Values from 0 to 1.0
     public static (double winChance, double tieChance) GetWinningChancePreFlopSim(Pair playerHoleCards, int numOfOpponents, int numberOfSimulatedGames)
     {
-        if (numOfOpponents < 1) throw new ArgumentOutOfRangeException(nameof(numOfOpponents), "There should be at least 1 opponent.");
-        if (numberOfSimulatedGames < 100) throw new ArgumentOutOfRangeException(nameof(numberOfSimulatedGames), "Number of simulated games is less than 100. I recommend at least 100 simulated games for a good prediction.");
+        Guards.ArgsPreFlopSim(playerHoleCards, numOfOpponents, numberOfSimulatedGames);
 
         Deck testDeck = new();
         int timesWon = 0;
@@ -98,7 +93,7 @@ public static class ChanceCalculator
 
             winners = Algo.GetWinners(allPlayers, communityCards);
 
-            if (winners.Count == 1 && winners.ElementAt(0) == player)
+            if (winners.Count == 1 && winners[0] == player)
             {
                 timesWon++;
             }
@@ -113,11 +108,13 @@ public static class ChanceCalculator
 
 
     //  Returns Value from 0 to 1.0 from pre-computed data
-    public static (double winChance, double tieChance) GetWinningChancePreFlopLookUp(Pair playerCards, int numOfOpponents, IPreFlopDataLoader preFlopDataLoader)
+    public static (double winChance, double tieChance) GetWinningChancePreFlopLookUp(Pair playerHoleCards, int numOfOpponents, IPreFlopDataLoader preFlopDataLoader)
     {
+        Guards.ArgsPreFlopLookUp(playerHoleCards, numOfOpponents);
+
         Dictionary<(string hand, int opponentCount), (double winChance, double tieChance)> PreFlopLookUpTable = preFlopDataLoader.Load();
 
-        string s = $"{_cardPrintLookUp[playerCards.First.Rank]}{_cardPrintLookUp[playerCards.Second.Rank]}" + (playerCards.First.Suit == playerCards.Second.Suit ? "s" : "o");
+        string s = $"{_cardPrintLookUp[playerHoleCards.First.Rank]}{_cardPrintLookUp[playerHoleCards.Second.Rank]}" + (playerHoleCards.First.Suit == playerHoleCards.Second.Suit ? "s" : "o");
 
         (double, double) result;
         try
@@ -135,6 +132,8 @@ public static class ChanceCalculator
     // Returns Value from 0 to 1.0 | Realistically: 0.1166 to 0.8389
     public static double GetWinningChancePreFlopChen(Pair playerHoleCards)
     {
+        Guards.AgainstDuplicateHoleCards(playerHoleCards, nameof(playerHoleCards));
+
         // ! Sigmoid adjustment
         return 1 / (1 + Math.Exp(-(_handStrengthSensitivity * GetPreFlopChen(playerHoleCards) + _baselineWinRate)));
     }
@@ -142,7 +141,7 @@ public static class ChanceCalculator
     // Returns -1 to 20
     public static double GetPreFlopChen(Pair playerHoleCards)
     {
-        if (playerHoleCards.First.Rank == playerHoleCards.Second.Rank && playerHoleCards.First.Suit == playerHoleCards.Second.Suit) throw new ArgumentException("⛔ Player hole cards are the same, this will never happen in a real game.");
+        Guards.AgainstDuplicateHoleCards(playerHoleCards, nameof(playerHoleCards));
 
         double points = 0;
         Card higherCard;
@@ -192,7 +191,7 @@ public static class ChanceCalculator
         else if (points == -0.5d) points = 0;
         else points = Math.Round(points, MidpointRounding.AwayFromZero);
 
-        if (points < -1) throw new InternalPokerAlgoException("Invariant violated: totalPoints should always be greater than -1 before returning.");
+        if (points < -1) throw new InternalPokerAlgoException($"Invariant violated: {nameof(points)} should always be greater than -1 before returning.");
 
         return points;
     }

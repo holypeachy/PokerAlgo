@@ -367,19 +367,16 @@ public class Program
 ! 
 
 TODO
-TODO: Validate ChanceCalculator input using a guard clause pattern
+TODO: Use dependency injection for preflop file creation. PokerAlgo.Compute additional package.
 TODO: Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
-TODO: Add preflop computation to PokerAlgo Helpers class or as an additional package. Maybe also use dependency injection for custom data formats?
+TODO: Add test, does ChanceCalculator give similar values for AKs and KAs
+
+TODO: Make PokerAlgo a nuget package and upload it.
 
 ? Future Ideas
-? Also use dependency injection for preflop file creation?
+? Rename tests
 ? Instead of using tuples, use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
-? I should make the Algo a nuget package and upload it.
-? Use method extensions for better code readability?
-
 ? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
-? Does ChanceCalculator give similar values for AKs and KAs?
-? Guard Clause. Helper class to handle input validation.
 ? Precompute all chances of winning?
 
 * Notes
@@ -387,8 +384,8 @@ TODO: Add preflop computation to PokerAlgo Helpers class or as an additional pac
 * Null-coalescing operator "??".
 
 * Changes
-* Added tests to validate ChanceCalculator simulation chance ranges from 0.0 to 1.0.
-* Holy moly, second super bug I catch thanks to testing; in ChanceCalculator.GetWinningChancePreFlopSim() the deck was used before removing known cards meaning a chance of having duplicate cards. Because of this preflop data needs to be recomputed.
-* Added Guard methods for input validation of Algo and HandEvaluator to Helpers class.
+* refactor: use indexer operator instead of LINQ ElementAt() for the entire project.
+* refactor: move guard clause methods to Guards class.
+* feat: add internal Guards class to handle input validation, Guards class methods now handle validation for ChanceCalculator.
 * 
 */
