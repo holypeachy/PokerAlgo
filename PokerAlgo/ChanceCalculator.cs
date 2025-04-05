@@ -21,6 +21,7 @@ public static class ChanceCalculator
         Player player = new("Player", new Card(playerHoleCards.First), new Card(playerHoleCards.Second));
         List<Player> allPlayers;
         List<Player> winners;
+        List<Card> fullCommunity;
 
         List<Card> cardsToRemove = new()
         {
@@ -28,12 +29,17 @@ public static class ChanceCalculator
             playerHoleCards.Second
         };
         cardsToRemove.AddRange(communityCards);
+        List<Card> simRemainingCommunity = new();
+
+        int remainingCommunity = 5 - communityCards.Count;
 
         for (int i = 0; i < numberOfSimulatedGames; i++)
         {
             testDeck.ResetDeck();
-
+            simRemainingCommunity.Clear();
             testDeck.RemoveCards(cardsToRemove);
+
+            if (remainingCommunity > 0) simRemainingCommunity.AddRange(testDeck.NextCards(remainingCommunity));
 
             allPlayers = new() { player };
 
@@ -42,7 +48,9 @@ public static class ChanceCalculator
                 allPlayers.Add(new Player("Simulated Opponent", testDeck.NextCard(), testDeck.NextCard()));
             }
 
-            winners = Algo.GetWinners(allPlayers, communityCards);
+            fullCommunity = communityCards.ToList();
+            fullCommunity.AddRange(simRemainingCommunity);
+            winners = Algo.GetWinners(allPlayers, fullCommunity);
 
             if (winners.Count == 1 && winners[0] == player)
             {
@@ -67,8 +75,9 @@ public static class ChanceCalculator
         int timesTied = 0;
 
         Player player = new("Player", new Card(playerHoleCards.First), new Card(playerHoleCards.Second));
-        List<Player> allPlayers;
+        List<Player> allPlayers = new();
         List<Player> winners;
+        List<Card> communityCards;
 
         List<Card> cardsToRemove = new()
         {
@@ -82,9 +91,10 @@ public static class ChanceCalculator
 
             testDeck.RemoveCards(cardsToRemove);
 
-            List<Card> communityCards = testDeck.NextCards(5);
+            communityCards = testDeck.NextCards(5);
 
-            allPlayers = new() { player };
+            allPlayers.Clear();
+            allPlayers.Add(player);
 
             for (int k = 0; k < numOfOpponents; k++)
             {

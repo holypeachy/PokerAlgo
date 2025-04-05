@@ -5,8 +5,7 @@ internal static class Guards
     public static void ArgsGetWinners(List<Player> players, List<Card> communityCards)
     {
         if (players.Count < 2) throw new ArgumentOutOfRangeException(nameof(players), "There must be at least 2 players.");
-        if (communityCards.Count < 3) throw new ArgumentOutOfRangeException(nameof(communityCards), "There must be at least 3 community cards.");
-        if (communityCards.Count > 5) throw new ArgumentOutOfRangeException(nameof(communityCards), "There must be no more than 5 community cards.");
+        if (communityCards.Count != 5) throw new ArgumentOutOfRangeException(nameof(communityCards), "For the showdown, there must be all 5 community cards.");
 
         List<Card> allCards = new();
         allCards.AddRange(communityCards);

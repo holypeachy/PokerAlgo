@@ -368,14 +368,14 @@ class Program
 
 TODO
 TODO: Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
-TODO: Add test, does ChanceCalculator give similar values for AKs and KAs
+TODO: Rename tests
 
 TODO: Make PokerAlgo a nuget package and upload it.
 
 ? Future Ideas
-? Rename tests
 ? Instead of using tuples, use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
 ? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
+
 ? Precompute all chances of winning?
 
 * Notes
@@ -383,6 +383,12 @@ TODO: Make PokerAlgo a nuget package and upload it.
 * Null-coalescing operator "??".
 
 * Changes
-* feat: add PokerAlgo.Compute CLI project to compute preflop data.
+* chore: recompute preflop_data.
+* chore: updated preflop lookup with the newly computed data.
+* test: add tests to verify preflop sim data using external data set.
+* fix: GetWinningChanceSim now simulates remaining community cards.
+* feat: Algo.GetWinners() only takes 5 community cards, HandEvaluator.GetWinningHand() can still take 5-7.
+* test: add symmetry tests, ChanceCalculator gives similar values for AKo and KAo within 0.01.
+* fix: was using deck before removing cards in simulations, this would sometimes lead to duplicate cards.
 * 
 */
