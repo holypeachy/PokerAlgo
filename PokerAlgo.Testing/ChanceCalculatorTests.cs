@@ -5,7 +5,7 @@ public class ChanceCalculatorTests
     public string pathToPreFlopDirectory = @"C:/Users/Frank/Code/PokerAlgo/Resources/preflop_data/";
 
     [Fact]
-    public void GetWinningChanceSim_no_less_than_3_cummunity_cards()
+    public void GetWinningChanceSim_Throws_When_CommunityLessThanThree()
     {
         Deck deck = new();
         Pair playerCards = new Pair(deck.NextCard(), deck.NextCard());
@@ -19,7 +19,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChanceSim_no_more_than_5_cummunity_cards()
+    public void GetWinningChanceSim_Throws_When_CommunityMoreThanFive()
     {
         Deck deck = new();
         Pair playerCards = new Pair(deck.NextCard(), deck.NextCard());
@@ -29,7 +29,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChanceSim_at_least_1_opponent_to_simulate()
+    public void GetWinningChanceSim_Throws_When_OpponentsIsZero()
     {
         Deck deck = new();
         Pair playerCards = new Pair(deck.NextCard(), deck.NextCard());
@@ -39,7 +39,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChanceSim_at_least_100_sim_games_for_chance_prediction()
+    public void GetWinningChanceSim_Throws_When_SimCountIsTooLow()
     {
         Deck deck = new();
         Pair playerCards = new Pair(deck.NextCard(), deck.NextCard());
@@ -49,7 +49,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChanceSim_no_errors()
+    public void GetWinningChanceSim_Returns_When_ValidInput()
     {
         Deck deck = new();
         Pair playerCards = new Pair(deck.NextCard(), deck.NextCard());
@@ -61,7 +61,7 @@ public class ChanceCalculatorTests
 
 
     [Fact]
-    public void GetWinningChancePreFlopSim_at_least_1_opponent_to_simulate()
+    public void GetWinningChancePreFlopSim_Throws_When_OpponentsIsZero()
     {
         Deck deck = new();
         Pair playerCards = new Pair(deck.NextCard(), deck.NextCard());
@@ -71,7 +71,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChancePreFlopSim_at_least_100_sim_games_for_chance_prediction()
+    public void GetWinningChancePreFlopSim_Throws_When_SimCountIsTooLow()
     {
         Deck deck = new();
         Pair playerCards = new Pair(deck.NextCard(), deck.NextCard());
@@ -82,7 +82,7 @@ public class ChanceCalculatorTests
 
 
     [Fact]
-    public void GetPreFlopChen_Chen_value_for_AK_suited_is_12()
+    public void GetPreFlopChen_Returns12_For_AKs()
     {
         Pair holeCards = new(new Card(14, CardSuit.Spades, true), new Card(13, CardSuit.Spades, true));
 
@@ -90,7 +90,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetPreFlopChen_Chen_value_for_TT_offsuit_is_10()
+    public void GetPreFlopChen_Returns10_For_TTo()
     {
         Pair holeCards = new(new Card(10, CardSuit.Spades, true), new Card(10, CardSuit.Hearts, true));
 
@@ -98,7 +98,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetPreFlopChen_Chen_value_for_57_suited_is_6()
+    public void GetPreFlopChen_Returns6_For_57s()
     {
         Pair holeCards = new(new Card(5, CardSuit.Spades, true), new Card(7, CardSuit.Spades, true));
 
@@ -106,7 +106,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetPreFlopChen_Chen_value_for_27_offsuit_is_neg_1()
+    public void GetPreFlopChen_ReturnsNeg1_For_27o()
     {
         Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(7, CardSuit.Hearts, true));
 
@@ -114,7 +114,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetPreFlopChen_Chen_value_for_AA_offsuit_is_20()
+    public void GetPreFlopChen_Returns20_For_AAo()
     {
         Pair holeCards = new(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Hearts, true));
 
@@ -122,7 +122,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetPreFlopChen_Chen_value_for_AA_suited_is_22_but_should_throw_error_because_not_possible_in_game()
+    public void GetPreFlopChen_Throws_When_DuplicateAA()
     {
         Pair holeCards = new(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Spades, true));
 
@@ -131,7 +131,7 @@ public class ChanceCalculatorTests
 
 
     [Fact]
-    public void GetWinningChancePreFlopLookUp_AAo_4_opponents_win_should_be_557242()
+    public void GetWinningChancePreFlopLookUp_Returns557242_For_AAo_4Opponents()
     {
         Pair playerCards = new(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Clubs, true));
         FolderLoader loader = new(pathToPreFlopDirectory);
@@ -143,7 +143,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChancePreFlopLookUp_AKs_4_opponents_opponents_win_should_be_343988()
+    public void GetWinningChancePreFlopLookUp_Returns343988_For_AKs_4Opponents()
     {
         Pair playerCards = new(new Card(14, CardSuit.Spades, true), new Card(13, CardSuit.Spades, true));
         IPreFlopDataLoader loader = new FolderLoader(pathToPreFlopDirectory);
@@ -155,7 +155,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChancePreFlopLookUp_4Ao_2_opponents_opponents_win_should_be_3509()
+    public void GetWinningChancePreFlopLookUp_Returns3509_For_A4o_2Opponents()
     {
         Pair playerCards = new(new Card(4, CardSuit.Spades, true), new Card(14, CardSuit.Hearts, true));
         IPreFlopDataLoader loader = new FolderLoader(pathToPreFlopDirectory);
@@ -168,7 +168,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChancePreFlopLookUp_AKs_1_opponent_opponents_win_should_be_661998()
+    public void GetWinningChancePreFlopLookUp_Returns661998_For_AKs_1Opponent()
     {
         Pair playerCards = new(new Card(14, CardSuit.Spades, true), new Card(13, CardSuit.Spades, true));
         IPreFlopDataLoader loader = new FolderLoader(pathToPreFlopDirectory);
@@ -181,7 +181,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChancePreFlopLookUp_AKs_10_opponents_throws_KeyNotFoundException()
+    public void GetWinningChancePreFlopLookUp_Throws_When_TooManyOpponents()
     {
         Pair playerCards = new(new Card(14, CardSuit.Spades, true), new Card(13, CardSuit.Spades, true));
         IPreFlopDataLoader loader = new FolderLoader(pathToPreFlopDirectory);
@@ -191,7 +191,7 @@ public class ChanceCalculatorTests
 
 
     [Fact]
-    public void GetWinningChanceSim_Probabilities_Are_In_Valid_Range()
+    public void GetWinningChanceSim_Probabilities_InRange()
     {
         Deck deck = new();
         Pair holeCards = new(deck.NextCard(), deck.NextCard());
@@ -205,7 +205,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChancePreFlopSim_Probabilities_Are_In_Valid_Range()
+    public void GetWinningChancePreFlopSim_Probabilities_InRange()
     {
         Deck deck = new();
         Pair holeCards = new Pair(deck.NextCard(), deck.NextCard());
@@ -219,7 +219,7 @@ public class ChanceCalculatorTests
 
 
     [Fact]
-    public void GetWinningChanceSim_no_duplicate_cards()
+    public void GetWinningChanceSim_Throws_When_DuplicateCards()
     {
         // Given
         Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(2, CardSuit.Spades, true));
@@ -237,7 +237,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChancePreFlopSim_no_duplicate_cards()
+    public void GetWinningChancePreFlopSim_Throws_When_DuplicateCards()
     {
         // Given
         Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(2, CardSuit.Spades, true));
@@ -247,7 +247,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChancePreFlopLookUp_no_duplicate_cards()
+    public void GetWinningChancePreFlopLookUp_Throws_When_DuplicateCards()
     {
         // Given
         Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(2, CardSuit.Spades, true));
@@ -258,7 +258,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChancePreFlopChen_no_duplicate_cards()
+    public void GetWinningChancePreFlopChen_Throws_When_DuplicateCards()
     {
         // Given
         Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(2, CardSuit.Spades, true));
@@ -268,7 +268,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetPreFlopChen_no_duplicate_cards()
+    public void GetPreFlopChen_Throws_When_DuplicateCards()
     {
         // Given
         Pair holeCards = new(new Card(2, CardSuit.Spades, true), new Card(2, CardSuit.Spades, true));
@@ -277,8 +277,9 @@ public class ChanceCalculatorTests
         Assert.Throws<DuplicateCardException>(() => ChanceCalculator.GetPreFlopChen(holeCards));
     }
 
+
     [Fact]
-    public void GetWinningChancePreFlopLookUp_symmetry_AKo_and_KAo_have_similar_values()
+    public void GetWinningChancePreFlopLookUp_AKo_KAo_Symmetric()
     {
         // Given
         Pair AKo = new(new Card(14, CardSuit.Diamonds, true), new Card(13, CardSuit.Hearts, true));
@@ -293,7 +294,7 @@ public class ChanceCalculatorTests
     }
 
     [Fact]
-    public void GetWinningChancePreFlopLookUp_symmetry_27o_and_72o_have_similar_values()
+    public void GetWinningChancePreFlopLookUp_27o_72o_Symmetric()
     {
         // Given
         Pair o27 = new(new Card(2, CardSuit.Diamonds, true), new Card(7, CardSuit.Hearts, true));
@@ -310,7 +311,7 @@ public class ChanceCalculatorTests
 
     [Fact]
     // ! https://homes.luddy.indiana.edu/kapadia/nofoldem/5_wins.stats
-    public void GetWinningChancePreFlopLookUp_external_dataset_validation_9As()
+    public void GetWinningChancePreFlopLookUp_ExternalValidation_9As()
     {
         // Given
         double external9AsWin = 0.2666;
@@ -326,7 +327,7 @@ public class ChanceCalculatorTests
 
     [Fact]
     // ! https://homes.luddy.indiana.edu/kapadia/nofoldem/5_wins.stats
-    public void GetWinningChancePreFlopLookUp_external_dataset_validation_KKo()
+    public void GetWinningChancePreFlopLookUp_ExternalValidation_KKo()
     {
         // Given
         double externalKKoWin = 0.4953;
@@ -342,7 +343,7 @@ public class ChanceCalculatorTests
 
     [Fact]
     // ! https://homes.luddy.indiana.edu/kapadia/nofoldem/5_wins.stats
-    public void GetWinningChancePreFlopLookUp_external_dataset_validation_27o()
+    public void GetWinningChancePreFlopLookUp_ExternalValidation_27o()
     {
         // Given
         double external27oWin = 0.0972;

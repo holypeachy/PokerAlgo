@@ -3,7 +3,7 @@ namespace PokerAlgo.Testing;
 public class FolderLoaderTests
 {
     [Fact]
-    public void Load_no_data_read_throws_IOException()
+    public void Load_Throws_When_DirectoryIsMissingOrInvalid()
     {
         string path = @"C:/Users/Frank/Code/PokerAlgo/Resources/";
         IPreFlopDataLoader loader = new FolderLoader(path);

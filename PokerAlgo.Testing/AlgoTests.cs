@@ -3,7 +3,7 @@ namespace PokerAlgo.Testing;
 public class AlgoTests
 {
     [Fact]
-    public void GetWinners_less_than_2_players_throws_error()
+    public void GetWinners_When_LessThanTwoPlayers_ThrowsException()
     {
         Deck deck = new();
         List<Player> players = new()
@@ -17,7 +17,7 @@ public class AlgoTests
     }
 
     [Fact]
-    public void GetWinners_less_than_3_community_throws_error()
+    public void GetWinners_When_LessThanThreeCommunityCards_ThrowsException()
     {
         Deck deck = new();
         List<Player> players = new()
@@ -32,7 +32,7 @@ public class AlgoTests
     }
 
     [Fact]
-    public void GetWinners_more_than_5_community()
+    public void GetWinners_When_MoreThanFiveCommunityCards_ThrowsException()
     {
         Deck deck = new();
         List<Player> players = new()
@@ -47,7 +47,7 @@ public class AlgoTests
     }
 
     [Fact]
-    public void GetWinners_no_error()
+    public void GetWinners_When_ValidInput_ReturnsNoError()
     {
         Deck deck = new();
         List<Player> players = new()
@@ -62,7 +62,7 @@ public class AlgoTests
     }
 
     [Fact]
-    public void GetWinners_duplicate_cards_throws_error()
+    public void GetWinners_When_DuplicateCardsExist_ThrowsException()
     {
         Pair pair1 = new(new Card(5, CardSuit.Spades, true), new Card(5, CardSuit.Spades, true));
 
@@ -88,7 +88,7 @@ public class AlgoTests
     }
 
     [Fact]
-    public void GetWinners_low_aces_throws_error()
+    public void GetWinners_When_LowAceInput_ThrowsException()
     {
         Pair pair1 = new(new Card(1, CardSuit.Spades, true), new Card(3, CardSuit.Spades, true));
 
@@ -114,5 +114,4 @@ public class AlgoTests
         Assert.Throws<LowAcesException>(() => Algo.GetWinners(players, communityCards));
     }
 
-    
 }

@@ -3,7 +3,7 @@ namespace PokerAlgo.Testing;
 public class HandEvaluatorTests
 {
     [Fact]
-    public void GetWinningHand_no_less_than_5_cards() // 2 player cards + 3 community cards
+    public void GetWinningHand_Throws_When_LessThanFiveCards() // 2 player cards + 3 community cards
     {
         Deck deck = new();
 
@@ -14,7 +14,7 @@ public class HandEvaluatorTests
     }
 
     [Fact]
-    public void GetWinningHand_no_more_than_7_cards() // 2 player cards + 5 community cards
+    public void GetWinningHand_Throws_When_MoreThanSevenCards() // 2 player cards + 5 community cards
     {
         Deck deck = new();
 
@@ -25,7 +25,7 @@ public class HandEvaluatorTests
     }
 
     [Fact]
-    public void GetWinningHand_no_error()
+    public void GetWinningHand_Returns_When_ValidInput()
     {
         Deck deck = new();
 
@@ -37,7 +37,7 @@ public class HandEvaluatorTests
 
 
     [Fact]
-    public void GetWinningHand_no_duplicate_cards()
+    public void GetWinningHand_Throws_When_DuplicateCards()
     {
         HandEvaluator handEvaluator = new();
 
@@ -56,7 +56,7 @@ public class HandEvaluatorTests
     }
 
     [Fact]
-    public void GetWinningHand_no_low_aces()
+    public void GetWinningHand_Throws_When_LowAceDetected()
     {
         HandEvaluator handEvaluator = new();
 

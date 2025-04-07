@@ -488,7 +488,6 @@ class Program
 
 TODO
 TODO: Review Multithreading code.
-TODO: Rename tests
 
 TODO: Make PokerAlgo a nuget package and upload it.
 
@@ -506,6 +505,5 @@ TODO: Make PokerAlgo a nuget package and upload it.
 * Null-coalescing operator "??".
 
 * Changes
-* feat: add parallelization for Monte Carlo simulations, ~4.39x faster.
-* Details: Added GetWinningChanceSimParallel, GetWinningChancePreFlopSimParallel, WinningChanceSimTask, and WinningChancePreFlopSimTask methods to ChanceCalculator.
+* test: renamed all unit tests.
 */

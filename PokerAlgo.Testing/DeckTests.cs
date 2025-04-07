@@ -3,7 +3,7 @@ namespace PokerAlgo.Testing;
 public class DeckTests
 {
     [Fact]
-    public void Cards_are_unique()
+    public void Deck_ShouldContainUniqueCards_AfterResetAndRemove()
     {
         Deck deck = new();
         List<Card> cardsToRemove = deck.NextCards(20);
@@ -31,7 +31,7 @@ public class DeckTests
     }
 
     [Fact]
-    public void NextCard_deck_is_empty()
+    public void NextCard_Throws_When_DeckIsEmpty()
     {
         // Given
         Deck deck = new();
@@ -45,7 +45,7 @@ public class DeckTests
     }
 
     [Fact]
-    public void NextCards_deck_is_empty()
+    public void NextCards_Throws_When_DeckIsEmpty()
     {
         // Given
         Deck deck = new();
@@ -56,7 +56,7 @@ public class DeckTests
     }
 
     [Fact]
-    public void NextCards_deck_has_1_card_left()
+    public void NextCards_Succeeds_When_ExactlyOneCardLeft()
     {
         // Given
         Deck deck = new();
@@ -67,7 +67,7 @@ public class DeckTests
     }
 
     [Fact]
-    public void NextCards_deck_not_enough_cards()
+    public void NextCards_Throws_When_NotEnoughCardsLeft()
     {
         // Given
         Deck deck = new();
@@ -79,7 +79,7 @@ public class DeckTests
     }
 
     [Fact]
-    public void NextCards_request_less_than_0_cards()
+    public void NextCards_Throws_When_CountIsZeroOrNegative()
     {
         // Given
         Deck deck = new();
@@ -88,7 +88,7 @@ public class DeckTests
     }
 
     [Fact]
-    public void RemoveCards_only_moves_nextCardIndex_if_cards_are_not_removed()
+    public void RemoveCards_DoesNotAdvanceIndex_When_SkippingRemovedCards()
     {
         Deck deck = new();
         List<Card> copyOfDeck = deck.GetCopyOfListOfCards();
@@ -105,7 +105,7 @@ public class DeckTests
     }
 
     [Fact]
-    public void NextCards_moves_nextCardIndex_properly_15_cards_next_15()
+    public void NextCards_MovesIndexCorrectly_When_15CardsDrawn()
     {
         // Given
         Deck deck = new();
