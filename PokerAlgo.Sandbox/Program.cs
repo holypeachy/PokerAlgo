@@ -11,6 +11,7 @@ class Program
 	private static bool _isChenPreflop = false;
 	private static bool _isLookupPreflop = false;
 	private static bool _isCompute = false;
+	private static bool _isManual = false;
 	private static string _preflopFolderPath = "";
 	private static int _numOfPreflopSimPlayers = 0;
 
@@ -68,12 +69,18 @@ class Program
 		{
 			_isLookupPreflop = true;
 		}
+		else if (args.Length == 1 && args[0] == "manual")
+		{
+			_isManual = true;
+		}
 		else
 		{
 			Console.WriteLine("⚠️ PokerAlgo: Please enter valid arguments!\n");
 			Console.WriteLine("Examples:");
 			Console.WriteLine(" Main code execution.");
 			Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2}\n");
+			Console.WriteLine(" Manual run.");
+			Console.WriteLine("\tdotnet run manual\n");
 			Console.WriteLine(" Run Monte Carlo simulations on all players.");
 			Console.WriteLine("\tdotnet run sim");
 			Console.WriteLine("\tdotnet run sim {number of simulations : int}\n");
@@ -85,7 +92,7 @@ class Program
 			Console.WriteLine("\tdotnet run compute {number of opponents : int} {number of simulations : int} {output directory : string}\n");
 			Console.WriteLine(" Runs logic tests.");
 			Console.WriteLine("\tdotnet run test");
-			Console.WriteLine("\tdotnet run test {enable debug : bool}");
+			Console.WriteLine("\tdotnet run test {enable debug : bool}\n");
 			Environment.Exit(1);
 		}
 
@@ -141,6 +148,8 @@ class Program
 		else if (_isCompute) PreFlopComputation();
 
 		else if (_isLookupPreflop) LookUpPreFlopChances();
+
+		else if (_isManual) Manual();
 
 		else MainExecution();
 
@@ -360,6 +369,117 @@ class Program
 		}
 	}
 
+	static void Manual()
+	{
+		Stopwatch timer = new();
+
+		Console.WriteLine(players[0]);
+		Console.WriteLine();
+		foreach (var item in communityCards)
+		{
+			Console.Write(item + " ");
+		}
+		Console.WriteLine();
+
+		HandEvaluator evaluator = new();
+		List<Card> cards = new();
+		cards.AddRange(communityCards);
+		cards.Add(players[0].HoleCards.First);
+		cards.Add(players[0].HoleCards.Second);
+		Console.WriteLine();
+		Console.WriteLine(evaluator.GetWinningHand(cards));
+		Console.WriteLine();
+
+		Console.WriteLine("4 Opponents, 1 Million Sims\n");
+		timer.Start();
+		(double win, double tie) result = ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 1_000_000);
+		timer.Stop();
+		Console.WriteLine($"Single-Thread:\n\twin: {result.win}\n\ttie: {result.tie}\n\ttime: {timer.ElapsedMilliseconds}ms");
+		timer.Restart();
+		result = ChanceCalculator.GetWinningChanceSimParallel(players[0].HoleCards, communityCards, 4, 1_000_000);
+		timer.Stop();
+		Console.WriteLine($"Multi-Thread:\n\twin: {result.win}\n\ttie: {result.tie}\n\ttime: {timer.ElapsedMilliseconds}ms");
+
+		Console.WriteLine("\nPre-Flop");
+		Console.WriteLine("4 Opponents, 1 Million Sims\n");
+		timer.Start();
+		result = ChanceCalculator.GetWinningChancePreFlopSimParallel(players[0].HoleCards, 4, 1_000_000);
+		timer.Stop();
+		Console.WriteLine($"Single-Thread:\n\twin: {result.win}\n\ttie: {result.tie}\n\ttime: {timer.ElapsedMilliseconds}ms");
+		timer.Restart();
+		result = ChanceCalculator.GetWinningChancePreFlopSimParallel(players[0].HoleCards, 4, 1_000_000);
+		timer.Stop();
+		Console.WriteLine($"Multi-Thread:\n\twin: {result.win}\n\ttie: {result.tie}\n\ttime: {timer.ElapsedMilliseconds}ms");
+	}
+
+	static void Manual2()
+	{
+		Console.WriteLine(players[0]);
+		Console.WriteLine();
+		foreach (var item in communityCards)
+		{
+			Console.Write(item + " ");
+		}
+		Console.WriteLine();
+
+		HandEvaluator evaluator = new();
+		List<Card> cards = new();
+		cards.AddRange(communityCards);
+		cards.Add(players[0].HoleCards.First);
+		cards.Add(players[0].HoleCards.Second);
+		Console.WriteLine();
+		Console.WriteLine(evaluator.GetWinningHand(cards));
+		Console.WriteLine();
+		Console.WriteLine("Sim: 500");
+		Stopwatch timer = new();
+		timer.Start();
+		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 500));
+		timer.Stop();
+		Console.WriteLine(timer.ElapsedMilliseconds);
+		Console.WriteLine();
+
+		Console.WriteLine("Sim: 1,000");
+		timer.Restart();
+		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 1000));
+		timer.Stop();
+		Console.WriteLine(timer.ElapsedMilliseconds);
+		Console.WriteLine();
+
+		Console.WriteLine("Sim: 5,000");
+		timer.Restart();
+		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 5000));
+		timer.Stop();
+		Console.WriteLine(timer.ElapsedMilliseconds);
+		Console.WriteLine();
+
+		Console.WriteLine("Sim: 10,000");
+		timer.Restart();
+		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 10000));
+		timer.Stop();
+		Console.WriteLine(timer.ElapsedMilliseconds);
+		Console.WriteLine();
+
+		Console.WriteLine("Sim: 100,000");
+		timer.Restart();
+		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 100000));
+		timer.Stop();
+		Console.WriteLine(timer.ElapsedMilliseconds);
+		Console.WriteLine();
+
+		Console.WriteLine("Sim: 500,000");
+		timer.Restart();
+		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 500000));
+		timer.Stop();
+		Console.WriteLine(timer.ElapsedMilliseconds);
+		Console.WriteLine();
+
+		Console.WriteLine("Sim: 1,000,000");
+		timer.Restart();
+		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 1000000));
+		timer.Stop();
+		Console.WriteLine(timer.ElapsedMilliseconds);
+	}
+
 }
 
 /*
@@ -367,12 +487,15 @@ class Program
 ! 
 
 TODO
-TODO: Multithreading for Monte Carlo simulations. ( create tasks then use Task.WaitAll() )
+TODO: Review Multithreading code.
 TODO: Rename tests
 
 TODO: Make PokerAlgo a nuget package and upload it.
 
 ? Future Ideas
+? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.
+? Make GetWinningChanceSim and GetWinningChancePreFlopSim an overloaded method? Since in GetWinningChanceSim the community cards are already variable.
+
 ? Instead of using tuples, use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
 ? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
 
@@ -383,12 +506,6 @@ TODO: Make PokerAlgo a nuget package and upload it.
 * Null-coalescing operator "??".
 
 * Changes
-* chore: recompute preflop_data.
-* chore: updated preflop lookup with the newly computed data.
-* test: add tests to verify preflop sim data using external data set.
-* fix: GetWinningChanceSim now simulates remaining community cards.
-* feat: Algo.GetWinners() only takes 5 community cards, HandEvaluator.GetWinningHand() can still take 5-7.
-* test: add symmetry tests, ChanceCalculator gives similar values for AKo and KAo within 0.01.
-* fix: was using deck before removing cards in simulations, this would sometimes lead to duplicate cards.
-* 
+* feat: add parallelization for Monte Carlo simulations, ~4.39x faster.
+* Details: Added GetWinningChanceSimParallel, GetWinningChancePreFlopSimParallel, WinningChanceSimTask, and WinningChancePreFlopSimTask methods to ChanceCalculator.
 */
