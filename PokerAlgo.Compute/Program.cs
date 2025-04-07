@@ -83,7 +83,7 @@ class Program
 
             foreach (KeyValuePair<string, Pair> keyValuePair in startingHands)
             {
-                (double winChance, double tieChance) = ChanceCalculator.GetWinningChancePreFlopSim(keyValuePair.Value, currentOpponents, _numOfSims);
+                (double winChance, double tieChance) = ChanceCalculator.GetWinningChancePreFlopSimParallel(keyValuePair.Value, currentOpponents, _numOfSims);
                 results.AppendLine($"{keyValuePair.Key} {winChance} {tieChance}");
 
                 int currentLineCursor = Console.CursorTop;

@@ -504,5 +504,5 @@ TODO: Make PokerAlgo a nuget package and upload it.
 * Null-coalescing operator "??".
 
 * Changes
-* test: add symmetry tests to single thread and parallel sim methods
+* feat: PokerAlgo.Compute now uses multithreaded preflop simulation
 */
