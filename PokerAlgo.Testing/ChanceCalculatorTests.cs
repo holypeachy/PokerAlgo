@@ -356,5 +356,44 @@ public class ChanceCalculatorTests
         win.Should().BeApproximately(external27oWin, 0.01);
         tie.Should().BeApproximately(external27oTie, 0.01);
     }
+
+
+    [Fact]
+    public void GetWinningChanceSimParallel_and_GetWinningChanceSim_Symmetric()
+    {
+        // Given
+        Pair holeCards = new(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Clubs, true));
+        List<Card> community = new()
+        {
+            new Card(7, CardSuit.Hearts, false),
+            new Card(8, CardSuit.Hearts, false),
+            new Card(9, CardSuit.Hearts, false),
+            new Card(12, CardSuit.Hearts, false),
+            new Card(8, CardSuit.Diamonds, false),
+        };
+
+        // When
+        (double simWin, double simTie) = ChanceCalculator.GetWinningChanceSim(holeCards, community, 4, 500_000);
+        (double parallelWin, double parallelTie) = ChanceCalculator.GetWinningChanceSimParallel(holeCards, community, 4, 500_000);
+
+        // Then
+        simWin.Should().BeApproximately(parallelWin, 0.001);
+        simTie.Should().BeApproximately(parallelTie, 0.001);
+    }
+
+    [Fact]
+    public void GetWinningChancePreFlopSimParallel_and_GetWinningChancePreFlopSim_Symmetric()
+    {
+        // Given
+        Pair holeCards = new(new Card(14, CardSuit.Spades, true), new Card(14, CardSuit.Clubs, true));
+
+        // When
+        (double simWin, double simTie) = ChanceCalculator.GetWinningChancePreFlopSim(holeCards, 4, 500_000);
+        (double parallelWin, double parallelTie) = ChanceCalculator.GetWinningChancePreFlopSimParallel(holeCards, 4, 500_000);
+
+        // Then
+        simWin.Should().BeApproximately(parallelWin, 0.001);
+        simTie.Should().BeApproximately(parallelTie, 0.001);
+    }
     
 }

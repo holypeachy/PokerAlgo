@@ -488,7 +488,6 @@ class Program
 
 TODO
 TODO: Review Multithreading code.
-
 TODO: Make PokerAlgo a nuget package and upload it.
 
 ? Future Ideas
@@ -505,5 +504,5 @@ TODO: Make PokerAlgo a nuget package and upload it.
 * Null-coalescing operator "??".
 
 * Changes
-* test: renamed all unit tests.
+* test: add symmetry tests to single thread and parallel sim methods
 */
