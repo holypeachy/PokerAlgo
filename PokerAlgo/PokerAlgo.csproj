@@ -17,9 +17,10 @@
     <Authors>holypeach</Authors>
     <Company>Individual</Company>
     <PackageId>PokerAlgo</PackageId>
-    <Description>Texas Hold'em hand evaluator and chance calculator.</Description>
+    <Description>Texas Hold'em hand evaluator and simulation engine.</Description>
     <PackageTags>poker texas-holdem simulation cards</PackageTags>
     <RepositoryUrl>https://github.com/holypeachy/PokerAlgo</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
 </Project>
