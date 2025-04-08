@@ -1,25 +1,6 @@
 namespace PokerAlgo;
 public static class Algo
 {
-    private static int _debugVerbosity = 0;
-    public static int DebugVerbosity {
-        get
-        { 
-            return _debugVerbosity;
-        }
-        set
-        { 
-            if(value == 0 || value == 1 || value == 2)
-            {
-                _debugVerbosity = value;
-            }
-            else
-            {
-                _debugVerbosity = 0;
-            }
-        }
-    } // * Verbosity Levels | 0 = Disabled | 1 = Progress Report | 2 = Everything
-
     public static List<Player> GetWinners(List<Player> players, List<Card> communityCards)
     {
         Guards.ArgsGetWinners(players, communityCards);

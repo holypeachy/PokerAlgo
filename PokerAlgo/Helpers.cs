@@ -3,7 +3,29 @@ using System.Diagnostics;
 namespace PokerAlgo;
 public static class Helpers
 {
-    private static int DebugVerbosity => Algo.DebugVerbosity;
+#if DEBUG
+    private static int _debugVerbosity = 0;
+    public static int DebugVerbosity
+    {
+        get
+        {
+            return _debugVerbosity;
+        }
+        set
+        {
+            if (value == 0 || value == 1 || value == 2)
+            {
+                _debugVerbosity = value;
+            }
+            else
+            {
+                _debugVerbosity = 0;
+            }
+        }
+    } // * Verbosity Levels | 0 = Disabled | 1 = Progress Report | 2 = Everything
+#else
+    internal static int DebugVerbosity { get; set; } = 0;
+#endif
 
     private static readonly Dictionary<int, string> _cardPrintLookUp = new Dictionary<int, string>
     {

@@ -50,7 +50,7 @@ class Program
 		{
 			if (inputVerbosity == 0 || inputVerbosity == 1 || inputVerbosity == 2)
 			{
-				Algo.DebugVerbosity = inputVerbosity;
+				Helpers.DebugVerbosity = inputVerbosity;
 			}
 		}
 		else if (args.Length == 1 && args[0] == "test")
@@ -75,7 +75,7 @@ class Program
 		}
 		else
 		{
-			Console.WriteLine("⚠️ PokerAlgo: Please enter valid arguments!\n");
+			Console.WriteLine("⚠️ PokerAlgo.Sandbox: Please enter valid arguments!\n");
 			Console.WriteLine("Examples:");
 			Console.WriteLine(" Main code execution.");
 			Console.WriteLine("\tdotnet run {debug verbosity : 0|1|2}\n");
@@ -96,7 +96,7 @@ class Program
 			Environment.Exit(1);
 		}
 
-		_debugVerbosity = Algo.DebugVerbosity;
+		_debugVerbosity = Helpers.DebugVerbosity;
 		// _debugVerbosity = 0;
 
 		Stopwatch watch;
@@ -168,7 +168,7 @@ class Program
 
 	static void MonteCarloSim()
 	{
-		Algo.DebugVerbosity = 0;
+		Helpers.DebugVerbosity = 0;
 		HandEvaluator handEvaluator = new();
 		Console.WriteLine();
 		Console.WriteLine($"Number of Simulations: {_numOfSims}");
@@ -216,7 +216,7 @@ class Program
 
 	static void ChenPreFlopChances()
 	{
-		Algo.DebugVerbosity = 0;
+		Helpers.DebugVerbosity = 0;
 		Console.WriteLine($"Chen + Sigmoid Pre-Flop");
 		Console.WriteLine("-----------------------------");
 		foreach (Player p in players)
@@ -243,7 +243,7 @@ class Program
 
 	static void LookUpPreFlopChances()
 	{
-		Algo.DebugVerbosity = 0;
+		Helpers.DebugVerbosity = 0;
 		FolderLoader folderLoader = new(_pathToPreFlopDirectory);
 
 		Console.WriteLine($"Lookup Pre-Flop Chances");
@@ -487,12 +487,15 @@ class Program
 ! 
 
 TODO
-TODO: Review Multithreading code.
-TODO: Make PokerAlgo a nuget package and upload it.
+TODO: Prep project for exporting as nuget package.
+TODO: Add XML comments to export once, that way I don't have to keep the inline comments always.
 
 ? Future Ideas
+? Only instantiate one Random class per Deck class, instead of creating one everytime we shuffle.
+? In ChanceCalculator, use a copy the constructor of List class instead of ToList() for slightly better performance.
 ? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.
 ? Make GetWinningChanceSim and GetWinningChancePreFlopSim an overloaded method? Since in GetWinningChanceSim the community cards are already variable.
+? Remove duplicate entries on the preflop computation logic. AKo == KAo
 
 ? Instead of using tuples, use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
 ? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
@@ -502,7 +505,12 @@ TODO: Make PokerAlgo a nuget package and upload it.
 * Notes
 * "WinningHand nullable? It has been giving me a headache with the warnings." Turns out, it's a good programming pattern.
 * Null-coalescing operator "??".
+* ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* feat: PokerAlgo.Compute now uses multithreaded preflop simulation
+* refactor: DebugAlgo previous in the Algo class is now in Helpers class.
+* refactor: add preprocessor directives to Helpers class so DebugAlgo is not public but internal and set to 0.
+* chore: add *.preflop under the PokerAlgo.Compute project files to the .gitignore.
+* chore: review monte carlo parallelization code.
+* 
 */

@@ -53,3 +53,6 @@ global.json
 # Ignore macOS and Linux system files
 .DS_Store
 *.swp
+
+# Custom Rules
+/PokerAlgo.Compute/*.preflop
