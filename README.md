@@ -1,17 +1,19 @@
-# PokerAlgo
-#### An algorithm to determine the winner(s) of a Texas Hold 'em game. Might not be the most efficient one out there, but it's mine.
----
+# 🍑 PokerAlgo - Texas Hold'em hand evaluator and simulation engine.
+#### Designed and implemented my own algorithm to determine a player's winning hand and the winner(s). Might not be the most efficient one out there, but it's mine. With parallelized Monte Carlo simulations to determine chances of winning or tying.
 - The core logic to a Texas Hold 'em game I'm working on.
-- Would like to release as nuget package so anyone can use it, and so I can easily reuse it in other projects.
+- Will release soon as a nuget package so anyone can use it, and so I can easily reuse it in my other projects.
 ## Features
-- Determines the "winning hand" of a given Player.  
+- Determines the "winning hand" of a given Player.
 - Determines the winner or winners in case of a tie.
 - Given a winning hand, it will provide a "pretty" name. For example, "Full House, 7s over 5s" or "Pair of 7s".
 - Provides the chances of winning or tying a round of Texas Hold 'em.
   - Given a Player's hole cards, it can provide a hand strength value using Bill Chen's formula. A value ranging from -1 to 22.
   - Pre-flop, given a Player's hole cards, it can provide the chances of winning or tying using Monte Carlo simulations or using pre-computed data from a file.
   - Post-flop, it can compute the chances of a player winning or tying using Monte Carlo simulations.
+  <br/></br>
   > Something to note about these predictions is that they are independent of other players. They are only calculated based on what a given player knows, hence why the chances don't add to 100%. The reason I added predictions to begin with is so I could build an AI that would make decisions based on its probabilities of winning.
+- Monte Carlo Simulations are parallelized (Tasks).
+  - > I saw a ~4.39x improvement on my i9 9900k
 ## Quick Log and Ideas
 - 4/6/2025: Implemented custom exceptions. Added better input validation and added an internal Guards class that handles said input validation. Because of this and further testing I discovered another little logic bug in ChanceCalculator.GetWinningChancePreFlopSim() in which the deck was used before removing known cards meaning a chance of having duplicate cards. Added a new project under the same sln file called PokerAlgo.Compute. Its sole purpose is to compute preflop data and output it as files that can be used by the PokerAlgo. GetWinningChanceSim now simulates remaining community cards, back then it made sense since I wanted to know the "current" chances of winning but that makes no sense because of the probability of opponents getting a better hand. Add parallelization for Monte Carlo simulations which made them ~4.39x faster at least on my PC. I renamed all unit tests for consistency and readability. It's late and I would like to review the parallelized Monte Carlo code tomorrow to make sure there are no logical weirdness. Apart from that this part of the project is almost done. I might not upload it as a nuget package just yet, but I will prepare it.  
 The next step for the game would be a prototype with the full game logic and a Rule-Based AI. The most challenging part of the the game logic will probably be pot splitting. As for the AI I'm thinking of using a mathematical model that takes in chances of winning, the chips the AI has bet vs how much it has left, and the opponents' "confidence" to make a choice on whether to call/check, raise, or fold. I'm thinking of using Raylib-cs to visualize the state of the game.
@@ -30,7 +32,8 @@ After I have designed and implemented the functionality to load the pre-flop cha
 - 12/4/2024: First half is done. It detects the type of winning hands a player has. I need to optimize this now. Then I would need to see what winning hands are on the community cards. Then the last part is to compare the hands of each player as well as the community.
 
 ## Output Example:
-This is an example of the current output of the program that showcases its functionality. 
+This is the current output of the CLI util (PokerAlgo.Sandbox) I use to test the library that showcases its functionality.  
+(TODO: Update these screenshots)
 
 Running the program. 
 
@@ -48,10 +51,15 @@ Determine pre-flop chances of winning (Chen's + Custom Sigmoid Equation).
 
 ![image](https://github.com/user-attachments/assets/dfc50d13-2f92-41ab-9468-4133066bd520)
 
-Compute pre-flop chances of winning (Monte Carlo) and output to a file. 
+---
+Compute pre-flop chances of winning (Monte Carlo) and output to a file using PokerAlgo.Compute.  
 
 ![image](https://github.com/user-attachments/assets/181576db-a0a5-4d7c-9a6b-449d24842dcd)
 
 Output file. 
 
-![image](https://github.com/user-attachments/assets/204f85d1-328e-41d2-beea-61167dd8ccaf)
+![image](https://github.com/user-attachments/assets/204f85d1-328e-41d2-beea-61167dd8ccaf)  
+
+---
+wow you made it this far without falling asleep?!
+here's a cookie => 🍪
