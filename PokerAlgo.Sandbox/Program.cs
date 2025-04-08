@@ -487,7 +487,6 @@ class Program
 ! 
 
 TODO
-TODO: Prep project for exporting as nuget package.
 TODO: Add XML comments to export once, that way I don't have to keep the inline comments always.
 
 ? Future Ideas
@@ -508,9 +507,6 @@ TODO: Add XML comments to export once, that way I don't have to keep the inline 
 * ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* refactor: DebugAlgo previous in the Algo class is now in Helpers class.
-* refactor: add preprocessor directives to Helpers class so DebugAlgo is not public but internal and set to 0.
-* chore: add *.preflop under the PokerAlgo.Compute project files to the .gitignore.
-* chore: review monte carlo parallelization code.
-* 
+* chore: prep project for exporting as nuget package.
+* Details: Added metadata to the .csproj. All that's left to do is add XML comments and generate a .xml file for intellisense.
 */

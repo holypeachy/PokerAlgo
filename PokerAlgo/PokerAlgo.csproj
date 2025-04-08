@@ -7,7 +7,19 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <Authors>holypeach</Authors>
+    <Company>Individual</Company>
+    <PackageId>PokerAlgo</PackageId>
+    <Description>Texas Hold'em hand evaluator and chance calculator.</Description>
+    <PackageTags>poker texas-holdem simulation cards</PackageTags>
+    <RepositoryUrl>https://github.com/holypeachy/PokerAlgo</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
