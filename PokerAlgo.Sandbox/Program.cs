@@ -490,6 +490,8 @@ TODO
 TODO: Add XML comments to export once, that way I don't have to keep the inline comments always.
 
 ? Future Ideas
+? Remove json serialization stuff from Card class, only needed because of logic tests.
+? Add SerializableAttribute to all Exception classes? uses? or remove from PokerAlgoException. 
 ? Only instantiate one Random class per Deck class, instead of creating one everytime we shuffle.
 ? In ChanceCalculator, use a copy the constructor of List class instead of ToList() for slightly better performance.
 ? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.
