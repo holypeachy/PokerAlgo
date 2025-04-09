@@ -1,12 +1,28 @@
 namespace PokerAlgo;
+/// <summary>
+/// Represents a player in a Texas Hold'em hand, including their name, hole cards, and evaluated winning hand.
+/// </summary>
 public class Player
 {
+	/// <summary>
+	/// Gets the player's name.
+	/// </summary>
 	public string Name { get; }
+	/// <summary>
+	/// Gets the player's hole cards as a <see cref="Pair"/>.
+	/// </summary>
 	public Pair HoleCards { get; }
-
+	/// <summary>
+	/// Gets or sets the player’s winning hand after evaluation, if any.
+	/// </summary>
 	public WinningHand? WinningHand { get; set; }
 
-
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Player"/> class with a name and two hole cards.
+	/// </summary>
+	/// <param name="name">The player's display name.</param>
+	/// <param name="first">The first hole card.</param>
+	/// <param name="second">The second hole card.</param>
 	public Player(string name, Card first, Card second)
 	{
 		this.Name = name;

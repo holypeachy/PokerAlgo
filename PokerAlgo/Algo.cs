@@ -1,6 +1,15 @@
 namespace PokerAlgo;
+/// <summary>
+/// Provides logic for evaluating and comparing players' hands in a Texas Hold'em game.
+/// </summary>
 public static class Algo
 {
+    /// <summary>
+    /// Evaluates the hands of all players using the provided community cards and returns the winner(s).
+    /// </summary>
+    /// <param name="players">A list of players, each with hole cards.</param>
+    /// <param name="communityCards">Exactly 5 community cards.</param>
+    /// <returns>A list of winning players — one or more in the case of a tie.</returns>
     public static List<Player> GetWinners(List<Player> players, List<Card> communityCards)
     {
         Guards.ArgsGetWinners(players, communityCards);

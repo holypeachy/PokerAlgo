@@ -1,5 +1,7 @@
 namespace PokerAlgo;
-
+/// <summary>
+/// Loads precomputed preflop data from a folder containing `.preflop` files and builds a lookup table.
+/// </summary>
 public class FolderLoader : IPreFlopDataLoader
 {
     private readonly string _folderPath;
@@ -11,6 +13,10 @@ public class FolderLoader : IPreFlopDataLoader
         _folderPath = folderPath;
     }
 
+    /// <summary>
+    /// Parses all `.preflop` files in the configured directory and builds a lookup table of preflop hand probabilities.
+    /// </summary>
+    /// <returns>A dictionary mapping hand notation and opponent count to win/tie probabilities.</returns>
     Dictionary<(string holeCardsInNotation, int opponentCount), (double winChance, double tieChance)> IPreFlopDataLoader.Load()
     {
         if (LookupTable is null)

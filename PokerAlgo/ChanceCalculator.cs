@@ -1,4 +1,7 @@
 namespace PokerAlgo;
+/// <summary>
+/// Provides methods to estimate winning and tie chances using Monte Carlo simulations and precomputed data.
+/// </summary>
 public static class ChanceCalculator
 {
     private static readonly double _handStrengthSensitivity = 0.175d; // Logistic Growth Rate of sigmoid
@@ -10,6 +13,14 @@ public static class ChanceCalculator
     };
 
 
+    /// <summary>
+    /// Runs a parallelized Monte Carlo simulation to estimate winning and tie probabilities, given the player’s hole cards, community cards, and number of opponents.
+    /// </summary>
+    /// <param name="playerHoleCards"></param>
+    /// <param name="communityCards"></param>
+    /// <param name="numOfOpponents"></param>
+    /// <param name="numberOfSimulatedGames"></param>
+    /// <returns></returns>
     // Returns Win and Tie Values from 0 to 1.0
     public static (double winChance, double tieChance) GetWinningChanceSimParallel(Pair playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
     {
@@ -38,6 +49,13 @@ public static class ChanceCalculator
         return (winChance, tieChance);
     }
 
+    /// <summary>
+    /// Runs a parallelized simulation to estimate preflop winning and tie probabilities based solely on the player's hole cards and number of opponents.
+    /// </summary>
+    /// <param name="playerHoleCards"></param>
+    /// <param name="numOfOpponents"></param>
+    /// <param name="numberOfSimulatedGames"></param>
+    /// <returns></returns>
     // Returns Win and Tie Values from 0 to 1.0
     public static (double winChance, double tieChance) GetWinningChancePreFlopSimParallel(Pair playerHoleCards, int numOfOpponents, int numberOfSimulatedGames)
     {
@@ -175,6 +193,14 @@ public static class ChanceCalculator
     }
 
 
+    /// <summary>
+    /// Returns precomputed win and tie probabilities for a given hand and opponent count using a preflop lookup table.
+    /// </summary>
+    /// <param name="playerHoleCards"></param>
+    /// <param name="numOfOpponents"></param>
+    /// <param name="preFlopDataLoader"></param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     //  Returns Value from 0 to 1.0 from pre-computed data
     public static (double winChance, double tieChance) GetWinningChancePreFlopLookUp(Pair playerHoleCards, int numOfOpponents, IPreFlopDataLoader preFlopDataLoader)
     {
@@ -197,6 +223,11 @@ public static class ChanceCalculator
         return result;
     }
 
+    /// <summary>
+    /// Approximates a win chance using the Chen formula and logistic transformation.
+    /// </summary>
+    /// <param name="playerHoleCards"></param>
+    /// <returns></returns>
     // Returns Value from 0 to 1.0 | Realistically: 0.1166 to 0.8389
     public static double GetWinningChancePreFlopChen(Pair playerHoleCards)
     {
@@ -206,6 +237,12 @@ public static class ChanceCalculator
         return 1 / (1 + Math.Exp(-(_handStrengthSensitivity * GetPreFlopChen(playerHoleCards) + _baselineWinRate)));
     }
 
+    /// <summary>
+    /// Calculates the raw Chen strength score for a preflop hand, ranging from -1 to 20.
+    /// </summary>
+    /// <param name="playerHoleCards"></param>
+    /// <returns></returns>
+    /// <exception cref="InternalPokerAlgoException"></exception>
     // Returns -1 to 20
     public static double GetPreFlopChen(Pair playerHoleCards)
     {

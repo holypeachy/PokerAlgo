@@ -1,11 +1,20 @@
 namespace PokerAlgo;
+/// <summary>
+/// Represents a full 52-card poker deck with support for shuffling, drawing, and card removal.
+/// </summary>
 public class Deck
 {
 	private readonly List<Card> _cards;
 	private int _nextCardIndex;
 
+	/// <summary>
+	/// Gets the index of the next card to be drawn from the deck.
+	/// </summary>
 	public int NextCardIndex { get { return _nextCardIndex; } }
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Deck"/> class.
+	/// </summary>
 	public Deck()
 	{
 		_cards = new List<Card>();
@@ -46,6 +55,9 @@ public class Deck
 		}
 	}
 
+	/// <summary>
+	/// Resets the deck by clearing the drawn cards, resetting player flags, and reshuffling.
+	/// </summary>
 	public void ResetDeck()
 	{
 		for (int i = 0; i < _nextCardIndex; i++)
@@ -57,14 +69,27 @@ public class Deck
 		Shuffle();
 	}
 
-	// Returns the first card, and then removes it from the deck
+	/// <summary>
+	/// Draws and returns the next card from the deck.
+	/// Throws if the deck is empty.
+	/// </summary>
+	/// <returns>The next <see cref="Card"/> in the deck.</returns>
+	/// <exception cref="DeckEmptyException"></exception>
 	public Card NextCard()
 	{
 		if (_nextCardIndex >= _cards.Count) throw new DeckEmptyException("No More Cards in The Deck");
 
 		return _cards[_nextCardIndex++];
 	}
-
+	/// <summary>
+	/// Draws and returns a specified number of cards from the deck.
+	/// Throws if the request is invalid or if there aren’t enough cards.
+	/// </summary>
+	/// <param name="numberOfCards">The number of cards to retrieve from the deck.</param>
+	/// <returns>A List of <see cref="Card"/>s.</returns>
+	/// <exception cref="ArgumentOutOfRangeException"></exception>
+	/// <exception cref="DeckEmptyException"></exception>
+	/// <exception cref="NotEnoughCardsInDeckException"></exception>
 	public List<Card> NextCards(int numberOfCards)
 	{
 		if (numberOfCards < 1) throw new ArgumentOutOfRangeException(nameof(numberOfCards),"The number of cards passed must be greater than 0.");
@@ -76,7 +101,12 @@ public class Deck
 
 		return cardsToReturn;
 	}
-
+	/// <summary>
+	/// Removes a list of cards from the deck, adjusting internal state accordingly.
+	/// Throws if a card is not found in the deck.
+	/// </summary>
+	/// <param name="cardsToRemove">The list of cards you would like to remove from the deck.</param>
+	/// <exception cref="CardNotInDeckException"></exception>
 	public void RemoveCards(List<Card> cardsToRemove)
 	{
 		foreach (Card card in cardsToRemove)
@@ -92,7 +122,11 @@ public class Deck
 			}
 		}
 	}
-
+	/// <summary>
+	/// Returns a deep copy of the entire list of cards currently in the deck.
+	/// This includes drawn and remaining cards.
+	/// </summary>
+	/// <returns>A List of cards.</returns>
 	public List<Card> GetCopyOfListOfCards()
 	{
 		return _cards.Select(c => new Card(c)).ToList();

@@ -1,4 +1,7 @@
 namespace PokerAlgo;
+/// <summary>
+/// Evaluates the best five-card poker hand from a list of 5 to 7 cards.
+/// </summary>
 public class HandEvaluator
 {
     private WinningHand? _tempBestHand;
@@ -10,6 +13,12 @@ public class HandEvaluator
     }
 
 
+    /// <summary>
+    /// Evaluates and returns the best possible poker hand from the given set of cards.
+    /// </summary>
+    /// <param name="cards">A list of 5 to 7 cards.</param>
+    /// <returns>A <see cref="WinningHand"/> object representing the best hand.</returns>
+    /// <exception cref="InternalPokerAlgoException"></exception>
     public WinningHand GetWinningHand(List<Card> cards)
     {
         Guards.ArgsGetWinningHand(cards);

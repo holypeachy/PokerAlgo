@@ -1,6 +1,9 @@
 using System.Diagnostics;
 
 namespace PokerAlgo;
+/// <summary>
+/// Contains utility and debug logging methods for inspecting hands, cards, and internal logic during development.
+/// </summary>
 public static class Helpers
 {
 #if DEBUG
@@ -45,7 +48,13 @@ public static class Helpers
         {1, "Ace"},
     };
 
-
+    /// <summary>
+    /// Returns a human-readable string representing the name of a given poker hand (e.g., "Full House, Ks over 3s").
+    /// </summary>
+    /// <param name="hand">The <see cref="WinningHand"/> you want a pretty name for!</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="InternalPokerAlgoException"></exception>
     public static string GetPrettyHandName(WinningHand? hand)
     {
         if (hand is null) throw new ArgumentException("\'hand\' argument must not be null.", nameof(hand));
