@@ -49,7 +49,7 @@ public static class Helpers
     };
 
     /// <summary>
-    /// Returns a human-readable string representing the name of a given poker hand (e.g., "Full House, Ks over 3s").
+    /// Returns a human-readable string representing the name of a given poker hand (e.g., "Full House, Kings over 3s").
     /// </summary>
     /// <param name="hand">The <see cref="WinningHand"/> you want a pretty name for!</param>
     /// <returns></returns>
