@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace PokerAlgo;
 public static class Helpers
 {
@@ -7,21 +5,8 @@ public static class Helpers
     private static int _debugVerbosity = 0;
     public static int DebugVerbosity
     {
-        get
-        {
-            return _debugVerbosity;
-        }
-        set
-        {
-            if (value == 0 || value == 1 || value == 2)
-            {
-                _debugVerbosity = value;
-            }
-            else
-            {
-                _debugVerbosity = 0;
-            }
-        }
+        get => _debugVerbosity;
+        set => _debugVerbosity = (value >= 0 && value <= 2) ? value : 0;
     } // * Verbosity Levels | 0 = Disabled | 1 = Progress Report | 2 = Everything
 #else
     internal static int DebugVerbosity { get; set; } = 0;
@@ -77,7 +62,7 @@ public static class Helpers
     }
 
 
-    [Conditional("DEBUG")]
+#if DEBUG
     public static void DebugLog(string log = "", int verbosity = 1)
     {
         if (DebugVerbosity > verbosity - 1)
@@ -86,18 +71,16 @@ public static class Helpers
         }
     }
 
-    [Conditional("DEBUG")]
     public static void DebugLogCards(string description, List<Card> cards)
     {
         if (DebugVerbosity > 1)
         {
             Console.WriteLine($"🤖 {description}: ");
-            if(cards.Count > 0) Console.Write("\t" + string.Join(' ', cards) + "\n");
+            if (cards.Count > 0) Console.Write("\t" + string.Join(' ', cards) + "\n");
             Console.WriteLine();
         }
     }
 
-    [Conditional("DEBUG")]
     public static void DebugLogPlayers(string description, List<Player> players)
     {
         if (DebugVerbosity > 0)
@@ -119,7 +102,6 @@ public static class Helpers
         }
     }
 
-    [Conditional("DEBUG")]
     public static void DebugLogWinners(List<Player> winners)
     {
         if (DebugVerbosity > 0)
@@ -144,19 +126,17 @@ public static class Helpers
         }
     }
 
-    [Conditional("DEBUG")]
     public static void DebugLogDeterminingHand(string playerName)
     {
-            if (DebugVerbosity > 0)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine();
-                Console.WriteLine("💭 Determining Hand for \'" + playerName + "\'");
-                Console.ResetColor();
-            }
+        if (DebugVerbosity > 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine();
+            Console.WriteLine("💭 Determining Hand for \'" + playerName + "\'");
+            Console.ResetColor();
+        }
     }
 
-    [Conditional("DEBUG")]
     public static void DebugLogWinningHand(HandType handType, List<Card> cards)
     {
         if (DebugVerbosity > 0)
@@ -177,4 +157,18 @@ public static class Helpers
             Console.WriteLine();
         }
     }
+#else
+    internal static void DebugLog(string log = "", int verbosity = 1){}
+
+    internal static void DebugLogCards(string description, List<Card> cards){}
+
+    internal static void DebugLogPlayers(string description, List<Player> players) {}
+
+    internal static void DebugLogWinners(List<Player> winners){}
+
+    internal static void DebugLogDeterminingHand(string playerName){}
+
+    internal static void DebugLogWinningHand(HandType handType, List<Card> cards){}
+#endif
+
 }
