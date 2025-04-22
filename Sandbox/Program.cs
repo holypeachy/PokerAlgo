@@ -1,4 +1,4 @@
-﻿namespace PokerAlgo.Sandbox;
+﻿namespace Sandbox;
 
 class Program
 {
