@@ -1,4 +1,4 @@
-namespace PokerAlgo.Testing;
+namespace Testing;
 
 public class HandEvaluatorTests
 {

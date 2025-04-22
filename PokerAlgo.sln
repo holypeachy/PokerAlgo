@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{D51D79C2-4FD7-4A39-920A-848FDBD3A523}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compute", "Compute\Compute.csproj", "{DC62836C-F92A-415F-9ADD-074C29E82B8D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerAlgo.Compute", "PokerAlgo.Compute\PokerAlgo.Compute.csproj", "{DC62836C-F92A-415F-9ADD-074C29E82B8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
