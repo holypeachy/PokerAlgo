@@ -510,5 +510,5 @@ TODO: Add XML comments to export once, that way I don't have to keep the inline 
 * ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* feat: Log methods in Helpers are now internal on release.
+* chore: rename directories and .csproj files.
 */
