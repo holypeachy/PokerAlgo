@@ -33,7 +33,7 @@ public class Card : IEquatable<Card>
 
     public override string ToString()
     {
-        return $"{_cardPrintLookUp[Rank]},{Suit}]" + (IsPlayerCard ? "🙂" : "");
+        return $"[{_cardPrintLookUp[Rank]},{Suit}]" + (IsPlayerCard ? "🙂" : "");
     }
 
     // Does not take into consideration IsPlayerCard
