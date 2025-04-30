@@ -4,10 +4,10 @@ public class Pair
     public Card First { get; }
     public Card Second { get; }
     
-    public Pair(Card First, Card Second)
+    public Pair(Card first, Card second)
     {
-        this.First = First;
-        this.Second = Second;
+        this.First = first;
+        this.Second = second;
     }
 
     public override string ToString()
