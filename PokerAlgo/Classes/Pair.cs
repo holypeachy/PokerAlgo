@@ -16,8 +16,8 @@ public class Pair
     /// <summary>
     /// Initializes a new instance of the <see cref="Pair"/> class using two cards.
     /// </summary>
-    /// <param name="First">The first card.</param>
-    /// <param name="Second">The second card.</param>
+    /// <param name="first">The first card.</param>
+    /// <param name="second">The second card.</param>
     public Pair(Card first, Card second)
     {
         this.First = first;

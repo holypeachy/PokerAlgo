@@ -33,6 +33,11 @@ public class Player
 		this.WinningHand = null;
 	}
 
+	/// <summary>
+	/// Assign two, new hole cards to the player.
+	/// </summary>
+	/// <param name="first"></param>
+	/// <param name="second"></param>
 	public void NewHand(Card first, Card second)
 	{
 		first.IsPlayerCard = true;

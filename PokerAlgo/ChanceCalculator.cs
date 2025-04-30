@@ -86,6 +86,9 @@ public static class ChanceCalculator
 
 
     // Returns Win and Tie Values from 0 to 1.0
+    /// <summary>
+    /// For best performance use the parallelized simulations.
+    /// </summary>
     public static (double winChance, double tieChance) GetWinningChanceSim(Pair playerHoleCards, List<Card> communityCards, int numOfOpponents, int numberOfSimulatedGames)
     {
         Guards.ArgsWinningChanceSim(playerHoleCards, communityCards, numOfOpponents, numberOfSimulatedGames);
@@ -142,6 +145,9 @@ public static class ChanceCalculator
     }
 
     // Returns Win and Tie Values from 0 to 1.0
+    /// <summary>
+    /// For best performance use the parallelized simulations.
+    /// </summary>
     public static (double winChance, double tieChance) GetWinningChancePreFlopSim(Pair playerHoleCards, int numOfOpponents, int numberOfSimulatedGames)
     {
         Guards.ArgsPreFlopSim(playerHoleCards, numOfOpponents, numberOfSimulatedGames);
