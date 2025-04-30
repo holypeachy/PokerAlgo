@@ -32,6 +32,14 @@ public static class Algo
 
     private static List<Player> DetermineWinners(List<Player> allPlayers)
     {
+        foreach (Player p in allPlayers)
+        {
+            if (p.WinningHand is null)
+            {
+                throw new InternalPokerAlgoException($"Invariant violated: a player's hand is null. Player\'s \'{p.Name}\' WinningHand is null. ");
+            }
+        }
+
         // Order from highest to lowest hand value
         List<Player> players = allPlayers.OrderByDescending(x => x.WinningHand.Type).ToList();
 

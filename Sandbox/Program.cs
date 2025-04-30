@@ -511,6 +511,6 @@ TODO: Add XML comments to export once, that way I don't have to keep the inline 
 * ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* refactor: add NewHand method to Player class.
-* details: made some tiny changes to a few PokerAlgo classes.
+* fix: undo something I did last commit, god bless unit tests
+* details: did an oopsie. All good, tests are passing now.
 */
