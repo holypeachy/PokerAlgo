@@ -13,6 +13,10 @@ internal static class Guards
         {
             allCards.Add(p.HoleCards.First);
             allCards.Add(p.HoleCards.Second);
+            if (p.WinningHand is null)
+            {
+                throw new InternalPokerAlgoException($"Invariant violated: a player's hand is null. Player\'s \'{p.Name}\' WinningHand is null. ");
+            }
         }
 
         bool areUnique = allCards.Count == allCards.Distinct().Count();

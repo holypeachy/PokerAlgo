@@ -5,12 +5,10 @@ namespace PokerAlgo;
 public class Deck
 {
 	private readonly List<Card> _cards;
-	private int _nextCardIndex;
-
 	/// <summary>
 	/// Gets the index of the next card to be drawn from the deck.
 	/// </summary>
-	public int NextCardIndex { get { return _nextCardIndex; } }
+	public int NextCardIndex { get; private set; }
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Deck"/> class.
@@ -18,7 +16,7 @@ public class Deck
 	public Deck()
 	{
 		_cards = new List<Card>();
-		_nextCardIndex = 0;
+		NextCardIndex = 0;
 
 		Create();
 
@@ -60,11 +58,11 @@ public class Deck
 	/// </summary>
 	public void ResetDeck()
 	{
-		for (int i = 0; i < _nextCardIndex; i++)
+		for (int i = 0; i < NextCardIndex; i++)
 		{
 			_cards[i].IsPlayerCard = false;
 		}
-		_nextCardIndex = 0;
+		NextCardIndex = 0;
 
 		Shuffle();
 	}
@@ -77,9 +75,9 @@ public class Deck
 	/// <exception cref="DeckEmptyException"></exception>
 	public Card NextCard()
 	{
-		if (_nextCardIndex >= _cards.Count) throw new DeckEmptyException("No More Cards in The Deck");
+		if (NextCardIndex >= _cards.Count) throw new DeckEmptyException("No more cards in the Deck");
 
-		return _cards[_nextCardIndex++];
+		return _cards[NextCardIndex++];
 	}
 	/// <summary>
 	/// Draws and returns a specified number of cards from the deck.
@@ -93,11 +91,11 @@ public class Deck
 	public List<Card> NextCards(int numberOfCards)
 	{
 		if (numberOfCards < 1) throw new ArgumentOutOfRangeException(nameof(numberOfCards),"The number of cards passed must be greater than 0.");
-		if (_nextCardIndex >= _cards.Count) throw new DeckEmptyException("No More Cards in The Deck");
-		if (_nextCardIndex - 1 + numberOfCards >= _cards.Count) throw new NotEnoughCardsInDeckException($"Cards Left: {_cards.Count - (_nextCardIndex - 1)}. Cards Requested: {numberOfCards}");
+		if (NextCardIndex >= _cards.Count) throw new DeckEmptyException("No more cards in the Deck");
+		if (NextCardIndex - 1 + numberOfCards >= _cards.Count) throw new NotEnoughCardsInDeckException($"Cards Left: {_cards.Count - (NextCardIndex - 1)}. Cards requested: {numberOfCards}");
 
-		List<Card> cardsToReturn = _cards.GetRange(_nextCardIndex, numberOfCards);
-		_nextCardIndex += numberOfCards;
+		List<Card> cardsToReturn = _cards.GetRange(NextCardIndex, numberOfCards);
+		NextCardIndex += numberOfCards;
 
 		return cardsToReturn;
 	}
@@ -114,9 +112,9 @@ public class Deck
 			int index = _cards.IndexOf(card);
 			if (index == -1) throw new CardNotInDeckException($"Invariant violated: card to remove {card} was not found in deck.");
 
-			if (index > _nextCardIndex - 1)
+			if (index > NextCardIndex - 1)
 			{
-				_nextCardIndex++;
+				NextCardIndex++;
 				_cards.RemoveAt(index);
 				_cards.Insert(0, card);
 			}

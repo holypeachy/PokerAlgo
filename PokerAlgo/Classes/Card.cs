@@ -21,7 +21,7 @@ public class Card : IEquatable<Card>
 
     private static readonly Dictionary<int, string> _cardPrintLookUp = new()
     {
-        {1, "A"}, {11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
+        {1, "A"}, {2, "2"}, {3, "3"}, {4, "4"}, {5, "5"}, {6, "6"}, {7, "7"}, {8, "8"}, {9, "9"}, {10, "T"},{11, "J"}, {12, "Q"}, {13, "K"}, {14, "A"}
     };
 
     /// <summary>
@@ -55,7 +55,7 @@ public class Card : IEquatable<Card>
 
     public override string ToString()
     {
-        return "[" + (Rank == 1 || Rank > 10 ? _cardPrintLookUp[Rank] : Rank) + $",{Suit}]" + (IsPlayerCard ? "🙂" : "");
+        return $"{_cardPrintLookUp[Rank]},{Suit}]" + (IsPlayerCard ? "🙂" : "");
     }
 
     // Does not take into consideration IsPlayerCard

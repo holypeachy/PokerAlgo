@@ -41,14 +41,6 @@ public static class Algo
 
     private static List<Player> DetermineWinners(List<Player> allPlayers)
     {
-        foreach (Player p in allPlayers)
-        {
-            if (p.WinningHand is null)
-            {
-                throw new InternalPokerAlgoException($"Invariant violated: a player's hand is null. Player\'s \'{p.Name}\' WinningHand is null. ");
-            }
-        }
-
         // Order from highest to lowest hand value
         List<Player> players = allPlayers.OrderByDescending(x => x.WinningHand.Type).ToList();
 
@@ -74,7 +66,7 @@ public static class Algo
             for (int playerIndex = 0; playerIndex < winners.Count - 1; playerIndex++)
             {
                 int result = CompareWinningHands(winners[playerIndex].WinningHand, winners[playerIndex + 1].WinningHand);
-                Helpers.DebugLog($"Algo.BreakTies() - " + (result == -1 ? winners[playerIndex].Name + " has the better hand\n" : result == 1 ? winners[playerIndex + 1].Name + " has the better hand\n" : "Players Tie"), 2);
+                Helpers.DebugLog($"Algo.BreakTies() - " + (result == -1 ? winners[playerIndex].Name + " has the better hand\n" : result == 1 ? winners[playerIndex + 1].Name + " has the better hand\n" : $"Players Tie ({winners[playerIndex].Name} & {winners[playerIndex + 1].Name}"), 2);
 
                 if (result == -1)
                 {
@@ -143,6 +135,7 @@ public static class Algo
             case HandType.FourKind:
                 if (leftCards[4].Rank > rightCards[4].Rank) return -1;
                 else if (rightCards[4].Rank > leftCards[4].Rank) return 1;
+
                 else return CompareKickers(new List<Card> { leftCards[0] }, new List<Card> { rightCards[0] });
 
             case HandType.FullHouse:
@@ -161,6 +154,7 @@ public static class Algo
             case HandType.ThreeKind:
                 if (leftCards[4].Rank > rightCards[4].Rank) return -1;
                 else if (rightCards[4].Rank > leftCards[4].Rank) return 1;
+
                 else return CompareKickers(leftCards.GetRange(0, 2), rightCards.GetRange(0, 2));
 
             case HandType.TwoPair:
@@ -174,6 +168,7 @@ public static class Algo
             case HandType.Pair:
                 if (leftCards[4].Rank > rightCards[4].Rank) return -1;
                 else if (rightCards[4].Rank > leftCards[4].Rank) return 1;
+
                 else return CompareKickers(leftCards.GetRange(0, 3), rightCards.GetRange(0, 3));
 
             case HandType.Nothing:

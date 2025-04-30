@@ -490,6 +490,7 @@ TODO
 TODO: Add XML comments to export once, that way I don't have to keep the inline comments always.
 
 ? Future Ideas
+? Use NewHand method for simulations.
 ? Semantic Debug Levels. Use an enum for verbosity levels.
 ? Remove json serialization stuff from Card class, only needed because of logic tests.
 ? Add SerializableAttribute to all Exception classes? uses? or remove from PokerAlgoException. 
@@ -510,5 +511,6 @@ TODO: Add XML comments to export once, that way I don't have to keep the inline 
 * ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* chore: rename directories and .csproj files.
+* refactor: add NewHand method to Player class.
+* details: made some tiny changes to a few PokerAlgo classes.
 */

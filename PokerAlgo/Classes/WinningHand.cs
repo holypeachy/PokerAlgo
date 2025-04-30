@@ -26,6 +26,6 @@ public class WinningHand
 
     public override string ToString()
     {
-        return $"Type: {Type} " + $"| Cards: {string.Join(" ", Cards)}";
+        return $"WinningHand: {Type} - " + $"Cards: {string.Join(" ", Cards)}";
     }
 }

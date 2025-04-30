@@ -18,10 +18,10 @@ public class Pair
     /// </summary>
     /// <param name="First">The first card.</param>
     /// <param name="Second">The second card.</param>
-    public Pair(Card First, Card Second)
+    public Pair(Card first, Card second)
     {
-        this.First = First;
-        this.Second = Second;
+        this.First = first;
+        this.Second = second;
     }
 
     public override string ToString()
