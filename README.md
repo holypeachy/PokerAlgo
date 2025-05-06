@@ -1,4 +1,4 @@
-# 🍑 PokerAlgo - Texas Hold'em hand evaluator and simulation engine.
+# 🍑 PokerAlgo - Texas Hold 'em hand evaluator and simulation engine.
 #### Designed and implemented my own algorithm to determine a player's winning hand and the winner(s). Might not be the most efficient one out there, but it's mine. With parallelized Monte Carlo simulations to determine chances of winning or tying.
 - The core logic to a Texas Hold 'em game I'm working on.
 - Will release soon as a nuget package so anyone can use it, and so I can easily reuse it in my other projects.
