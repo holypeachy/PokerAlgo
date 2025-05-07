@@ -82,11 +82,13 @@ public class Deck
 			int index = _cards.IndexOf(card);
 			if (index == -1) throw new CardNotInDeckException($"Invariant violated: card to remove {card} was not found in deck.");
 
+			Card old;
 			if (index > NextCardIndex - 1)
 			{
 				NextCardIndex++;
+				old = _cards[index];
 				_cards.RemoveAt(index);
-				_cards.Insert(0, card);
+				_cards.Insert(0, old);
 			}
 		}
 	}

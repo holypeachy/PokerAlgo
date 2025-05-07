@@ -83,8 +83,8 @@ public static class ChanceCalculator
 
         List<Card> cardsToRemove = new()
         {
-            playerHoleCards.First,
-            playerHoleCards.Second
+            player.HoleCards.First,
+            player.HoleCards.Second,
         };
         cardsToRemove.AddRange(communityCards);
         List<Card> simRemainingCommunity = new();
@@ -278,8 +278,8 @@ public static class ChanceCalculator
 
         List<Card> cardsToRemove = new()
         {
-            holeCards.First,
-            holeCards.Second
+            player.HoleCards.First,
+            player.HoleCards.Second,
         };
         cardsToRemove.AddRange(communityCards);
         List<Card> simRemainingCommunity = new();
@@ -331,8 +331,8 @@ public static class ChanceCalculator
 
         List<Card> cardsToRemove = new()
         {
-            holeCards.First,
-            holeCards.Second
+            player.HoleCards.First,
+            player.HoleCards.Second,
         };
 
         for (int i = 0; i < sims; i++)
