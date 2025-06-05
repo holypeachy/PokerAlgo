@@ -10,8 +10,34 @@ public class HandEvaluator
     }
 
 
-    public WinningHand GetWinningHand(List<Card> cards)
+    public WinningHand GetWinningHand(List<Card> combinedCards)
     {
+        Guards.ArgsGetWinningHand(combinedCards);
+
+        _tempBestHand = null;
+        List<Card> cardsCopy = combinedCards.ToList();
+
+        SortCardsByValue(cardsCopy);
+
+        Helpers.DebugLogCards("HandEvaluator.GetWinningHand() - All Cards", cardsCopy);
+
+        EvaluateHand(cardsCopy);
+
+        if (_tempBestHand is null) throw new InternalPokerAlgoException("Invariant violated: _tempBestHand should never be null before returning. No winning hand was found.");
+
+        return _tempBestHand;
+    }
+    
+    public WinningHand GetWinningHand(Pair playerHoleCards, List<Card> communityCards)
+    {
+        List<Card> cards = new()
+        {
+            playerHoleCards.First,
+            playerHoleCards.Second,
+        };
+
+        cards.AddRange(communityCards);
+
         Guards.ArgsGetWinningHand(cards);
 
         _tempBestHand = null;
@@ -27,7 +53,6 @@ public class HandEvaluator
 
         return _tempBestHand;
     }
-
 
     private void EvaluateHand(List<Card> cards)
     {

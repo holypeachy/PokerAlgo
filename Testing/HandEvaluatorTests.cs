@@ -73,4 +73,37 @@ public class HandEvaluatorTests
 
         Assert.Throws<LowAcesException>(() => handEvaluator.GetWinningHand(cards));
     }
+
+    [Fact]
+    public void GetWinningHand_Overload_ValidInput()
+    {
+        HandEvaluator handEvaluator = new();
+
+        List<Card> community = new()
+        {
+            new Card(7, CardSuit.Spades, false),
+            new Card(5, CardSuit.Spades, false),
+            new Card(10, CardSuit.Spades, false),
+        };
+
+        Pair holeCards = new(new Card(3, CardSuit.Clubs, true), new Card(10, CardSuit.Diamonds, true));
+
+        handEvaluator.GetWinningHand(holeCards, community);
+    }
+
+    [Fact]
+    public void GetWinningHand_Overload_Throws_When_LessThanFiveCards()
+    {
+        HandEvaluator handEvaluator = new();
+
+        List<Card> community = new()
+        {
+            new Card(14, CardSuit.Spades, false),
+            new Card(5, CardSuit.Spades, false),
+        };
+
+        Pair holeCards = new(new Card(3, CardSuit.Clubs, true), new Card(10, CardSuit.Diamonds, true));
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => handEvaluator.GetWinningHand(holeCards, community));
+    }
 }

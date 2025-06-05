@@ -484,14 +484,12 @@ class Program
 
 /*
 ! ISSUES:
-! Bug: In ChanceCalculator.GetWinningChanceSim (and I assume the other sim functions) the isPlayerCard flag of passed cards is being reset. Somehow testDeck is resetting the cards passed from the playerHoleCards parameter. 
 ! 
 
 TODO
 TODO: Add XML comments to export once, that way I don't have to keep the inline comments always.
 
 ? Future Ideas
-? Add Overload to GetWinningHand that takes a Player and the community cards.
 ? Use NewHand method for simulations.
 ? Semantic Debug Levels. Use an enum for verbosity levels.
 ? Remove json serialization stuff from Card class, only needed because of logic tests.
@@ -514,6 +512,6 @@ TODO: Add XML comments to export once, that way I don't have to keep the inline 
 * ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* fix: using ChanceCalculator.GetWinningChance functions would reset passed in playerHoldCards isPlayerCard flag.
-* details: Deck.RemoveCards() was inserting a card from cardsToRemove into the _card list.
+* feat: add overload to GetWinningHand which takes a Player's hole cards and the community cards.
+* details: adding an overload makes the code a little more user friendly and concise since you need to combine the player and the community cards anyways. I also added a couple of simple tests for it.
 */
