@@ -149,7 +149,7 @@ class Program
 
 		else if (_isLookupPreflop) LookUpPreFlopChances();
 
-		else if (_isManual) Manual();
+		else if (_isManual) Manual2();
 
 		else MainExecution();
 
@@ -414,70 +414,51 @@ class Program
 
 	static void Manual2()
 	{
-		Console.WriteLine(players[0]);
+		Helpers.DebugVerbosity = 0;
+		HandEvaluator handEvaluator = new();
 		Console.WriteLine();
-		foreach (var item in communityCards)
+		Console.WriteLine($"Number of Simulations: {_numOfSims}");
+		Console.WriteLine($"Manual 2 - Parallel Monte Carlo Sims");
+		Console.WriteLine("-----------------------------");
+		foreach (Player p in players)
 		{
-			Console.Write(item + " ");
+			List<Card> cards = new()
+					{
+						p.HoleCards.First,
+						p.HoleCards.Second,
+					};
+			cards.AddRange(communityCards);
+			p.WinningHand = handEvaluator.GetWinningHand(cards);
+
+			Console.BackgroundColor = ConsoleColor.Yellow;
+			Console.ForegroundColor = ConsoleColor.Black;
+			Console.Write($"\t {p.Name} ");
+			Console.BackgroundColor = ConsoleColor.Green;
+			Console.Write($" {Helpers.GetPrettyHandName(p.WinningHand)} ");
+			Console.BackgroundColor = ConsoleColor.Gray;
+			Console.Write(" " + string.Join(' ', p.WinningHand.Cards) + " ");
+			Console.ResetColor();
+			Console.WriteLine();
+
+			(double winChance, double tieChance) chanceTuple = ChanceCalculator.GetWinningChanceSimParallel(p.HoleCards, communityCards, players.Count - 1, _numOfSims);
+			string winPercentage = string.Format("{0:0.00}%", chanceTuple.winChance * 100);
+			string tiePercentage = string.Format("{0:0.00}%", chanceTuple.tieChance * 100);
+
+			Console.Write($"\tWin:");
+			Console.ForegroundColor = ConsoleColor.Black;
+			Console.BackgroundColor = ConsoleColor.Blue;
+			Console.Write($" {winPercentage} ");
+			Console.ResetColor();
+			Console.WriteLine();
+
+			Console.Write($"\tTie:");
+			Console.ForegroundColor = ConsoleColor.Black;
+			Console.BackgroundColor = ConsoleColor.Blue;
+			Console.Write($" {tiePercentage} ");
+			Console.ResetColor();
+			Console.WriteLine();
+			Console.WriteLine();
 		}
-		Console.WriteLine();
-
-		HandEvaluator evaluator = new();
-		List<Card> cards = new();
-		cards.AddRange(communityCards);
-		cards.Add(players[0].HoleCards.First);
-		cards.Add(players[0].HoleCards.Second);
-		Console.WriteLine();
-		Console.WriteLine(evaluator.GetWinningHand(cards));
-		Console.WriteLine();
-		Console.WriteLine("Sim: 500");
-		Stopwatch timer = new();
-		timer.Start();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 500));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 1,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 1000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 5,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 5000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 10,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 10000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 100,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 100000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 500,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 500000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 1,000,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 1000000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
 	}
 
 }
@@ -512,6 +493,6 @@ TODO: Add XML comments to export once, that way I don't have to keep the inline 
 * ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* feat: add overload to GetWinningHand which takes a Player's hole cards and the community cards.
-* details: adding an overload makes the code a little more user friendly and concise since you need to combine the player and the community cards anyways. I also added a couple of simple tests for it.
+* feat: use NewHand method for simulations instead of creating a new player.
+* details: idk why I didn't think of this earlier. certainly saves on performance since each loop we are not instantiating any player objects.
 */
