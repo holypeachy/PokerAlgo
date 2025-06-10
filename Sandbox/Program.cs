@@ -472,15 +472,11 @@ TODO:
 
 ? Future Ideas
 ? Semantic Debug Levels. Use an enum for verbosity levels.
-? In ChanceCalculator, use a copy the constructor of List class instead of ToList() for slightly better performance.
 ? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.
-? Make GetWinningChanceSim and GetWinningChancePreFlopSim an overloaded method? Since in GetWinningChanceSim the community cards are already variable.
 ? Remove duplicate entries on the preflop computation logic. AKo == KAo
 
 ? Modular Architecture: Make Player and Card an interface. Make Deck generic.
-? Instead of using tuples, use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
 ? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
-
 ? Precompute all chances of winning?
 
 * Notes
@@ -489,7 +485,6 @@ TODO:
 * ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* feature: add SerializableAttribute to all exception classes
-* refactor: Random class is now a private field in Deck class
-* details: Only instantiate one Random class per Deck class, instead of creating one everytime we shuffle.
+* refactor: use a copy constructor of List class instead of ToList() in ChanceCalculator
+* details: 
 */

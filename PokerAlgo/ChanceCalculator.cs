@@ -111,7 +111,7 @@ public static class ChanceCalculator
             
             if (remainingCommunity > 0) simRemainingCommunity.AddRange(testDeck.NextCards(remainingCommunity));
 
-            fullCommunity = communityCards.ToList();
+            fullCommunity = new List<Card>(communityCards);
             fullCommunity.AddRange(simRemainingCommunity);
             winners = Algo.GetWinners(allPlayers, fullCommunity);
 
@@ -315,7 +315,7 @@ public static class ChanceCalculator
 
             if (remainingCommunity > 0) simRemainingCommunity.AddRange(testDeck.NextCards(remainingCommunity));
 
-            fullCommunity = communityCards.ToList();
+            fullCommunity = new List<Card>(communityCards);
             fullCommunity.AddRange(simRemainingCommunity);
             winners = Algo.GetWinners(allPlayers, fullCommunity);
 
