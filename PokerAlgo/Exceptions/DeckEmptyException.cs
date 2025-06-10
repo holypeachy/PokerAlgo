@@ -2,6 +2,7 @@ namespace PokerAlgo;
 /// <summary>
 /// The exception that is thrown when an attempt is made to draw a card from an empty deck.
 /// </summary>
+[Serializable]
 public class DeckEmptyException : PokerAlgoException
 {
     public DeckEmptyException() { }

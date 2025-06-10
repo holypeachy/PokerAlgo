@@ -112,22 +112,27 @@ public static class ChanceCalculator
 
         int remainingCommunity = 5 - communityCards.Count;
 
+        allPlayers = new() { player };
+
+        for (int k = 0; k < numOfOpponents; k++)
+        {
+            allPlayers.Add(new Player("Simulated Opponent", testDeck.NextCard(), testDeck.NextCard()));
+        }
+
         for (int i = 0; i < numberOfSimulatedGames; i++)
         {
             testDeck.ResetDeck();
             simRemainingCommunity.Clear();
             testDeck.RemoveCards(cardsToRemove);
 
+            foreach (Player p in allPlayers)
+            {
+                if(p.Name != "Player") p.NewHand(testDeck.NextCard(), testDeck.NextCard());
+            }
+            
             if (remainingCommunity > 0) simRemainingCommunity.AddRange(testDeck.NextCards(remainingCommunity));
 
-            allPlayers = new() { player };
-
-            for (int k = 0; k < numOfOpponents; k++)
-            {
-                allPlayers.Add(new Player("Simulated Opponent", testDeck.NextCard(), testDeck.NextCard()));
-            }
-
-            fullCommunity = communityCards.ToList();
+            fullCommunity = new List<Card>(communityCards);
             fullCommunity.AddRange(simRemainingCommunity);
             winners = Algo.GetWinners(allPlayers, fullCommunity);
 
@@ -157,7 +162,7 @@ public static class ChanceCalculator
         int timesTied = 0;
 
         Player player = new("Player", new Card(playerHoleCards.First), new Card(playerHoleCards.Second));
-        List<Player> allPlayers = new();
+        List<Player> allPlayers;
         List<Player> winners;
         List<Card> communityCards;
 
@@ -167,21 +172,25 @@ public static class ChanceCalculator
             playerHoleCards.Second
         };
 
+        allPlayers = new() { player };
+
+        for (int k = 0; k < numOfOpponents; k++)
+        {
+            allPlayers.Add(new Player("Simulated Opponent", testDeck.NextCard(), testDeck.NextCard()));
+        }
+
         for (int i = 0; i < numberOfSimulatedGames; i++)
         {
             testDeck.ResetDeck();
 
             testDeck.RemoveCards(cardsToRemove);
 
-            communityCards = testDeck.NextCards(5);
-
-            allPlayers.Clear();
-            allPlayers.Add(player);
-
-            for (int k = 0; k < numOfOpponents; k++)
+            foreach (Player p in allPlayers)
             {
-                allPlayers.Add(new Player("Simulated Opponent", testDeck.NextCard(), testDeck.NextCard()));
+                if(p.Name != "Player") p.NewHand(testDeck.NextCard(), testDeck.NextCard());
             }
+
+            communityCards = testDeck.NextCards(5);
 
             winners = Algo.GetWinners(allPlayers, communityCards);
 
@@ -329,22 +338,27 @@ public static class ChanceCalculator
 
         int remainingCommunity = 5 - communityCards.Count;
 
+        allPlayers = new() { player };
+
+        for (int k = 0; k < numOfOpponents; k++)
+        {
+            allPlayers.Add(new Player("Simulated Opponent", testDeck.NextCard(), testDeck.NextCard()));
+        }
+
         for (int i = 0; i < sims; i++)
         {
             testDeck.ResetDeck();
             simRemainingCommunity.Clear();
             testDeck.RemoveCards(cardsToRemove);
 
-            if (remainingCommunity > 0) simRemainingCommunity.AddRange(testDeck.NextCards(remainingCommunity));
-
-            allPlayers = new() { player };
-
-            for (int k = 0; k < numOfOpponents; k++)
+            foreach (Player p in allPlayers)
             {
-                allPlayers.Add(new Player("Simulated Opponent", testDeck.NextCard(), testDeck.NextCard()));
+                if(p.Name != "Player") p.NewHand(testDeck.NextCard(), testDeck.NextCard());
             }
 
-            fullCommunity = communityCards.ToList();
+            if (remainingCommunity > 0) simRemainingCommunity.AddRange(testDeck.NextCards(remainingCommunity));
+
+            fullCommunity = new List<Card>(communityCards);
             fullCommunity.AddRange(simRemainingCommunity);
             winners = Algo.GetWinners(allPlayers, fullCommunity);
 
@@ -368,7 +382,7 @@ public static class ChanceCalculator
         int timesTied = 0;
 
         Player player = new("Player", new Card(holeCards.First), new Card(holeCards.Second));
-        List<Player> allPlayers = new();
+        List<Player> allPlayers;
         List<Player> winners;
         List<Card> communityCards;
 
@@ -378,21 +392,25 @@ public static class ChanceCalculator
             player.HoleCards.Second,
         };
 
+        allPlayers = new() { player };
+
+        for (int k = 0; k < numOfOpponents; k++)
+        {
+            allPlayers.Add(new Player("Simulated Opponent", testDeck.NextCard(), testDeck.NextCard()));
+        }
+
         for (int i = 0; i < sims; i++)
         {
             testDeck.ResetDeck();
 
             testDeck.RemoveCards(cardsToRemove);
 
-            communityCards = testDeck.NextCards(5);
-
-            allPlayers.Clear();
-            allPlayers.Add(player);
-
-            for (int k = 0; k < numOfOpponents; k++)
+            foreach (Player p in allPlayers)
             {
-                allPlayers.Add(new Player("Simulated Opponent", testDeck.NextCard(), testDeck.NextCard()));
+                if(p.Name != "Player") p.NewHand(testDeck.NextCard(), testDeck.NextCard());
             }
+
+            communityCards = testDeck.NextCards(5);
 
             winners = Algo.GetWinners(allPlayers, communityCards);
 

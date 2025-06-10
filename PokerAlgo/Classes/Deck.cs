@@ -8,6 +8,7 @@ public class Deck
 	/// <summary>
 	/// Gets the index of the next card to be drawn from the deck.
 	/// </summary>
+	private readonly Random _rand = new();
 	public int NextCardIndex { get; private set; }
 
 	/// <summary>
@@ -36,13 +37,12 @@ public class Deck
 
 	private void Shuffle()
 	{
-		Random rand = new();
 		Card tempCard;
 		int targetIndex;
 
 		for (int currentIndex = 0; currentIndex < _cards.Count; currentIndex++)
 		{
-			targetIndex = rand.Next(_cards.Count);
+			targetIndex = _rand.Next(_cards.Count);
 			if (targetIndex == currentIndex)
 			{
 				continue;

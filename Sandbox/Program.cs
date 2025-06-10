@@ -149,7 +149,7 @@ class Program
 
 		else if (_isLookupPreflop) LookUpPreFlopChances();
 
-		else if (_isManual) Manual();
+		else if (_isManual) Manual2();
 
 		else MainExecution();
 
@@ -414,98 +414,69 @@ class Program
 
 	static void Manual2()
 	{
-		Console.WriteLine(players[0]);
+		Helpers.DebugVerbosity = 0;
+		HandEvaluator handEvaluator = new();
 		Console.WriteLine();
-		foreach (var item in communityCards)
+		Console.WriteLine($"Number of Simulations: {_numOfSims}");
+		Console.WriteLine($"Manual 2 - Parallel Monte Carlo Sims");
+		Console.WriteLine("-----------------------------");
+		foreach (Player p in players)
 		{
-			Console.Write(item + " ");
+			List<Card> cards = new()
+					{
+						p.HoleCards.First,
+						p.HoleCards.Second,
+					};
+			cards.AddRange(communityCards);
+			p.WinningHand = handEvaluator.GetWinningHand(cards);
+
+			Console.BackgroundColor = ConsoleColor.Yellow;
+			Console.ForegroundColor = ConsoleColor.Black;
+			Console.Write($"\t {p.Name} ");
+			Console.BackgroundColor = ConsoleColor.Green;
+			Console.Write($" {Helpers.GetPrettyHandName(p.WinningHand)} ");
+			Console.BackgroundColor = ConsoleColor.Gray;
+			Console.Write(" " + string.Join(' ', p.WinningHand.Cards) + " ");
+			Console.ResetColor();
+			Console.WriteLine();
+
+			(double winChance, double tieChance) chanceTuple = ChanceCalculator.GetWinningChanceSimParallel(p.HoleCards, communityCards, players.Count - 1, _numOfSims);
+			string winPercentage = string.Format("{0:0.00}%", chanceTuple.winChance * 100);
+			string tiePercentage = string.Format("{0:0.00}%", chanceTuple.tieChance * 100);
+
+			Console.Write($"\tWin:");
+			Console.ForegroundColor = ConsoleColor.Black;
+			Console.BackgroundColor = ConsoleColor.Blue;
+			Console.Write($" {winPercentage} ");
+			Console.ResetColor();
+			Console.WriteLine();
+
+			Console.Write($"\tTie:");
+			Console.ForegroundColor = ConsoleColor.Black;
+			Console.BackgroundColor = ConsoleColor.Blue;
+			Console.Write($" {tiePercentage} ");
+			Console.ResetColor();
+			Console.WriteLine();
+			Console.WriteLine();
 		}
-		Console.WriteLine();
-
-		HandEvaluator evaluator = new();
-		List<Card> cards = new();
-		cards.AddRange(communityCards);
-		cards.Add(players[0].HoleCards.First);
-		cards.Add(players[0].HoleCards.Second);
-		Console.WriteLine();
-		Console.WriteLine(evaluator.GetWinningHand(cards));
-		Console.WriteLine();
-		Console.WriteLine("Sim: 500");
-		Stopwatch timer = new();
-		timer.Start();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 500));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 1,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 1000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 5,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 5000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 10,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 10000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 100,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 100000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 500,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 500000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
-		Console.WriteLine();
-
-		Console.WriteLine("Sim: 1,000,000");
-		timer.Restart();
-		Console.WriteLine(ChanceCalculator.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 1000000));
-		timer.Stop();
-		Console.WriteLine(timer.ElapsedMilliseconds);
 	}
 
 }
 
 /*
 ! ISSUES:
-! Bug: In ChanceCalculator.GetWinningChanceSim (and I assume the other sim functions) the isPlayerCard flag of passed cards is being reset. Somehow testDeck is resetting the cards passed from the playerHoleCards parameter. 
 ! 
 
 TODO
-TODO: Add XML comments to export once, that way I don't have to keep the inline comments always.
+TODO: 
 
 ? Future Ideas
-? Add Overload to GetWinningHand that takes a Player and the community cards.
-? Use NewHand method for simulations.
 ? Semantic Debug Levels. Use an enum for verbosity levels.
-? Remove json serialization stuff from Card class, only needed because of logic tests.
-? Add SerializableAttribute to all Exception classes? uses? or remove from PokerAlgoException. 
-? Only instantiate one Random class per Deck class, instead of creating one everytime we shuffle.
-? In ChanceCalculator, use a copy the constructor of List class instead of ToList() for slightly better performance.
 ? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.
-? Make GetWinningChanceSim and GetWinningChancePreFlopSim an overloaded method? Since in GetWinningChanceSim the community cards are already variable.
 ? Remove duplicate entries on the preflop computation logic. AKo == KAo
 
 ? Modular Architecture: Make Player and Card an interface. Make Deck generic.
-? Instead of using tuples, use a record ? This object would hold winning chance and tie chance, it would also make future extensions easier to implement.
 ? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
-
 ? Precompute all chances of winning?
 
 * Notes
@@ -514,6 +485,6 @@ TODO: Add XML comments to export once, that way I don't have to keep the inline 
 * ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* fix: using ChanceCalculator.GetWinningChance functions would reset passed in playerHoldCards isPlayerCard flag.
-* details: Deck.RemoveCards() was inserting a card from cardsToRemove into the _card list.
+* refactor: use a copy constructor of List class instead of ToList() in ChanceCalculator
+* details: 
 */

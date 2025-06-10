@@ -2,6 +2,7 @@ namespace PokerAlgo;
 /// <summary>
 /// The exception that is thrown when the deck does not contain enough cards to complete an operation.
 /// </summary>
+[Serializable]
 public class NotEnoughCardsInDeckException : PokerAlgoException
 {
     public NotEnoughCardsInDeckException() { }
