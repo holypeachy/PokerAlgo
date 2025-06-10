@@ -468,14 +468,10 @@ class Program
 ! 
 
 TODO
-TODO: Add XML comments to export once, that way I don't have to keep the inline comments always.
+TODO: 
 
 ? Future Ideas
-? Use NewHand method for simulations.
 ? Semantic Debug Levels. Use an enum for verbosity levels.
-? Remove json serialization stuff from Card class, only needed because of logic tests.
-? Add SerializableAttribute to all Exception classes? uses? or remove from PokerAlgoException. 
-? Only instantiate one Random class per Deck class, instead of creating one everytime we shuffle.
 ? In ChanceCalculator, use a copy the constructor of List class instead of ToList() for slightly better performance.
 ? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.
 ? Make GetWinningChanceSim and GetWinningChancePreFlopSim an overloaded method? Since in GetWinningChanceSim the community cards are already variable.
@@ -493,6 +489,7 @@ TODO: Add XML comments to export once, that way I don't have to keep the inline 
 * ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* feat: use NewHand method for simulations instead of creating a new player.
-* details: idk why I didn't think of this earlier. certainly saves on performance since each loop we are not instantiating any player objects.
+* feature: add SerializableAttribute to all exception classes
+* refactor: Random class is now a private field in Deck class
+* details: Only instantiate one Random class per Deck class, instead of creating one everytime we shuffle.
 */

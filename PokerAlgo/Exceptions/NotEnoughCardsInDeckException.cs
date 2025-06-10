@@ -1,5 +1,6 @@
 namespace PokerAlgo;
 
+[Serializable]
 public class NotEnoughCardsInDeckException : PokerAlgoException
 {
     public NotEnoughCardsInDeckException() { }

@@ -1,5 +1,6 @@
 namespace PokerAlgo;
 
+[Serializable]
 public class InvalidCardRankException : PokerAlgoException
 {
     public InvalidCardRankException() { }
