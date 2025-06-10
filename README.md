@@ -15,6 +15,8 @@
 - Monte Carlo Simulations are parallelized (Tasks).
   - > I saw a ~4.39x improvement on my i9 9900k
 ## Quick Log and Ideas
+- 6/10/2025: I've been using PokerAlgo on the next part of my project and it's working perfectly. Fixed a bug that would reset the IsPlayerCard flag, refactored a few little things, and added a few quality of life features.  
+I never did actually make a release so I'll be doing that now. Maybe I should rename the docs branch to release, given that it has the XML comments.
 - 4/29/2025: PokerAlgo 1.0.0 is officially finished 🥂!  
 It has been done for a few weeks but I had a case of codebase fatigue. I haven't packaged it yet but XML comments are written and included in the source in the 'docs' branch. I decided to made a docs branch because I really don't like the comments cluttering my codebase. I have made some minor adjustments as I've used it on the next part of my project, [PokerProto](https://github.com/holypeachy/PokerProto). The last thing to do would be to create a code example on how to use PokerAlgo.  
 As I'm writing an example on how to use the library I saw how tedious GetWinningHand is so I'll write an overload that takes a player and the community cards so the user doesn't have to combine the cards manually into a list.
