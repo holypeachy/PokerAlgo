@@ -485,6 +485,5 @@ TODO:
 * ResetDeck() AND RemoveCards() together, always before using NextCard().
 
 * Changes
-* refactor: use a copy constructor of List class instead of ToList() in ChanceCalculator
-* details: 
+*
 */

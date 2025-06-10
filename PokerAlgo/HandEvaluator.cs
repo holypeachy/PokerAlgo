@@ -16,7 +16,7 @@ public class HandEvaluator
     /// <summary>
     /// Evaluates and returns the best possible poker hand from the given set of cards.
     /// </summary>
-    /// <param name="cards">A list of 5 to 7 cards.</param>
+    /// <param name="combinedCards">A list of 5 to 7 cards. Typically 2 player hole cards, and at least 3 community cards.</param>
     /// <returns>A <see cref="WinningHand"/> object representing the best hand.</returns>
     /// <exception cref="InternalPokerAlgoException"></exception>
     public WinningHand GetWinningHand(List<Card> combinedCards)
@@ -37,6 +37,13 @@ public class HandEvaluator
         return _tempBestHand;
     }
     
+    /// <summary>
+    /// Evaluates and returns the best possible poker hand from the given set of cards.
+    /// </summary>
+    /// <param name="playerHoleCards">A player's hole cards</param>
+    /// <param name="communityCards">At least 3 community cards (aka the flop)</param>
+    /// <returns>A <see cref="WinningHand"/> object representing the best hand.</returns>
+    /// <exception cref="InternalPokerAlgoException"></exception>
     public WinningHand GetWinningHand(Pair playerHoleCards, List<Card> communityCards)
     {
         List<Card> cards = new()

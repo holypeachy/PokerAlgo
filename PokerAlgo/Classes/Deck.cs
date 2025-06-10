@@ -5,10 +5,10 @@ namespace PokerAlgo;
 public class Deck
 {
 	private readonly List<Card> _cards;
+	private readonly Random _rand = new();
 	/// <summary>
 	/// Gets the index of the next card to be drawn from the deck.
 	/// </summary>
-	private readonly Random _rand = new();
 	public int NextCardIndex { get; private set; }
 
 	/// <summary>
