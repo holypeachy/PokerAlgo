@@ -473,16 +473,16 @@ TODO:
 ? Future Ideas
 ? Semantic Debug Levels. Use an enum for verbosity levels.
 ? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.
-? Remove duplicate entries on the preflop computation logic. AKo == KAo
+? Remove symmetric entries on the preflop computation logic. AKo == KAo
 
+? Simulate all players together for accurate chances of winning that add to 100%.
+? Precompute post-fop chances of winning?
 ? Modular Architecture: Make Player and Card an interface. Make Deck generic.
 ? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
-? Precompute all chances of winning?
 
 * Notes
-* "WinningHand nullable? It has been giving me a headache with the warnings." Turns out, it's a good programming pattern.
 * Null-coalescing operator "??".
-* ResetDeck() AND RemoveCards() together, always before using NextCard().
+* ResetDeck() THEN RemoveCards() together, always before using NextCard().
 
 * Changes
 * refactor: use a copy constructor of List class instead of ToList() in ChanceCalculator
