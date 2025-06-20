@@ -1,7 +1,7 @@
 # 🍑 PokerAlgo - Texas Hold 'em hand evaluator and simulation engine.
 #### Designed and implemented my own algorithm to determine a player's winning hand and the winner(s). Might not be the most efficient one out there, but it's mine. With parallelized Monte Carlo simulations to determine chances of winning or tying.
 - The core logic to a Texas Hold 'em game I'm working on.
-- Will release soon as a nuget package so anyone can use it, and so I can easily reuse it in my other projects.
+- Still a work in progress but fully tested. I would like to add the computation of post-flop chances but it will take me some time to do so.
 ## Features
 - Determines the "winning hand" of a given Player.
 - Determines the winner or winners in case of a tie.
@@ -14,7 +14,72 @@
   > Something to note about these predictions is that they are independent of other players. They are only calculated based on what a given player knows, hence why the chances don't add to 100%. The reason I added predictions to begin with is so I could build an AI that would make decisions based on its probabilities of winning.
 - Monte Carlo Simulations are parallelized (Tasks).
   - > I saw a ~4.39x improvement on my i9 9900k
+## Installation
+```bash
+dotnet add package PokerAlgo
+```
+## How to use
+```csharp
+using PokerAlgo;
+
+namespace PokerAlgoTest;
+class Program
+{
+    static void Main()
+    {
+        Deck deck = new();
+
+        List<Player> players = new() // at least 2 players
+        {
+            new Player("Player 1", deck.NextCard(), deck.NextCard()),
+            new Player("Player 2", deck.NextCard(), deck.NextCard()),
+            new Player("Player 3", deck.NextCard(), deck.NextCard()),
+            new Player("Player 4", deck.NextCard(), deck.NextCard()),
+            new Player("Player 5", deck.NextCard(), deck.NextCard()),
+        };
+
+        List<Card> community = deck.NextCards(5);
+
+        Console.WriteLine("Players:");
+        foreach (var player in players)
+        {
+            Console.WriteLine(player);
+        }
+
+        Console.WriteLine("\nCommunity Cards:");
+        foreach (Card item in community)
+        {
+            Console.Write(item + " ");
+        }
+
+        Console.WriteLine();
+        Player player1 = players[0];
+        HandEvaluator evaluator = new();
+        WinningHand winningHand = evaluator.GetWinningHand(player1.HoleCards, community);
+        Console.WriteLine("\nPlayer 1 WinningHand: \n" + winningHand);
+
+        Console.WriteLine("\nChances of Player 1 Winning:");
+        var chances = ChanceCalculator.GetWinningChanceSimParallel(player1.HoleCards, community, players.Count - 1, 10_000);
+        Console.WriteLine($"Win: {chances.winChance}\nTie: {chances.tieChance}");
+
+
+        List<Player> winners = Algo.GetWinners(players, community);
+
+        Console.WriteLine();
+        Console.WriteLine(winners.Count == 1 ? "Winner:" : "Tie:");
+        foreach (Player winner in winners)
+        {
+            Console.WriteLine(winner);
+            Console.WriteLine(winner.WinningHand);
+            Console.WriteLine(Helpers.GetPrettyHandName(winner.WinningHand));
+            Console.WriteLine();
+        }
+
+    }
+}
+```
 ## Quick Log and Ideas
+- 6/19/2025: PokerAlgo has been published as a [nuget package](https://www.nuget.org/packages/PokerAlgo) and can be installed using the command above. I have 2 major things I would like to add to this project. Simulate all players together for chances that add up to 100% on the board (combined probabilities instead of individual ones) and compute data tables for post-flop hands to avoid using simulations during a live game. The first should be easy, the second will take some time.
 - 6/10/2025: I've been using PokerAlgo on the next part of my project and it's working perfectly. Fixed a bug that would reset the IsPlayerCard flag, refactored a few little things, and added a few quality of life features.  
 I never did actually make a release so I'll be doing that now. Maybe I should rename the docs branch to release, given that it has the XML comments.
 - 4/29/2025: PokerAlgo 1.0.0 is officially finished 🥂!  
@@ -37,7 +102,7 @@ After I have designed and implemented the functionality to load the pre-flop cha
 - 12/4/2024: First half is done. It detects the type of winning hands a player has. I need to optimize this now. Then I would need to see what winning hands are on the community cards. Then the last part is to compare the hands of each player as well as the community.
 
 ## Output Example:
-This is the current output of the CLI util (PokerAlgo.Sandbox) I use to test the library that showcases its functionality.  
+This is the current output of the CLI util (Sandbox) I use to test the library that showcases its functionality.  
 (TODO: Update these screenshots)
 
 Running Sandbox. 
