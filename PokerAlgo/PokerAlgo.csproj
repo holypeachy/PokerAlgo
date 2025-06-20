@@ -9,26 +9,34 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IncludeSymbols>true</IncludeSymbols>
-    <IncludeSource>false</IncludeSource>
+    <IncludeSource>true</IncludeSource>
+    <Deterministic>true</Deterministic>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <PropertyGroup>
     <Version>1.0.0</Version>
-    <Author>holypeach</Author>
+    <Authors>holypeach</Authors>
     <Company>Individual</Company>
     <PackageId>PokerAlgo</PackageId>
     <Product>PokerAlgo</Product>
     <Description>Texas Hold'em hand evaluator and simulation engine.</Description>
     <PackageTags>poker texas-holdem simulation cards</PackageTags>
     <RepositoryUrl>https://github.com/holypeachy/PokerAlgo</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIcon>assets/icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="assets/README.md" Pack="true" PackagePath="" />
-    <None Include="assets/icon.png" Pack="true" PackagePath="" />
+    <None Include="Assets\README.md" Pack="true" PackagePath="" />
+    <None Include="Assets\icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
