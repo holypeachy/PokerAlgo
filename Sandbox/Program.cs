@@ -15,7 +15,7 @@ class Program
 	private static string _preflopFolderPath = "";
 	private static int _numOfPreflopSimPlayers = 0;
 
-	private static readonly string _pathToPreFlopDirectory = @"C:/Users/Frank/Code/PokerAlgo/Resources/preflop_data/";
+	private static readonly string _pathToPreFlopDirectory = @"C:/Users/Peach/Code/PokerAlgo/Resources/preflop_data/";
 
 	private static readonly Dictionary<int, string> _cardPrintLookUp = new()
 	{
@@ -71,6 +71,7 @@ class Program
 		}
 		else if (args.Length == 1 && args[0] == "manual")
 		{
+			Helpers.DebugVerbosity = 1;
 			_isManual = true;
 		}
 		else
@@ -474,17 +475,22 @@ TODO:
 ? Semantic Debug Levels. Use an enum for verbosity levels.
 ? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.
 ? Remove symmetric entries on the preflop computation logic. AKo == KAo
+? Replace hard coded debug logs Class.Method() format by using nameof()
 
 ? Simulate all players together for accurate chances of winning that add to 100%.
-? Precompute post-fop chances of winning?
-? Modular Architecture: Make Player and Card an interface. Make Deck generic.
+? Precompute post-flop chances of winning? ( Would probably take days of CPU time :< )
+? Modular Architecture: Make Player and Card an interface. Make Deck generic. (Is this necessary or useful?)
 ? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
+? Add meta data to pre-flop calculations
+? Add path to pre-flop to a single location, like an environmental variable
 
 * Notes
 * Null-coalescing operator "??".
 * ResetDeck() THEN RemoveCards() together, always before using NextCard().
 
 * Changes
-* refactor: use a copy constructor of List class instead of ToList() in ChanceCalculator
-* details: 
+* chore: make a few tiny changes
+* add debug verbosity 1 for manual runs in Sandbox
+* update path to pre-flop data directory
+* 
 */

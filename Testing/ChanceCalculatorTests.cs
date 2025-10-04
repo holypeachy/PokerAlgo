@@ -2,7 +2,7 @@ namespace Testing;
 
 public class ChanceCalculatorTests
 {
-    public string pathToPreFlopDirectory = @"C:/Users/Frank/Code/PokerAlgo/Resources/preflop_data/";
+    public string pathToPreFlopDirectory = @"C:/Users/Peach/Code/PokerAlgo/Resources/preflop_data/";
 
     [Fact]
     public void GetWinningChanceSim_Throws_When_CommunityLessThanThree()
