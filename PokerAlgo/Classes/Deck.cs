@@ -2,11 +2,30 @@ namespace PokerAlgo;
 public class Deck
 {
 	private readonly List<Card> _cards;
-	private readonly Random _rand = new();
+	private Random _rand;
 	public int NextCardIndex { get; private set; }
 
-	public Deck()
+	private readonly Random _seedGen = new();
+    public int Seed { get; private set; }
+
+    public Deck()
 	{
+		Seed = _seedGen.Next();
+		_rand = new(Seed);
+
+		_cards = new List<Card>();
+		NextCardIndex = 0;
+
+		Create();
+
+		Shuffle();
+	}
+
+	public Deck(int seed)
+	{
+		Seed = seed;
+		_rand = new(Seed);
+
 		_cards = new List<Card>();
 		NextCardIndex = 0;
 
@@ -44,7 +63,24 @@ public class Deck
 		}
 	}
 
-	public void ResetDeck()
+	public int ResetDeck()
+	{
+		Seed = _seedGen.Next();
+		_rand = new(Seed);
+
+		Reset();
+
+		return Seed;
+	}
+
+	public void ResetDeck(int seed){
+		Seed = seed;
+		_rand = new(Seed);
+
+		Reset();
+	}
+
+	private void Reset()
 	{
 		for (int i = 0; i < NextCardIndex; i++)
 		{

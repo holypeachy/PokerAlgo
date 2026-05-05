@@ -485,12 +485,9 @@ TODO:
 ? Add path to pre-flop to a single location, like an environmental variable
 
 * Notes
-* Null-coalescing operator "??".
 * ResetDeck() THEN RemoveCards() together, always before using NextCard().
 
 * Changes
-* chore: make a few tiny changes
-* add debug verbosity 1 for manual runs in Sandbox
-* update path to pre-flop data directory
-* 
+* switch to .net 10
+* add seed gen to deck
 */

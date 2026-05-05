@@ -115,5 +115,27 @@ public class DeckTests
         deck.NextCardIndex.Should().Be(15);
     }
 
-    
+    [Fact]
+    public void Seed_Generates_Same_Deck_Order()
+    {
+        Random rand = new();
+        int seed = rand.Next();
+
+        Deck deck = new();
+
+        deck.ResetDeck(seed);
+        List<Card> firstOrder = deck.GetCopyOfListOfCards();
+        deck.ResetDeck(seed);
+        List<Card> secondOrder = deck.GetCopyOfListOfCards();
+
+        firstOrder.Should().BeEquivalentTo(secondOrder);
+
+        deck = new(seed);
+        firstOrder = deck.GetCopyOfListOfCards();
+        deck = new(seed);
+        secondOrder = deck.GetCopyOfListOfCards();
+
+        firstOrder.Should().BeEquivalentTo(secondOrder);
+    }
+
 }
