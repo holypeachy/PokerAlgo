@@ -5,17 +5,42 @@ namespace PokerAlgo;
 public class Deck
 {
 	private readonly List<Card> _cards;
-	private readonly Random _rand = new();
+	private Random _rand;
 	/// <summary>
 	/// Gets the index of the next card to be drawn from the deck.
 	/// </summary>
 	public int NextCardIndex { get; private set; }
 
+	private readonly Random _seedGen = new();
+	/// <summary>
+	/// Gets the current seed of the <see cref="Random"/> class used.
+	/// </summary>
+    public int Seed { get; private set; }
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Deck"/> class.
 	/// </summary>
-	public Deck()
+    public Deck()
 	{
+		Seed = _seedGen.Next();
+		_rand = new(Seed);
+
+		_cards = new List<Card>();
+		NextCardIndex = 0;
+
+		Create();
+
+		Shuffle();
+	}
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Deck"/> class with a seed.
+	/// </summary>
+	public Deck(int seed)
+	{
+		Seed = seed;
+		_rand = new(Seed);
+
 		_cards = new List<Card>();
 		NextCardIndex = 0;
 
@@ -54,9 +79,29 @@ public class Deck
 	}
 
 	/// <summary>
-	/// Resets the deck by clearing the drawn cards, resetting player flags, and reshuffling.
+	/// Resets the deck by clearing the drawn cards, resetting player flags, and reshuffling. Optional seed parameter for replayability.
 	/// </summary>
-	public void ResetDeck()
+	public int ResetDeck()
+	{
+		Seed = _seedGen.Next();
+		_rand = new(Seed);
+
+		Reset();
+
+		return Seed;
+	}
+
+	/// <summary>
+	/// Resets the deck by clearing the drawn cards, resetting player flags, and reshuffling. Optional seed parameter for replayability.
+	/// </summary>
+	public void ResetDeck(int seed){
+		Seed = seed;
+		_rand = new(Seed);
+
+		Reset();
+	}
+
+	private void Reset()
 	{
 		for (int i = 0; i < NextCardIndex; i++)
 		{
