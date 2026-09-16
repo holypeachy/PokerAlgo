@@ -48,7 +48,6 @@ func MustCard(rank int, suit CardSuit, isPlayerCard bool) Card {
 	return card
 }
 
-// Does not take into consideration IsPlayerCard
 func (c Card) Equal(other Card) bool {
 	return c.Rank == other.Rank && c.Suit == other.Suit
 }

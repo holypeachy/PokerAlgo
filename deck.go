@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"slices"
+	"sort"
 	"time"
 )
 
@@ -56,14 +57,22 @@ func (d *Deck) ResetDeck() int64 {
 func (d *Deck) ResetDeckWithSeed(seed int64) {
 	d.Seed = seed
 	d.rand = rand.New(rand.NewSource(seed))
+	d.resetOrder()
 	d.reset()
 }
 
 func (d *Deck) reset() {
-	d.cards = d.cards[:0]
-	d.create()
 	d.NextCardIndex = 0
 	d.shuffle()
+}
+
+func (d *Deck) resetOrder() {
+	sort.Slice(d.cards, func(i, j int) bool {
+		if d.cards[i].Suit == d.cards[j].Suit {
+			return d.cards[i].Rank < d.cards[j].Rank
+		}
+		return d.cards[i].Suit < d.cards[j].Suit
+	})
 }
 
 // Returns the first card, and then removes it from the deck

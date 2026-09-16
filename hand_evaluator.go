@@ -252,17 +252,14 @@ func sortCardsByValue(cards []Card) {
 }
 
 func hasConsecutiveValues(cards []Card) bool {
-	startingValue := 0
-	for i, card := range cards {
-		if i == 0 {
-			startingValue = card.Rank
-			continue
-		}
+	startingValue := cards[0].Rank
+	for i := 1; i < len(cards); i++ {
 		startingValue++
-		if card.Rank != startingValue {
+		if cards[i].Rank != startingValue {
 			return false
 		}
 	}
+
 	return true
 }
 

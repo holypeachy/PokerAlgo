@@ -212,11 +212,11 @@ func TestWinningChanceSimParallelAndWinningChanceSimSymmetric(t *testing.T) {
 func TestWinningChancePreFlopSimParallelAndWinningChancePreFlopSimSymmetric(t *testing.T) {
 	holeCards := Pair{First: MustCard(14, Spades, true), Second: MustCard(14, Clubs, true)}
 
-	simChance, err := GetWinningChancePreFlopSim(holeCards, 4, 500_000)
+	simChance, err := GetWinningChancePreFlopSim(holeCards, 4, 1_000_000)
 	if err != nil {
 		t.Fatalf("preflop sim: %v", err)
 	}
-	parallelChance, err := GetWinningChancePreFlopSimParallel(holeCards, 4, 500_000)
+	parallelChance, err := GetWinningChancePreFlopSimParallel(holeCards, 4, 1_000_000)
 	if err != nil {
 		t.Fatalf("parallel preflop sim: %v", err)
 	}

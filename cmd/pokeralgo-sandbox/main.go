@@ -468,5 +468,8 @@ TODO:
 * ResetDeck() THEN RemoveCards() together, always before using NextCard().
 
 * Changes
-* switch to go
+* Undo dumb stuff Codex did without my consent
+* Fix deck ResetWithSeed
+
+* God bless tests. Lots of thinking, I'm tired :(. This line by line translation might have been less worth it than I thought, ugh.
 */
