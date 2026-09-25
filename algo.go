@@ -1,7 +1,6 @@
 package pokeralgo
 
 import (
-	"fmt"
 	"slices"
 	"sort"
 )
@@ -11,10 +10,10 @@ func DetermineWinners(players []Player, communityCards []Card) ([]Player, error)
 		return nil, err
 	}
 
-	debugLog("--- 🔎 Algo Starts", debugProgress)
+	debugf(debugSummary, "🔎 [algo] evaluating %d players", len(players))
 	playersWithHands := slices.Clone(players)
 	for i := range playersWithHands {
-		debugLogDeterminingHand(playersWithHands[i].Name)
+		debugEvaluationStart(playersWithHands[i].Name)
 
 		combinedCards := []Card{
 			playersWithHands[i].HoleCards.First,
@@ -29,7 +28,7 @@ func DetermineWinners(players []Player, communityCards []Card) ([]Player, error)
 		playersWithHands[i].BestHand = &winningHand
 	}
 
-	debugLog("\n--- 💭 Find Winners", debugProgress)
+	debugf(debugSummary, "\n🔎 [algo] comparing evaluated hands")
 	return determineWinners(playersWithHands)
 }
 
@@ -38,7 +37,7 @@ func determineWinners(allPlayers []Player) ([]Player, error) {
 	players := slices.Clone(allPlayers)
 	sortPlayersByWinningHandTypeDesc(players)
 
-	debugLogPlayers("Algo.DetermineWinners() - Players after sorting by WinningHand.Type", players)
+	debugPlayers(debugSummary, "players after sorting", players)
 
 	winners, err := breakTies(players)
 	if err != nil {
@@ -47,6 +46,7 @@ func determineWinners(allPlayers []Player) ([]Player, error) {
 	if len(winners) < 1 {
 		return nil, newError(ErrInternalPokerAlgo, "invariant violated: winners count should never be less than 1")
 	}
+	debugWinners(winners)
 
 	return winners, nil
 }
@@ -70,17 +70,23 @@ func breakTies(players []Player) ([]Player, error) {
 				return nil, err
 			}
 
-			message := fmt.Sprintf("Players Tie (%s & %s)", winners[playerIndex].Name, winners[playerIndex+1].Name)
+			message := "tie"
 			if result == -1 {
-				message = winners[playerIndex].Name + " has the better hand\n"
+				message = winners[playerIndex].Name + " wins"
 			} else if result == 1 {
-				message = winners[playerIndex+1].Name + " has the better hand\n"
+				message = winners[playerIndex+1].Name + " wins"
 			}
-			debugLog("Algo.BreakTies() - "+message, debugEverything)
+			debugf(
+				debugTrace,
+				"⚖️ [compare] %s vs %s: %s",
+				winners[playerIndex].Name,
+				winners[playerIndex+1].Name,
+				message,
+			)
 
 			if result == -1 {
 				if winners[playerIndex].BestHand.Type > winners[playerIndex+1].BestHand.Type {
-					debugLog("Algo.BreakTies() - Winning hand type difference, early break\n", debugEverything)
+					debugf(debugTrace, "⚖️ [compare] different hand types: remaining players cannot win")
 
 					for k := playerIndex + 1; k < len(winners); k++ {
 						tempPlayers = removePlayer(tempPlayers, winners[k])
@@ -109,8 +115,8 @@ func compareWinningHands(left *Hand, right *Hand) (int, error) {
 		return 0, newError(ErrInternalPokerAlgo, "invariant violated: a passed winning hand argument is nil")
 	}
 
-	debugLogCards("Algo.CompareWinningHands() - Left.Cards", left.Cards)
-	debugLogCards("Algo.CompareWinningHands() - Right.Cards", right.Cards)
+	debugCards(debugTrace, "compare", "left hand", left.Cards)
+	debugCards(debugTrace, "compare", "right hand", right.Cards)
 
 	if left.Type > right.Type {
 		return -1, nil
@@ -184,8 +190,8 @@ func compareWinningHands(left *Hand, right *Hand) (int, error) {
 
 // -1 left wins, 0 tie, 1 right wins
 func compareKickers(left []Card, right []Card) (int, error) {
-	debugLogCards("Algo.CompareKickers() - Left", left)
-	debugLogCards("Algo.CompareKickers() - Right", right)
+	debugCards(debugTrace, "compare", "left kickers", left)
+	debugCards(debugTrace, "compare", "right kickers", right)
 
 	if len(left) != len(right) {
 		return 0, newError(ErrInternalPokerAlgo, "invariant violated: left and right kicker counts differ")
@@ -193,15 +199,15 @@ func compareKickers(left []Card, right []Card) (int, error) {
 
 	for i := len(left) - 1; i >= 0; i-- {
 		if left[i].Rank > right[i].Rank {
-			debugLog("Algo.CompareKickers() - Left Wins", debugEverything)
+			debugf(debugTrace, "⚖️ [compare] kicker result: left wins")
 			return -1, nil
 		} else if right[i].Rank > left[i].Rank {
-			debugLog("Algo.CompareKickers() - Right Wins", debugEverything)
+			debugf(debugTrace, "⚖️ [compare] kicker result: right wins")
 			return 1, nil
 		}
 	}
 
-	debugLog("Algo.CompareKickers() - Tie", debugEverything)
+	debugf(debugTrace, "⚖️ [compare] kicker result: tie")
 
 	return 0, nil
 }

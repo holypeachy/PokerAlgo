@@ -13,7 +13,7 @@ func Evaluate(combinedCards []Card) (Hand, error) {
 	cardsCopy := slices.Clone(combinedCards)
 	sortCardsByValue(cardsCopy)
 
-	debugLogCards("HandEvaluator.GetWinningHand() - All Cards", cardsCopy)
+	debugCards(debugTrace, "evaluate", "input", cardsCopy)
 
 	return evaluateHand(cardsCopy)
 }
@@ -32,10 +32,10 @@ func evaluateHand(cards []Card) (Hand, error) {
 	pairs := cardsByRankCount(cards, 2)
 	sortCardsByValue(pairs)
 
-	debugLogCards("HandEvaluator.EvaluateHand() - Flush Cards", flushCards)
-	debugLogCards("HandEvaluator.EvaluateHand() - Four Kind Cards", fourKind)
-	debugLogCards("HandEvaluator.EvaluateHand() - Three Kind Cards", threeKinds)
-	debugLogCards("HandEvaluator.EvaluateHand() - Pair Cards", pairs)
+	debugCards(debugTrace, "evaluate", "flush candidates", flushCards)
+	debugCards(debugTrace, "evaluate", "four-kind candidates", fourKind)
+	debugCards(debugTrace, "evaluate", "three-kind candidates", threeKinds)
+	debugCards(debugTrace, "evaluate", "pair candidates", pairs)
 
 	var bestFive []Card
 
@@ -115,7 +115,7 @@ func evaluateHand(cards []Card) (Hand, error) {
 		}
 	}
 
-	debugLogCards("HandEvaluator.EvaluateHand() - Without Duplicates", tempCards)
+	debugCards(debugTrace, "evaluate", "straight candidates without duplicate ranks", tempCards)
 
 	for i := len(tempCards) - 5; i >= 0; i-- {
 		bestFive = slices.Clone(tempCards[i : i+5])
@@ -193,7 +193,7 @@ func completeWinningHand(winningCards []Card, allCards []Card) ([]Card, error) {
 	completeHand := slices.Clone(winningCards)
 	neededNumberOfCards := 5 - len(winningCards)
 	remainingCards := exceptCards(allCards, winningCards)
-	debugLogCards("HandEvaluator.CompleteWinningHand() - remainingCards", remainingCards)
+	debugCards(debugTrace, "evaluate", "remaining kicker candidates", remainingCards)
 
 	if neededNumberOfCards < 1 {
 		return nil, newError(ErrInternalPokerAlgo, "invariant violation: neededNumberOfCards is less than 1")
@@ -214,7 +214,7 @@ func completeWinningHand(winningCards []Card, allCards []Card) ([]Card, error) {
 }
 
 func newWinningHand(handType HandType, cards []Card) Hand {
-	debugLogWinningHand(handType, cards)
+	debugEvaluationResult(handType, cards)
 	return Hand{Type: handType, Cards: cards}
 }
 

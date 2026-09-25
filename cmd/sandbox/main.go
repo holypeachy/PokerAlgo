@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	pokeralgo "pokeralgo"
@@ -15,6 +17,7 @@ import (
 const numOfCommunityCards = 5
 
 var playerNames = []string{"Tom", "Matt", "Ben", "Sam", "Jim"}
+var sandboxLogger = log.New(os.Stdout, "", 0)
 
 func main() {
 	mode := flag.String("mode", "", "mode: main, sim, chen, lookup, manual, compute, template-hand, template-algo")
@@ -24,15 +27,22 @@ func main() {
 	outDir := flag.String("out", "", "output directory for compute/template modes")
 	opponents := flag.Int("opponents", 0, "number of opponents for compute mode")
 	parallel := flag.Bool("parallel", true, "use parallel simulations where applicable")
+	debug := flag.String("debug", "off", "debug level: off, summary, trace")
 	flag.Parse()
 
+	if err := pokeralgo.SetDebugLevel(*debug); err != nil {
+		fmt.Fprintf(os.Stderr, "⚠️ [sandbox] %v\n", err)
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	if !flagProvided("mode") {
-		fmt.Fprintln(os.Stderr, "⚠️ pokeralgo-sandbox: please provide -mode")
+		fmt.Fprintln(os.Stderr, "⚠️ [sandbox] please provide -mode")
 		flag.Usage()
 		os.Exit(1)
 	}
 	if err := validateModeFlags(*mode); err != nil {
-		fmt.Fprintf(os.Stderr, "⚠️ pokeralgo-sandbox: %v\n", err)
+		fmt.Fprintf(os.Stderr, "⚠️ [sandbox] %v\n", err)
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -79,12 +89,12 @@ func main() {
 			exitErr(err)
 		}
 	default:
-		fmt.Fprintln(os.Stderr, "⚠️ pokeralgo-sandbox: please enter a valid -mode")
+		fmt.Fprintln(os.Stderr, "⚠️ [sandbox] please enter a valid -mode")
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	fmt.Printf("\n🕜 Execution Time: %s\n", time.Since(started).Round(time.Millisecond))
+	sandboxLogger.Printf("\n🕜 [sandbox] execution time: %s", time.Since(started).Round(time.Millisecond))
 }
 
 func validateModeFlags(mode string) error {
@@ -141,31 +151,24 @@ func makePlayers(deck *pokeralgo.Deck) []pokeralgo.Player {
 }
 
 func printGameStart(players []pokeralgo.Player, communityCards []pokeralgo.Card, preflopDir string) {
-	fmt.Println("--- 🚀 Game Starts")
-	fmt.Println("--- 😎 Players:")
-
 	loader := pokeralgo.NewFolderLoader(preflopDir)
+	var output strings.Builder
+	output.WriteString("🚀 [sandbox] game started\n👥 [sandbox] players")
 	for _, player := range players {
 		chance, err := pokeralgo.GetWinningChancePreFlopLookUp(player.HoleCards, len(players)-1, loader)
 		if err != nil {
-			fmt.Printf("\t??.??%% - %s\n", player)
+			fmt.Fprintf(&output, "\n   ??.??%% | %s", player)
 			continue
 		}
-		fmt.Printf("\t%0.2f%% - %s\n", chance.Win*100, player)
+		fmt.Fprintf(&output, "\n   %0.2f%% | %s", chance.Win*100, player)
 	}
+	sandboxLogger.Print(output.String())
 
-	fmt.Print("\n--- 🃏 Community Cards:\n\t\t")
-	for _, card := range communityCards {
-		fmt.Printf("%s ", card)
-	}
-	fmt.Println()
-	fmt.Println()
+	sandboxLogger.Printf("🃏 [sandbox] community cards\n   %s", cardsToString(communityCards))
 }
 
 func monteCarloSim(players []pokeralgo.Player, communityCards []pokeralgo.Card, sims int, parallel bool) error {
-	fmt.Println()
-	fmt.Printf("Number of Simulations: %d\n", sims)
-	fmt.Println("-----------------------------")
+	sandboxLogger.Printf("\n🎲 [simulation] running\n   simulations: %d\n   parallel: %t", sims, parallel)
 
 	for _, player := range players {
 		winningHand, err := pokeralgo.EvaluatePlayer(player.HoleCards, communityCards)
@@ -174,23 +177,24 @@ func monteCarloSim(players []pokeralgo.Player, communityCards []pokeralgo.Card, 
 		}
 		player.BestHand = &winningHand
 
-		printPlayerHand(player)
-
 		chance, err := winningChanceSim(player.HoleCards, communityCards, len(players)-1, sims, parallel)
 		if err != nil {
 			return err
 		}
 
-		fmt.Printf("\tWin: %0.2f%%\n", chance.Win*100)
-		fmt.Printf("\tTie: %0.2f%%\n\n", chance.Tie*100)
+		sandboxLogger.Printf(
+			"👤 [simulation] %s\n   win: %0.2f%%\n   tie: %0.2f%%",
+			formatPlayerHand(player),
+			chance.Win*100,
+			chance.Tie*100,
+		)
 	}
 
 	return nil
 }
 
 func chenPreFlopChances(players []pokeralgo.Player) error {
-	fmt.Println("Chen + Sigmoid Pre-Flop")
-	fmt.Println("-----------------------------")
+	sandboxLogger.Print("🧮 [chen] preflop estimates")
 	for _, player := range players {
 		chen, err := pokeralgo.GetPreFlopChen(player.HoleCards)
 		if err != nil {
@@ -201,9 +205,7 @@ func chenPreFlopChances(players []pokeralgo.Player) error {
 			return err
 		}
 
-		fmt.Println(player)
-		fmt.Printf("\tChen: %v\n", chen)
-		fmt.Printf("\tWin: %0.2f%%\n", chance*100)
+		sandboxLogger.Printf("   %s | chen=%v | win=%0.2f%%", player, chen, chance*100)
 	}
 
 	samples := []struct {
@@ -215,7 +217,7 @@ func chenPreFlopChances(players []pokeralgo.Player) error {
 		{"27o", pokeralgo.HoleCards{First: pokeralgo.MustCard(2, pokeralgo.Spades, true), Second: pokeralgo.MustCard(7, pokeralgo.Diamonds, true)}},
 	}
 
-	fmt.Println()
+	sandboxLogger.Print("🧪 [chen] reference hands")
 	for _, sample := range samples {
 		chen, err := pokeralgo.GetPreFlopChen(sample.cards)
 		if err != nil {
@@ -226,7 +228,7 @@ func chenPreFlopChances(players []pokeralgo.Player) error {
 			return err
 		}
 
-		fmt.Printf("%s\n  Chen: %v\n  Win: %0.2f%%\n", sample.name, chen, chance*100)
+		sandboxLogger.Printf("   %s | chen=%v | win=%0.2f%%", sample.name, chen, chance*100)
 	}
 
 	return nil
@@ -235,19 +237,15 @@ func chenPreFlopChances(players []pokeralgo.Player) error {
 func lookupPreFlopChances(players []pokeralgo.Player, preflopDir string) error {
 	loader := pokeralgo.NewFolderLoader(preflopDir)
 
-	fmt.Println("Lookup Pre-Flop Chances")
-	fmt.Println("-----------------------------")
+	sandboxLogger.Print("📚 [lookup] preflop chances")
 	for _, player := range players {
 		chance, err := pokeralgo.GetWinningChancePreFlopLookUp(player.HoleCards, len(players)-1, loader)
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(player)
-		fmt.Printf("\tWin: %0.2f%%\n", chance.Win*100)
-		fmt.Printf("\tTie: %0.2f%%\n", chance.Tie*100)
+		sandboxLogger.Printf("   %s | win=%0.2f%% | tie=%0.2f%%", player, chance.Win*100, chance.Tie*100)
 	}
-	fmt.Println()
 
 	return nil
 }
@@ -257,8 +255,12 @@ func preFlopComputation(opponents int, sims int, outDir string) error {
 		return fmt.Errorf("please enter a valid directory path")
 	}
 
-	fmt.Println("💭 Computing chances of winning for all starting hands...")
-	fmt.Printf("Simulations per Hand: %d\n", sims)
+	sandboxLogger.Printf(
+		"💭 [compute] generating preflop data\n   opponents: %d\n   simulations per hand: %d\n   output: %s",
+		opponents,
+		sims,
+		outDir,
+	)
 
 	return preflopcompute.Run(preflopcompute.Options{
 		MaxOpponents: opponents,
@@ -273,10 +275,12 @@ func mainExecution(players []pokeralgo.Player, communityCards []pokeralgo.Card) 
 		return err
 	}
 
-	fmt.Println("🥇 Program.Main() Winner(s):")
+	var output strings.Builder
+	output.WriteString("🥇 [result] winners")
 	for _, player := range winners {
-		printPlayerHand(player)
+		fmt.Fprintf(&output, "\n   %s", formatPlayerHand(player))
 	}
+	sandboxLogger.Print(output.String())
 	return nil
 }
 
@@ -287,55 +291,68 @@ func manual(players []pokeralgo.Player, communityCards []pokeralgo.Card) error {
 
 	timer := time.Now()
 
-	fmt.Println(players[0])
-	fmt.Println()
-	for _, card := range communityCards {
-		fmt.Printf("%s ", card)
-	}
-	fmt.Println()
-
 	winningHand, err := pokeralgo.EvaluatePlayer(players[0].HoleCards, communityCards)
 	if err != nil {
 		return err
 	}
-	fmt.Println()
-	fmt.Println(winningHand)
-	fmt.Println()
+	sandboxLogger.Printf(
+		"🧪 [manual] hand\n   player: %s\n   board: %s\n   result: %s",
+		players[0],
+		cardsToString(communityCards),
+		pokeralgo.DescribeHand(winningHand),
+	)
 
-	fmt.Println("4 Opponents, 1 Million Sims")
-	fmt.Println()
+	sandboxLogger.Print("🎲 [manual] postflop benchmark\n   opponents: 4\n   simulations: 1000000")
 	started := time.Now()
 	result, err := pokeralgo.GetWinningChanceSim(players[0].HoleCards, communityCards, 4, 1_000_000)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Single-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.Win, result.Tie, time.Since(started).Round(time.Millisecond))
+	sandboxLogger.Printf(
+		"   sequential | win=%v | tie=%v | time=%s",
+		result.Win,
+		result.Tie,
+		time.Since(started).Round(time.Millisecond),
+	)
 
 	started = time.Now()
 	result, err = pokeralgo.GetWinningChanceSimParallel(players[0].HoleCards, communityCards, 4, 1_000_000)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Multi-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.Win, result.Tie, time.Since(started).Round(time.Millisecond))
+	sandboxLogger.Printf(
+		"   parallel   | win=%v | tie=%v | time=%s",
+		result.Win,
+		result.Tie,
+		time.Since(started).Round(time.Millisecond),
+	)
 
-	fmt.Println("\nPre-Flop")
-	fmt.Println("4 Opponents, 1 Million Sims")
-	fmt.Println()
+	sandboxLogger.Print("🎲 [manual] preflop benchmark\n   opponents: 4\n   simulations: 1000000")
 	started = time.Now()
 	result, err = pokeralgo.GetWinningChancePreFlopSim(players[0].HoleCards, 4, 1_000_000)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Single-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.Win, result.Tie, time.Since(started).Round(time.Millisecond))
+	sandboxLogger.Printf(
+		"   sequential | win=%v | tie=%v | time=%s",
+		result.Win,
+		result.Tie,
+		time.Since(started).Round(time.Millisecond),
+	)
 
 	started = time.Now()
 	result, err = pokeralgo.GetWinningChancePreFlopSimParallel(players[0].HoleCards, 4, 1_000_000)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Multi-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.Win, result.Tie, time.Since(started).Round(time.Millisecond))
+	sandboxLogger.Printf(
+		"   parallel   | win=%v | tie=%v | time=%s",
+		result.Win,
+		result.Tie,
+		time.Since(started).Round(time.Millisecond),
+	)
 
-	fmt.Printf("\nManual total time: %s\n", time.Since(timer).Round(time.Millisecond))
+	sandboxLogger.Printf("🕜 [manual] total time: %s", time.Since(timer).Round(time.Millisecond))
 	return nil
 }
 
@@ -346,14 +363,14 @@ func winningChanceSim(cards pokeralgo.HoleCards, communityCards []pokeralgo.Card
 	return pokeralgo.GetWinningChanceSim(cards, communityCards, opponents, sims)
 }
 
-func printPlayerHand(player pokeralgo.Player) {
+func formatPlayerHand(player pokeralgo.Player) string {
 	handName := "<nil>"
 	cards := ""
 	if player.BestHand != nil {
 		handName = pokeralgo.DescribeHand(*player.BestHand)
 		cards = cardsToString(player.BestHand.Cards)
 	}
-	fmt.Printf("\t %s  %s  %s \n", player.Name, handName, cards)
+	return fmt.Sprintf("%s | %s | %s", player.Name, handName, cards)
 }
 
 func cardsToString(cards []pokeralgo.Card) string {
@@ -368,7 +385,7 @@ func cardsToString(cards []pokeralgo.Card) string {
 }
 
 func makeTemplateHandEvalTestJSON(pathToTest string) error {
-	fmt.Printf("- Making Tests JSON file for: %q\n", pathToTest)
+	sandboxLogger.Printf("🧪 [fixture] creating hand template: %q", pathToTest)
 	deck := pokeralgo.NewDeck()
 	community := deck.MustDrawN(5)
 	playerHand := pokeralgo.HoleCards{First: deck.MustDraw(), Second: deck.MustDraw()}
@@ -384,7 +401,7 @@ func makeTemplateHandEvalTestJSON(pathToTest string) error {
 }
 
 func makeTemplateAlgoTestJSON(pathToTest string) error {
-	fmt.Printf("- Making Tests JSON file for: %q\n", pathToTest)
+	sandboxLogger.Printf("🧪 [fixture] creating winner template: %q", pathToTest)
 	deck := pokeralgo.NewDeck()
 	community := deck.MustDrawN(5)
 	players := []pokeralgo.Player{
@@ -419,12 +436,12 @@ func writeIndentedJSON(path string, value any) error {
 	if err := os.WriteFile(path, data, 0o644); err != nil {
 		return err
 	}
-	fmt.Printf("- %q has been created!\n", path)
+	sandboxLogger.Printf("✅ [fixture] created: %q", path)
 	return nil
 }
 
 func exitErr(err error) {
-	fmt.Fprintf(os.Stderr, "⛔ %v\n", err)
+	fmt.Fprintf(os.Stderr, "⛔ [sandbox] %v\n", err)
 	os.Exit(1)
 }
 
@@ -452,10 +469,8 @@ TODO
 TODO:
 
 ? Future Ideas
-? Semantic Debug Levels. Use an enum for verbosity levels.
 ? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.
 ? Remove symmetric entries on the preflop computation logic. AKo == KAo
-? Replace hard coded debug logs Class.Method() format by using nameof()
 
 ? Simulate all players together for accurate chances of winning that add to 100%.
 ? Precompute post-flop chances of winning? ( Would probably take days of CPU time :< )
@@ -471,10 +486,6 @@ TODO:
 * One game seed reproduces every shuffle. To reach a later hand, recreate the Deck and advance it with Reset().
 
 * Changes
-* Renamed a lot of types, vars, and functions
-* Simplify the Deck API
-* Made the Deck cursor and seed unexported. Added Remaining() and Seed().
-* Reset() no longer creates or returns a new seed. create a new seeded Deck instead.
-* GenerateSeed() uses crypto/rand and returns a seed suitable for NewDeckWithSeed().
-* Generated architectural docs for future reference.
+* Restyled internal and sandbox output with summary/trace levels, standard log, consistent component labels, and emojis.
+* Added the sandbox -debug flag: off, summary, or trace.
 */

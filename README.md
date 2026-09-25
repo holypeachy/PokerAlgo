@@ -29,15 +29,18 @@ PokerAlgo requires Go 1.26 or later.
 git clone https://github.com/holypeachy/PokerAlgo.git
 cd PokerAlgo
 go test ./...
-go run ./cmd/pokeralgo-sandbox -mode main -preflop-dir ./resources/preflop_data
+go run ./cmd/sandbox -mode main -preflop-dir ./resources/preflop_data
 ```
 > A little note: 1 or 2 tests may fail because some of these are probabilistic, try to rerun it if you want. But 1 test failing doesn't necessarily mean there's a bug.
 
 The sandbox has different modes for inspecting hand evaluation, comparing probability methods, running simulations, and generating test fixture templates. This utility is what I use to help with development.
 
 ```sh
-go run ./cmd/pokeralgo-sandbox -h
+go run ./cmd/sandbox -h
+go run ./cmd/sandbox -mode main -preflop-dir ./resources/preflop_data -debug summary
 ```
+
+Debug output defaults to `off`. The available levels are `off`, `summary`, and `trace`.
 
 ## Usage
 

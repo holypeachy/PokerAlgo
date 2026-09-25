@@ -3,11 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
 	"pokeralgo/internal/preflopcompute"
 )
+
+var computeLogger = log.New(os.Stdout, "", 0)
 
 func main() {
 	opponents := flag.Int("opponents", 0, "maximum number of opponents to compute, starting at 1")
@@ -16,17 +19,18 @@ func main() {
 	flag.Parse()
 
 	if !allFlagsProvided("opponents", "sims", "out") {
-		fmt.Fprintln(os.Stderr, "⚠️ pokeralgo-compute: please provide required flags")
+		fmt.Fprintln(os.Stderr, "⚠️ [compute] please provide required flags")
 		flag.Usage()
 		os.Exit(1)
 	}
 
 	started := time.Now()
-	fmt.Println("💭 Computing chances of winning for all starting hands...")
-	fmt.Printf("Number of Opponents: %d\n", *opponents)
-	fmt.Printf("Simulations per Hand: %d\n", *sims)
-	fmt.Println("Parallel: true")
-	fmt.Printf("Output Directory: %s\n\n", *outDir)
+	computeLogger.Printf(
+		"💭 [compute] generating preflop data\n   opponents: %d\n   simulations per hand: %d\n   parallel: true\n   output: %s",
+		*opponents,
+		*sims,
+		*outDir,
+	)
 
 	err := preflopcompute.Run(preflopcompute.Options{
 		MaxOpponents: *opponents,
@@ -34,12 +38,12 @@ func main() {
 		OutDir:       *outDir,
 	})
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "⛔ compute failed: %v\n", err)
+		fmt.Fprintf(os.Stderr, "⛔ [compute] %v\n", err)
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	fmt.Printf("\n🕜 Execution Time: %s\n", time.Since(started).Round(time.Millisecond))
+	computeLogger.Printf("\n🕜 [compute] execution time: %s", time.Since(started).Round(time.Millisecond))
 }
 
 func allFlagsProvided(names ...string) bool {

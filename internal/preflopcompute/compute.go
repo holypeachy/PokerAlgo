@@ -3,6 +3,7 @@ package preflopcompute
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -25,6 +26,8 @@ var cardPrintLookUp = map[int]string{
 	8: "8", 9: "9", 10: "T", 11: "J", 12: "Q", 13: "K", 14: "A",
 }
 
+var computeLogger = log.New(os.Stdout, "", 0)
+
 func Run(options Options) error {
 	if options.MaxOpponents < 1 || options.Sims < 100 {
 		return fmt.Errorf("please use opponents >= 1 and sims >= 100")
@@ -36,7 +39,7 @@ func Run(options Options) error {
 	hands := BuildStartingHands()
 
 	for currentOpponents := 1; currentOpponents <= options.MaxOpponents; currentOpponents++ {
-		fmt.Printf("Current Number of Opponents: %d\n", currentOpponents)
+		computeLogger.Printf("💭 [compute] opponent count: %d", currentOpponents)
 
 		filePath := filepath.Join(options.OutDir, fmt.Sprintf("%d_%d.preflop", currentOpponents, options.Sims))
 		file, err := os.Create(filePath)
@@ -57,7 +60,7 @@ func Run(options Options) error {
 				return err
 			}
 
-			fmt.Printf("\rProgress: %d/%d", index+1, len(hands))
+			fmt.Printf("\r⏳ [compute] progress: %d/%d", index+1, len(hands))
 		}
 
 		if err := writer.Flush(); err != nil {
@@ -68,10 +71,10 @@ func Run(options Options) error {
 			return err
 		}
 
-		fmt.Printf("\n✅ Computations done. Data can be found in: %s\n\n", filePath)
+		computeLogger.Printf("\n✅ [compute] complete\n   file: %s", filePath)
 	}
 
-	fmt.Println("🗯️ The data generated can be used by the default PokerAlgo Loader (FolderLoader).")
+	computeLogger.Print("📚 [compute] data is ready for FolderLoader")
 	return nil
 }
 

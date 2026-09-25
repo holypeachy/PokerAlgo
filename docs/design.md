@@ -19,8 +19,8 @@ PokerAlgo is a Go module named `pokeralgo`. The root package exposes the reusabl
 
 There are two command packages:
 
-- `cmd/pokeralgo-sandbox`: manual inspection utility with modes for showdown, simulations, Chen score, lookup data, preflop computation, and fixture templates.
-- `cmd/pokeralgo-compute`: focused CLI for generating `.preflop` files through `internal/preflopcompute`.
+- `cmd/sandbox`: manual inspection utility with modes for showdown, simulations, Chen score, lookup data, preflop computation, and fixture templates.
+- `cmd/compute`: focused CLI for generating `.preflop` files through `internal/preflopcompute`.
 
 Repository data:
 
@@ -47,6 +47,13 @@ Important invariant:
 Reasonable inference:
 
 - `IsHoleCard` exists mostly to preserve/read better output during hand construction when duplicate ranks occur. It is not used to determine poker strength once a `Hand` is built.
+
+## Debug Output
+
+- `SetDebugLevel` accepts `off`, `summary`, or `trace`; invalid values return `ErrInvalidArgument`.
+- Debug output is disabled by default and written to standard error.
+- The sandbox exposes the setting through `-debug`. PokerGame does not expose it unless it deliberately calls `SetDebugLevel` itself.
+- Set the level during startup before concurrent simulations begin; debug configuration is package-global.
 
 ## Deck Behavior
 
@@ -182,7 +189,7 @@ Preflop lookup:
 
 Preflop data generation:
 
-`pokeralgo-compute or sandbox compute -> preflopcompute.Run -> BuildStartingHands -> parallel preflop sims -> .preflop files`
+`compute or sandbox compute -> preflopcompute.Run -> BuildStartingHands -> parallel preflop sims -> .preflop files`
 
 ## Tests and Edge Cases
 
@@ -216,7 +223,7 @@ Facts from README/TODOs/code:
 - Post-flop lookup/precomputed tables are not implemented.
 - Preflop lookup data has no metadata beyond filename and row values.
 - Preflop data currently covers only the checked-in opponent counts; lookup for unsupported counts fails.
-- Debug logging is package-global state and mostly aimed at local CLI/manual diagnosis.
+- Debug logging is package-global state and mostly aimed at local CLI/manual diagnosis. Configure it before starting concurrent work.
 - `FolderLoader` caches data but does not protect that cache with synchronization.
 - Preflop computation can be expensive because it runs Monte Carlo simulations for every generated starting-hand notation and opponent count.
 - The module declares `go 1.26`; that version requirement is higher than many installed Go toolchains.
