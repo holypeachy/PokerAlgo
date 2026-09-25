@@ -434,7 +434,7 @@ type algoTest struct {
 !
 
 TODO
-TODO:
+TODO: Optimize performance
 
 ? Future Ideas
 ? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.
@@ -455,6 +455,5 @@ TODO:
 * For bulk compute, GOGC=1000 trades roughly 190-237 MB of memory for much higher CPU utilization and substantially lower execution time.
 
 * Changes
-* Renamed chance_calculator.go to simulations.go and shortened the public simulation, lookup, and Chen APIs.
-* Renamed hand_evaluator.go to evaluator.go and standardized the validation helper names.
+*
 */

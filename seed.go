@@ -2,15 +2,15 @@ package pokeralgo
 
 import (
 	"crypto/rand"
-	"encoding/binary"
+	"math"
+	"math/big"
 )
 
 func GenerateSeed() (int64, error) {
-	var bytes [8]byte
-
-	if _, err := rand.Read(bytes[:]); err != nil {
+	seed, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
+	if err != nil {
 		return 0, wrapError(ErrSeedGeneration, "generate seed", err)
 	}
 
-	return int64(binary.LittleEndian.Uint64(bytes[:]) >> 1), nil
+	return seed.Int64(), nil
 }
