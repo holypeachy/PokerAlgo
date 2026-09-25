@@ -18,7 +18,7 @@ The project is built around one central idea:
 
 `DetermineWinners` uses `Evaluate` for every player, then compares the results.
 
-The chance calculator repeatedly uses `DetermineWinners` inside simulated games.
+The simulation code repeatedly uses `DetermineWinners` inside simulated games.
 
 So the dependency flow is:
 
@@ -32,7 +32,7 @@ Evaluate
 DetermineWinners
         |
         v
-ChanceCalculator
+Simulations
 ```
 
 The evaluator is the base of the whole project. If it correctly identifies the best five-card hand, the winner logic and simulations can build on top of it.
@@ -142,7 +142,9 @@ return win chance and tie chance
 
 Preflop simulation is the same idea, except only the player's two hole cards are known, so the simulation deals all five community cards.
 
-The parallel versions split the number of simulations across CPU cores and add the results together at the end.
+The simulation functions split work into one fixed job per logical CPU, run each job in a goroutine, and add the results together at the end.
+
+Bulk preflop generation creates large volumes of short-lived allocations. For the standalone compute workload, a larger `GOGC` target lets those jobs remain runnable instead of repeatedly stopping at Go's small default heap target. This is an execution-time tuning concern rather than part of the poker algorithm.
 
 ## Preflop Lookup
 
@@ -190,9 +192,9 @@ PokerAlgo is simple if you think of it in layers:
 
 ```text
 Deck deals cards.
-HandEvaluator picks the best 5-card hand.
+Evaluator picks the best 5-card hand.
 Algo compares those hands to find winners.
-ChanceCalculator simulates many games by repeatedly calling Algo.
+Simulations run many games by repeatedly calling Algo.
 Preflop lookup skips simulation by reading generated results from files.
 ```
 

@@ -10,9 +10,9 @@ PokerAlgo is a Go module named `pokeralgo`. The root package exposes the reusabl
 
 - `card.go`, `types.go`: cards, suits, players, hand types, pairs, and winning-hand data structures.
 - `deck.go`: seeded/random deck construction, shuffle, draw, reset, and known-card removal.
-- `hand_evaluator.go`: best five-card hand classification from 5-7 cards.
+- `evaluator.go`: best five-card hand classification from 5-7 cards.
 - `algo.go`: showdown winner selection across players.
-- `chance_calculator.go`: Monte Carlo equity estimates, preflop Chen score, and preflop lookup entry points.
+- `simulations.go`: Monte Carlo equity estimates, preflop Chen score, and preflop lookup entry points.
 - `preflop_loader.go`: file-backed preflop lookup table loading.
 - `guards.go`, `errors.go`: validation and typed error categories.
 - `debug.go`, `helpers.go`: debug output and display names.
@@ -54,6 +54,14 @@ Reasonable inference:
 - Debug output is disabled by default and written to standard error.
 - The sandbox exposes the setting through `-debug`. PokerGame does not expose it unless it deliberately calls `SetDebugLevel` itself.
 - Set the level during startup before concurrent simulations begin; debug configuration is package-global.
+
+## Validation
+
+- Validation helpers in `guards.go` consistently use `validate...` names.
+- `validatePlayersAndBoard` protects showdown input.
+- `validateEvaluationCards` protects direct evaluation input.
+- `validateSimulation`, `validatePreflopSimulation`, and `validatePreflopLookup` protect probability entry points.
+- `validateHoleCards`, `validateUniqueCards`, and `validateUniqueCardsAndNoLowAces` provide shared checks.
 
 ## Deck Behavior
 
@@ -133,11 +141,19 @@ Reasonable inference:
 
 Monte Carlo facts:
 
-- `GetWinningChanceSim` estimates win/tie rates from known hole cards and 3-5 known community cards.
-- `GetWinningChancePreFlopSim` estimates preflop win/tie rates from only the player's hole cards.
-- Parallel variants split the requested simulation count across `runtime.NumCPU()` goroutines and aggregate wins/ties.
+- `Simulate` estimates win/tie rates from known hole cards and 3-5 known community cards.
+- `SimulatePreflop` estimates preflop win/tie rates from only the player's hole cards.
+- Simulations always run in parallel. They split the requested count into one fixed job per `runtime.NumCPU()`, launch one goroutine per job, then aggregate wins/ties from a buffered result channel after a `sync.WaitGroup` completes.
 - Each simulation resets a deck, excludes known cards, deals random opponent hands, completes community cards if needed, calls `DetermineWinners`, and counts the named player as win or tie.
 - Results are independent from the target player's perspective. They are not a combined table where all known players' chances sum to 100%.
+
+Performance facts measured during the Go port:
+
+- An allocation profile covering two million preflop simulations reported about 25.3 GB allocated across 288.8 million objects.
+- The default collector performed 12,930 collections during one two-million-simulation sandbox run because the live heap repeatedly returned near zero and the heap goal stayed small.
+- In the same benchmark, `GOGC=1000` reduced execution from about 5.9 seconds to 1.8 seconds while increasing peak memory from roughly 32 MB to 190-237 MB and raising CPU use from about five to twelve logical cores.
+- An identical 325-hand, one-opponent, 10,000-simulation compute run took about 2.69 seconds in C# Release, 4.53 seconds in Go with default GC behavior, and 1.59 seconds in Go with `GOGC=1000`.
+- GC tuning is not currently embedded in the library. For offline computation, use `GOGC=1000` and optionally a soft `GOMEMLIMIT`, such as `1GiB`.
 
 Validation facts:
 
@@ -148,8 +164,8 @@ Validation facts:
 
 Chen scoring facts:
 
-- `GetPreFlopChen` implements a Bill Chen style score using highest card base value, pair doubling/minimum, suited bonus, gap penalty, connector bonus, and rounding.
-- `GetWinningChancePreFlopChen` maps the Chen score through a sigmoid using `handStrengthSensitivity = 0.175` and `baselineWinRate = -1.85`.
+- `ChenScore` implements a Bill Chen style score using highest card base value, pair doubling/minimum, suited bonus, gap penalty, connector bonus, and rounding.
+- `ChenEstimate` maps the Chen score through a sigmoid using `handStrengthSensitivity = 0.175` and `baselineWinRate = -1.85`.
 - Tests pin known Chen values: `AKs = 12`, `TTo = 10`, `57s = 6`, `27o = -1`, `AAo = 20`.
 
 Preflop lookup facts:
@@ -157,7 +173,7 @@ Preflop lookup facts:
 - `FolderLoader.Load` glob-loads `*.preflop` files from a directory, parses opponent count from the filename prefix before `_`, and stores rows keyed by `(notation, opponentCount)`.
 - Rows are `notation winChance tieChance`, whitespace-separated.
 - Loaded data is cached on the `FolderLoader`; there is no cache invalidation.
-- `GetWinningChancePreFlopLookUp` builds notation from the hole-card order plus `s` or `o`.
+- `LookupPreflop` builds notation from the hole-card order plus `s` or `o`.
 - Checked-in data contains 325 rows per opponent count for 1-4 opponents.
 
 Preflop compute facts:
@@ -177,15 +193,15 @@ Showdown:
 
 Post-flop/turn/river simulation:
 
-`caller -> GetWinningChanceSim/Parallel -> validate known cards -> for each sim: reset deck -> exclude known player/community cards -> deal opponents -> complete board -> DetermineWinners -> count target player win/tie -> Chance`
+`caller -> Simulate -> validate known cards -> for each sim: reset deck -> exclude known player/community cards -> deal opponents -> complete board -> DetermineWinners -> count target player win/tie -> Chance`
 
 Preflop simulation:
 
-`caller -> GetWinningChancePreFlopSim/Parallel -> validate hole cards -> for each sim: reset deck -> exclude target hole cards -> deal opponents -> deal full board -> DetermineWinners -> Chance`
+`caller -> SimulatePreflop -> validate hole cards -> for each sim: reset deck -> exclude target hole cards -> deal opponents -> deal full board -> DetermineWinners -> Chance`
 
 Preflop lookup:
 
-`caller -> NewFolderLoader -> GetWinningChancePreFlopLookUp -> loader.Load/cache -> notation+opponent key -> Chance`
+`caller -> NewFolderLoader -> LookupPreflop -> loader.Load/cache -> notation+opponent key -> Chance`
 
 Preflop data generation:
 
@@ -200,12 +216,13 @@ Coverage demonstrated by tests:
 - `Evaluate` validation for 5-7 cards, duplicates, low ace input, and valid input.
 - Fixture coverage for every hand class: royal flush, straight flush including ace-low, quads, full house, flush, straight, trips, two pair, pair, and high card.
 - Winner fixture coverage for single winner, two-way/three-way ties, board-made royal/straight/full house/quads, straight vs trips, flush vs full house, pocket aces losing, lowest winning hand, shared pair, and straight flush vs lower flush.
-- Chance calculator validation, duplicate hole cards, known Chen scores, lookup known values, lookup symmetry checks, external spot checks, and probability range checks.
-- Sequential-vs-parallel simulation equivalence is tested with large sample counts and tolerances.
+- Simulation validation, duplicate hole cards, known Chen scores, lookup known values, lookup symmetry checks, external spot checks, and probability range checks.
+- Fixed parallel jobs and their sequential job implementations are compared with large sample counts and tolerances.
 
 Current test cost:
 
-- `go test ./...` passed locally in about 28.6 seconds. The slow part is the probabilistic tests using 500,000 and 1,000,000 simulations.
+- `go test ./...` passed locally in about 15.8 seconds. The slow part is the probabilistic tests using 500,000 and 1,000,000 simulations.
+- The independent Monte Carlo comparisons can occasionally exceed their narrow tolerance and pass on rerun without a code change.
 
 Gaps worth remembering:
 
@@ -226,6 +243,7 @@ Facts from README/TODOs/code:
 - Debug logging is package-global state and mostly aimed at local CLI/manual diagnosis. Configure it before starting concurrent work.
 - `FolderLoader` caches data but does not protect that cache with synchronization.
 - Preflop computation can be expensive because it runs Monte Carlo simulations for every generated starting-hand notation and opponent count.
+- The simulation hot path is allocation-heavy. A larger `GOGC` target is effective for offline generation, while reducing allocations remains the longer-term optimization path.
 - The module declares `go 1.26`; that version requirement is higher than many installed Go toolchains.
 
 Reasonable inferences:

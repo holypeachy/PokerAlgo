@@ -19,14 +19,14 @@ var compactCardPrintLookUp = map[int]string{
 }
 
 // Returns Win and Tie Values from 0 to 1.0
-func GetWinningChanceSimParallel(playerHoleCards HoleCards, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
-	if err := argsWinningChanceSim(playerHoleCards, communityCards, numOfOpponents, numberOfSimulatedGames); err != nil {
+func Simulate(playerHoleCards HoleCards, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
+	if err := validateSimulation(playerHoleCards, communityCards, numOfOpponents, numberOfSimulatedGames); err != nil {
 		return Chance{}, err
 	}
 
-	numTasks := runtime.NumCPU()
-	simPerTask := numberOfSimulatedGames / numTasks
-	remainder := numberOfSimulatedGames % numTasks
+	numberOfJobs := runtime.NumCPU()
+	simulationsPerJob := numberOfSimulatedGames / numberOfJobs
+	remainder := numberOfSimulatedGames % numberOfJobs
 
 	type result struct {
 		wins int
@@ -34,47 +34,50 @@ func GetWinningChanceSimParallel(playerHoleCards HoleCards, communityCards []Car
 		err  error
 	}
 
-	results := make(chan result, numTasks)
-	var wg sync.WaitGroup
-	for taskIndex := 0; taskIndex < numTasks; taskIndex++ {
-		simsThisTask := simPerTask
-		if taskIndex == 0 {
-			simsThisTask += remainder // put remainder in first task
+	results := make(chan result, numberOfJobs)
+	var waitGroup sync.WaitGroup
+	for jobIndex := range numberOfJobs {
+		simulations := simulationsPerJob
+		if jobIndex == 0 {
+			simulations += remainder
 		}
 
-		wg.Add(1)
+		waitGroup.Add(1)
 		go func() {
-			defer wg.Done()
-			wins, ties, err := winningChanceSimTask(playerHoleCards, communityCards, numOfOpponents, simsThisTask)
+			defer waitGroup.Done()
+			wins, ties, err := runSimulationJob(playerHoleCards, communityCards, numOfOpponents, simulations)
 			results <- result{wins: wins, ties: ties, err: err}
 		}()
 	}
 
-	wg.Wait()
+	waitGroup.Wait()
 	close(results)
 
 	totalWins := 0
 	totalTies := 0
-	for taskResult := range results {
-		if taskResult.err != nil {
-			return Chance{}, taskResult.err
+	for jobResult := range results {
+		if jobResult.err != nil {
+			return Chance{}, jobResult.err
 		}
-		totalWins += taskResult.wins
-		totalTies += taskResult.ties
+		totalWins += jobResult.wins
+		totalTies += jobResult.ties
 	}
 
-	return Chance{Win: float64(totalWins) / float64(numberOfSimulatedGames), Tie: float64(totalTies) / float64(numberOfSimulatedGames)}, nil
+	return Chance{
+		Win: float64(totalWins) / float64(numberOfSimulatedGames),
+		Tie: float64(totalTies) / float64(numberOfSimulatedGames),
+	}, nil
 }
 
 // Returns Win and Tie Values from 0 to 1.0
-func GetWinningChancePreFlopSimParallel(playerHoleCards HoleCards, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
-	if err := argsPreFlopSim(playerHoleCards, numOfOpponents, numberOfSimulatedGames); err != nil {
+func SimulatePreflop(playerHoleCards HoleCards, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
+	if err := validatePreflopSimulation(playerHoleCards, numOfOpponents, numberOfSimulatedGames); err != nil {
 		return Chance{}, err
 	}
 
-	numTasks := runtime.NumCPU()
-	simPerTask := numberOfSimulatedGames / numTasks
-	remainder := numberOfSimulatedGames % numTasks
+	numberOfJobs := runtime.NumCPU()
+	simulationsPerJob := numberOfSimulatedGames / numberOfJobs
+	remainder := numberOfSimulatedGames % numberOfJobs
 
 	type result struct {
 		wins int
@@ -82,69 +85,44 @@ func GetWinningChancePreFlopSimParallel(playerHoleCards HoleCards, numOfOpponent
 		err  error
 	}
 
-	results := make(chan result, numTasks)
-	var wg sync.WaitGroup
-	for taskIndex := 0; taskIndex < numTasks; taskIndex++ {
-		simsThisTask := simPerTask
-		if taskIndex == 0 {
-			simsThisTask += remainder // put remainder in first task
+	results := make(chan result, numberOfJobs)
+	var waitGroup sync.WaitGroup
+	for jobIndex := range numberOfJobs {
+		simulations := simulationsPerJob
+		if jobIndex == 0 {
+			simulations += remainder
 		}
 
-		wg.Add(1)
+		waitGroup.Add(1)
 		go func() {
-			defer wg.Done()
-			wins, ties, err := winningChancePreFlopSimTask(playerHoleCards, numOfOpponents, simsThisTask)
+			defer waitGroup.Done()
+			wins, ties, err := runPreflopSimulationJob(playerHoleCards, numOfOpponents, simulations)
 			results <- result{wins: wins, ties: ties, err: err}
 		}()
 	}
 
-	wg.Wait()
+	waitGroup.Wait()
 	close(results)
 
 	totalWins := 0
 	totalTies := 0
-	for taskResult := range results {
-		if taskResult.err != nil {
-			return Chance{}, taskResult.err
+	for jobResult := range results {
+		if jobResult.err != nil {
+			return Chance{}, jobResult.err
 		}
-		totalWins += taskResult.wins
-		totalTies += taskResult.ties
+		totalWins += jobResult.wins
+		totalTies += jobResult.ties
 	}
 
-	return Chance{Win: float64(totalWins) / float64(numberOfSimulatedGames), Tie: float64(totalTies) / float64(numberOfSimulatedGames)}, nil
-}
-
-// Returns Win and Tie Values from 0 to 1.0
-func GetWinningChanceSim(playerHoleCards HoleCards, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
-	if err := argsWinningChanceSim(playerHoleCards, communityCards, numOfOpponents, numberOfSimulatedGames); err != nil {
-		return Chance{}, err
-	}
-
-	wins, ties, err := winningChanceSimTask(playerHoleCards, communityCards, numOfOpponents, numberOfSimulatedGames)
-	if err != nil {
-		return Chance{}, err
-	}
-
-	return Chance{Win: float64(wins) / float64(numberOfSimulatedGames), Tie: float64(ties) / float64(numberOfSimulatedGames)}, nil
-}
-
-// Returns Win and Tie Values from 0 to 1.0
-func GetWinningChancePreFlopSim(playerHoleCards HoleCards, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
-	if err := argsPreFlopSim(playerHoleCards, numOfOpponents, numberOfSimulatedGames); err != nil {
-		return Chance{}, err
-	}
-
-	wins, ties, err := winningChancePreFlopSimTask(playerHoleCards, numOfOpponents, numberOfSimulatedGames)
-	if err != nil {
-		return Chance{}, err
-	}
-
-	return Chance{Win: float64(wins) / float64(numberOfSimulatedGames), Tie: float64(ties) / float64(numberOfSimulatedGames)}, nil
+	return Chance{
+		Win: float64(totalWins) / float64(numberOfSimulatedGames),
+		Tie: float64(totalTies) / float64(numberOfSimulatedGames),
+	}, nil
 }
 
 // Returns Value from 0 to 1.0 from pre-computed data
-func GetWinningChancePreFlopLookUp(playerHoleCards HoleCards, numOfOpponents int, preFlopDataLoader PreFlopDataLoader) (Chance, error) {
-	if err := argsPreFlopLookUp(playerHoleCards, numOfOpponents); err != nil {
+func LookupPreflop(playerHoleCards HoleCards, numOfOpponents int, preFlopDataLoader PreFlopDataLoader) (Chance, error) {
+	if err := validatePreflopLookup(playerHoleCards, numOfOpponents); err != nil {
 		return Chance{}, err
 	}
 
@@ -169,12 +147,12 @@ func GetWinningChancePreFlopLookUp(playerHoleCards HoleCards, numOfOpponents int
 }
 
 // Returns Value from 0 to 1.0 | Realistically: 0.1166 to 0.8389
-func GetWinningChancePreFlopChen(playerHoleCards HoleCards) (float64, error) {
-	if err := againstDuplicateHoleCards(playerHoleCards, "playerHoleCards"); err != nil {
+func ChenEstimate(playerHoleCards HoleCards) (float64, error) {
+	if err := validateHoleCards(playerHoleCards, "playerHoleCards"); err != nil {
 		return 0, err
 	}
 
-	chen, err := GetPreFlopChen(playerHoleCards)
+	chen, err := ChenScore(playerHoleCards)
 	if err != nil {
 		return 0, err
 	}
@@ -184,8 +162,8 @@ func GetWinningChancePreFlopChen(playerHoleCards HoleCards) (float64, error) {
 }
 
 // Returns -1 to 20
-func GetPreFlopChen(playerHoleCards HoleCards) (float64, error) {
-	if err := againstDuplicateHoleCards(playerHoleCards, "playerHoleCards"); err != nil {
+func ChenScore(playerHoleCards HoleCards) (float64, error) {
+	if err := validateHoleCards(playerHoleCards, "playerHoleCards"); err != nil {
 		return 0, err
 	}
 
@@ -257,7 +235,7 @@ func GetPreFlopChen(playerHoleCards HoleCards) (float64, error) {
 	return points, nil
 }
 
-func winningChanceSimTask(holeCards HoleCards, communityCards []Card, numOfOpponents int, sims int) (int, int, error) {
+func runSimulationJob(holeCards HoleCards, communityCards []Card, numOfOpponents int, sims int) (int, int, error) {
 	testDeck := NewDeck()
 	timesWon := 0
 	timesTied := 0
@@ -304,7 +282,7 @@ func winningChanceSimTask(holeCards HoleCards, communityCards []Card, numOfOppon
 	return timesWon, timesTied, nil
 }
 
-func winningChancePreFlopSimTask(holeCards HoleCards, numOfOpponents int, sims int) (int, int, error) {
+func runPreflopSimulationJob(holeCards HoleCards, numOfOpponents int, sims int) (int, int, error) {
 	testDeck := NewDeck()
 	timesWon := 0
 	timesTied := 0

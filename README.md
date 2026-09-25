@@ -17,7 +17,7 @@ The current implementation is a Go rewrite of the original C# library. The compl
 
 - Evaluates Texas Hold'em hands and identifies each player's best five cards.
 - Resolves winners and ties using hand-specific comparisons and kickers.
-- Estimates win and tie rates through sequential or CPU-parallel Monte Carlo simulations.
+- Estimates win and tie rates through CPU-parallel Monte Carlo simulations.
 - Supports pre-flop evaluation through Bill Chen's formula and generated lookup tables.
 - Includes command-line tools for manual testing, simulation, and pre-flop data generation.
 
@@ -33,7 +33,7 @@ go run ./cmd/sandbox -mode main -preflop-dir ./resources/preflop_data
 ```
 > A little note: 1 or 2 tests may fail because some of these are probabilistic, try to rerun it if you want. But 1 test failing doesn't necessarily mean there's a bug.
 
-The sandbox has different modes for inspecting hand evaluation, comparing probability methods, running simulations, and generating test fixture templates. This utility is what I use to help with development.
+The sandbox has different modes for inspecting hand evaluation, running simulations, comparing preflop estimates, and generating test fixture templates. This utility is what I use to help with development.
 
 ```sh
 go run ./cmd/sandbox -h
@@ -41,6 +41,17 @@ go run ./cmd/sandbox -mode main -preflop-dir ./resources/preflop_data -debug sum
 ```
 
 Debug output defaults to `off`. The available levels are `off`, `summary`, and `trace`.
+
+Preflop data generation is allocation-heavy. Giving Go's garbage collector more room substantially improves CPU utilization during this offline workload:
+
+```sh
+GOGC=1000 GOMEMLIMIT=1GiB go run ./cmd/compute \
+  -opponents 4 \
+  -sims 500000 \
+  -out ./resources/preflop_data
+```
+
+`GOMEMLIMIT` is a soft runtime limit. These settings are intended for bulk computation, not as package-wide defaults for applications using PokerAlgo.
 
 ## Usage
 
@@ -69,7 +80,7 @@ for _, winner := range winners {
 Win and tie rates can be estimated at any point after the hole cards (a player's 2 cards) are known. This example estimates Alice's chances after the flop:
 
 ```go
-chance, err := pokeralgo.GetWinningChanceSimParallel(players[0].HoleCards,
+chance, err := pokeralgo.Simulate(players[0].HoleCards,
 	community[:3],
 	len(players)-1,
 	100_000,

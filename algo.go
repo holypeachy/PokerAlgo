@@ -6,7 +6,7 @@ import (
 )
 
 func DetermineWinners(players []Player, communityCards []Card) ([]Player, error) {
-	if err := argsGetWinners(players, communityCards); err != nil {
+	if err := validatePlayersAndBoard(players, communityCards); err != nil {
 		return nil, err
 	}
 

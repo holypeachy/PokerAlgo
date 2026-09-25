@@ -6,54 +6,54 @@ import (
 	"testing"
 )
 
-func TestWinningChanceSimValidation(t *testing.T) {
+func TestSimulateValidation(t *testing.T) {
 	deck := NewDeck()
 	playerCards := HoleCards{First: deck.MustDraw(), Second: deck.MustDraw()}
 	communityCards := []Card{deck.MustDraw(), deck.MustDraw()}
 
-	if _, err := GetWinningChanceSim(playerCards, communityCards, 2, 500); err == nil {
+	if _, err := Simulate(playerCards, communityCards, 2, 500); err == nil {
 		t.Fatal("expected error for community less than three")
 	}
 
 	communityCards = deck.MustDrawN(6)
-	if _, err := GetWinningChanceSim(playerCards, communityCards, 2, 500); err == nil {
+	if _, err := Simulate(playerCards, communityCards, 2, 500); err == nil {
 		t.Fatal("expected error for community more than five")
 	}
 
 	communityCards = deck.MustDrawN(5)
-	if _, err := GetWinningChanceSim(playerCards, communityCards, 0, 500); err == nil {
+	if _, err := Simulate(playerCards, communityCards, 0, 500); err == nil {
 		t.Fatal("expected error for zero opponents")
 	}
 
-	if _, err := GetWinningChanceSim(playerCards, communityCards, 4, 10); err == nil {
+	if _, err := Simulate(playerCards, communityCards, 4, 10); err == nil {
 		t.Fatal("expected error for too few simulations")
 	}
 }
 
-func TestGetWinningChanceSimReturnsWhenValidInput(t *testing.T) {
+func TestSimulateReturnsWhenValidInput(t *testing.T) {
 	deck := NewDeck()
 	playerCards := HoleCards{First: deck.MustDraw(), Second: deck.MustDraw()}
 	communityCards := deck.MustDrawN(5)
 
-	if _, err := GetWinningChanceSim(playerCards, communityCards, 4, 500); err != nil {
+	if _, err := Simulate(playerCards, communityCards, 4, 500); err != nil {
 		t.Fatalf("expected valid sim input, got %v", err)
 	}
 }
 
-func TestPreFlopSimValidation(t *testing.T) {
+func TestSimulatePreflopValidation(t *testing.T) {
 	deck := NewDeck()
 	playerCards := HoleCards{First: deck.MustDraw(), Second: deck.MustDraw()}
 
-	if _, err := GetWinningChancePreFlopSim(playerCards, 0, 500); err == nil {
+	if _, err := SimulatePreflop(playerCards, 0, 500); err == nil {
 		t.Fatal("expected error for zero opponents")
 	}
 
-	if _, err := GetWinningChancePreFlopSim(playerCards, 4, 99); err == nil {
+	if _, err := SimulatePreflop(playerCards, 4, 99); err == nil {
 		t.Fatal("expected error for too few simulations")
 	}
 }
 
-func TestGetPreFlopChenKnownValues(t *testing.T) {
+func TestChenScoreKnownValues(t *testing.T) {
 	tests := []struct {
 		name     string
 		cards    HoleCards
@@ -68,9 +68,9 @@ func TestGetPreFlopChenKnownValues(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actual, err := GetPreFlopChen(test.cards)
+			actual, err := ChenScore(test.cards)
 			if err != nil {
-				t.Fatalf("GetPreFlopChen: %v", err)
+				t.Fatalf("ChenScore: %v", err)
 			}
 			if actual != test.expected {
 				t.Fatalf("expected %v, got %v", test.expected, actual)
@@ -79,7 +79,7 @@ func TestGetPreFlopChenKnownValues(t *testing.T) {
 	}
 }
 
-func TestChanceCalculatorsThrowWhenDuplicateCards(t *testing.T) {
+func TestChanceFunctionsReturnErrorForDuplicateCards(t *testing.T) {
 	holeCards := HoleCards{First: MustCard(2, Spades, true), Second: MustCard(2, Spades, true)}
 	communityCards := []Card{
 		MustCard(4, Spades, false),
@@ -89,24 +89,24 @@ func TestChanceCalculatorsThrowWhenDuplicateCards(t *testing.T) {
 		MustCard(8, Spades, false),
 	}
 
-	if _, err := GetWinningChanceSim(holeCards, communityCards, 4, 500); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := Simulate(holeCards, communityCards, 4, 500); !IsErrorKind(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
-	if _, err := GetWinningChancePreFlopSim(holeCards, 4, 500); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := SimulatePreflop(holeCards, 4, 500); !IsErrorKind(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
-	if _, err := GetWinningChancePreFlopLookUp(holeCards, 4, NewFolderLoader(preflopPath())); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := LookupPreflop(holeCards, 4, NewFolderLoader(preflopPath())); !IsErrorKind(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
-	if _, err := GetWinningChancePreFlopChen(holeCards); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := ChenEstimate(holeCards); !IsErrorKind(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
-	if _, err := GetPreFlopChen(holeCards); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := ChenScore(holeCards); !IsErrorKind(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
 }
 
-func TestWinningChancePreFlopLookUpKnownValues(t *testing.T) {
+func TestLookupPreflopKnownValues(t *testing.T) {
 	loader := NewFolderLoader(preflopPath())
 
 	tests := []struct {
@@ -124,7 +124,7 @@ func TestWinningChancePreFlopLookUpKnownValues(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actual, err := GetWinningChancePreFlopLookUp(test.cards, test.opponents, loader)
+			actual, err := LookupPreflop(test.cards, test.opponents, loader)
 			if err != nil {
 				t.Fatalf("lookup: %v", err)
 			}
@@ -134,16 +134,16 @@ func TestWinningChancePreFlopLookUpKnownValues(t *testing.T) {
 	}
 }
 
-func TestWinningChancePreFlopLookUpSymmetryAndExternalChecks(t *testing.T) {
+func TestLookupPreflopSymmetryAndExternalChecks(t *testing.T) {
 	loader := NewFolderLoader(preflopPath())
 
 	ako := HoleCards{First: MustCard(14, Diamonds, true), Second: MustCard(13, Hearts, true)}
 	kao := HoleCards{First: MustCard(13, Diamonds, true), Second: MustCard(14, Hearts, true)}
-	winAKo, err := GetWinningChancePreFlopLookUp(ako, 4, loader)
+	winAKo, err := LookupPreflop(ako, 4, loader)
 	if err != nil {
 		t.Fatalf("lookup AKo: %v", err)
 	}
-	winKAo, err := GetWinningChancePreFlopLookUp(kao, 4, loader)
+	winKAo, err := LookupPreflop(kao, 4, loader)
 	if err != nil {
 		t.Fatalf("lookup KAo: %v", err)
 	}
@@ -152,11 +152,11 @@ func TestWinningChancePreFlopLookUpSymmetryAndExternalChecks(t *testing.T) {
 
 	o27 := HoleCards{First: MustCard(2, Diamonds, true), Second: MustCard(7, Hearts, true)}
 	o72 := HoleCards{First: MustCard(7, Diamonds, true), Second: MustCard(2, Hearts, true)}
-	win27, err := GetWinningChancePreFlopLookUp(o27, 4, loader)
+	win27, err := LookupPreflop(o27, 4, loader)
 	if err != nil {
 		t.Fatalf("lookup 27o: %v", err)
 	}
-	win72, err := GetWinningChancePreFlopLookUp(o72, 4, loader)
+	win72, err := LookupPreflop(o72, 4, loader)
 	if err != nil {
 		t.Fatalf("lookup 72o: %v", err)
 	}
@@ -176,7 +176,7 @@ func TestWinningChancePreFlopLookUpSymmetryAndExternalChecks(t *testing.T) {
 
 	for _, check := range externalChecks {
 		t.Run(check.name, func(t *testing.T) {
-			actual, err := GetWinningChancePreFlopLookUp(check.cards, 4, loader)
+			actual, err := LookupPreflop(check.cards, 4, loader)
 			if err != nil {
 				t.Fatalf("lookup: %v", err)
 			}
@@ -186,7 +186,7 @@ func TestWinningChancePreFlopLookUpSymmetryAndExternalChecks(t *testing.T) {
 	}
 }
 
-func TestWinningChanceSimParallelAndWinningChanceSimSymmetric(t *testing.T) {
+func TestSimulateMatchesSimulationJob(t *testing.T) {
 	holeCards := HoleCards{First: MustCard(14, Spades, true), Second: MustCard(14, Clubs, true)}
 	community := []Card{
 		MustCard(7, Hearts, false),
@@ -196,60 +196,62 @@ func TestWinningChanceSimParallelAndWinningChanceSimSymmetric(t *testing.T) {
 		MustCard(8, Diamonds, false),
 	}
 
-	simChance, err := GetWinningChanceSim(holeCards, community, 4, 500_000)
+	wins, ties, err := runSimulationJob(holeCards, community, 4, 500_000)
 	if err != nil {
-		t.Fatalf("sim: %v", err)
+		t.Fatalf("simulation job: %v", err)
 	}
-	parallelChance, err := GetWinningChanceSimParallel(holeCards, community, 4, 500_000)
+	simChance := Chance{Win: float64(wins) / 500_000, Tie: float64(ties) / 500_000}
+	chance, err := Simulate(holeCards, community, 4, 500_000)
 	if err != nil {
-		t.Fatalf("parallel sim: %v", err)
+		t.Fatalf("simulate: %v", err)
 	}
 
-	assertFloatEqual(t, simChance.Win, parallelChance.Win, 0.001)
-	assertFloatEqual(t, simChance.Tie, parallelChance.Tie, 0.001)
+	assertFloatEqual(t, simChance.Win, chance.Win, 0.001)
+	assertFloatEqual(t, simChance.Tie, chance.Tie, 0.001)
 }
 
-func TestWinningChancePreFlopSimParallelAndWinningChancePreFlopSimSymmetric(t *testing.T) {
+func TestSimulatePreflopMatchesSimulationJob(t *testing.T) {
 	holeCards := HoleCards{First: MustCard(14, Spades, true), Second: MustCard(14, Clubs, true)}
 
-	simChance, err := GetWinningChancePreFlopSim(holeCards, 4, 1_000_000)
+	wins, ties, err := runPreflopSimulationJob(holeCards, 4, 1_000_000)
 	if err != nil {
-		t.Fatalf("preflop sim: %v", err)
+		t.Fatalf("preflop simulation job: %v", err)
 	}
-	parallelChance, err := GetWinningChancePreFlopSimParallel(holeCards, 4, 1_000_000)
+	simChance := Chance{Win: float64(wins) / 1_000_000, Tie: float64(ties) / 1_000_000}
+	chance, err := SimulatePreflop(holeCards, 4, 1_000_000)
 	if err != nil {
-		t.Fatalf("parallel preflop sim: %v", err)
+		t.Fatalf("simulate preflop: %v", err)
 	}
 
-	assertFloatEqual(t, simChance.Win, parallelChance.Win, 0.001)
-	assertFloatEqual(t, simChance.Tie, parallelChance.Tie, 0.001)
+	assertFloatEqual(t, simChance.Win, chance.Win, 0.001)
+	assertFloatEqual(t, simChance.Tie, chance.Tie, 0.001)
 }
 
-func TestWinningChanceSimProbabilitiesInRange(t *testing.T) {
+func TestSimulateProbabilitiesInRange(t *testing.T) {
 	deck := NewDeck()
 	holeCards := HoleCards{First: deck.MustDraw(), Second: deck.MustDraw()}
 	communityCards := deck.MustDrawN(5)
 
-	chance, err := GetWinningChanceSim(holeCards, communityCards, 4, 100)
+	chance, err := Simulate(holeCards, communityCards, 4, 100)
 	if err != nil {
 		t.Fatalf("sim: %v", err)
 	}
 	assertChanceInRange(t, chance)
 }
 
-func TestWinningChancePreFlopSimProbabilitiesInRange(t *testing.T) {
+func TestSimulatePreflopProbabilitiesInRange(t *testing.T) {
 	deck := NewDeck()
 	holeCards := HoleCards{First: deck.MustDraw(), Second: deck.MustDraw()}
 
-	chance, err := GetWinningChancePreFlopSim(holeCards, 4, 100)
+	chance, err := SimulatePreflop(holeCards, 4, 100)
 	if err != nil {
 		t.Fatalf("preflop sim: %v", err)
 	}
 	assertChanceInRange(t, chance)
 }
 
-func TestWinningChancePreFlopLookUpThrowsWhenTooManyOpponents(t *testing.T) {
-	_, err := GetWinningChancePreFlopLookUp(
+func TestLookupPreflopReturnsErrorWhenTooManyOpponents(t *testing.T) {
+	_, err := LookupPreflop(
 		HoleCards{First: MustCard(14, Spades, true), Second: MustCard(13, Spades, true)},
 		10,
 		NewFolderLoader(preflopPath()),

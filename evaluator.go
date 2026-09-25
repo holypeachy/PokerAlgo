@@ -6,7 +6,7 @@ import (
 )
 
 func Evaluate(combinedCards []Card) (Hand, error) {
-	if err := argsGetWinningHand(combinedCards); err != nil {
+	if err := validateEvaluationCards(combinedCards); err != nil {
 		return Hand{}, err
 	}
 

@@ -26,7 +26,7 @@ func main() {
 
 	started := time.Now()
 	computeLogger.Printf(
-		"💭 [compute] generating preflop data\n   opponents: %d\n   simulations per hand: %d\n   parallel: true\n   output: %s",
+		"💭 [compute] generating preflop data\n   opponents: %d\n   simulations per hand: %d\n   output: %s",
 		*opponents,
 		*sims,
 		*outDir,

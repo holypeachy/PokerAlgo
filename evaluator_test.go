@@ -2,7 +2,7 @@ package pokeralgo
 
 import "testing"
 
-func TestGetWinningHandValidation(t *testing.T) {
+func TestEvaluateValidation(t *testing.T) {
 	deck := NewDeck()
 	cards := deck.MustDrawN(4)
 	if _, err := Evaluate(cards); err == nil {
@@ -41,7 +41,7 @@ func TestGetWinningHandValidation(t *testing.T) {
 	}
 }
 
-func TestGetWinningHandReturnsForValidInput(t *testing.T) {
+func TestEvaluateReturnsForValidInput(t *testing.T) {
 	deck := NewDeck()
 	cards := deck.MustDrawN(6)
 
@@ -50,7 +50,7 @@ func TestGetWinningHandReturnsForValidInput(t *testing.T) {
 	}
 }
 
-func TestGetWinningHandForPlayerOverloadEquivalent(t *testing.T) {
+func TestEvaluatePlayerReturnsForValidInput(t *testing.T) {
 	community := []Card{
 		MustCard(7, Spades, false),
 		MustCard(5, Spades, false),

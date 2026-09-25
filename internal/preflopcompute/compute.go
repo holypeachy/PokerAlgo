@@ -49,7 +49,7 @@ func Run(options Options) error {
 
 		writer := bufio.NewWriter(file)
 		for index, hand := range hands {
-			chance, err := pokeralgo.GetWinningChancePreFlopSimParallel(hand.Cards, currentOpponents, options.Sims)
+			chance, err := pokeralgo.SimulatePreflop(hand.Cards, currentOpponents, options.Sims)
 			if err != nil {
 				file.Close()
 				return err
