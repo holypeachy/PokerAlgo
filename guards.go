@@ -7,10 +7,10 @@ import (
 
 func argsGetWinners(players []Player, communityCards []Card) error {
 	if len(players) < 2 {
-		return fmt.Errorf("there must be at least 2 players")
+		return newError(ErrInvalidArgument, "there must be at least 2 players")
 	}
 	if len(communityCards) != 5 {
-		return fmt.Errorf("for the showdown, there must be all 5 community cards")
+		return newError(ErrInvalidArgument, "for the showdown, there must be all 5 community cards")
 	}
 
 	allCards := slices.Clone(communityCards)
@@ -23,24 +23,24 @@ func argsGetWinners(players []Player, communityCards []Card) error {
 
 func argsGetWinningHand(cards []Card) error {
 	if len(cards) < 5 || len(cards) > 7 {
-		return fmt.Errorf("the list must have 5-7 cards")
+		return newError(ErrInvalidArgument, "the list must have 5-7 cards")
 	}
 
 	return validateUniqueAndNoLowAces(cards, "cards argument has duplicate cards")
 }
 
-func argsWinningChanceSim(playerHoleCards Pair, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) error {
+func argsWinningChanceSim(playerHoleCards HoleCards, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) error {
 	if len(communityCards) < 3 {
-		return fmt.Errorf("there should be no less than 3 community cards")
+		return newError(ErrInvalidArgument, "there should be no less than 3 community cards")
 	}
 	if len(communityCards) > 5 {
-		return fmt.Errorf("there should be no more than 5 community cards")
+		return newError(ErrInvalidArgument, "there should be no more than 5 community cards")
 	}
 	if numOfOpponents < 1 {
-		return fmt.Errorf("there should be at least 1 opponent")
+		return newError(ErrInvalidArgument, "there should be at least 1 opponent")
 	}
 	if numberOfSimulatedGames < 100 {
-		return fmt.Errorf("number of simulated games is less than 100")
+		return newError(ErrInvalidArgument, "number of simulated games is less than 100")
 	}
 
 	allCards := slices.Clone(communityCards)
@@ -48,24 +48,24 @@ func argsWinningChanceSim(playerHoleCards Pair, communityCards []Card, numOfOppo
 	return validateUnique(allCards, "either playerHoleCards or communityCards arguments have duplicate cards")
 }
 
-func argsPreFlopSim(playerHoleCards Pair, numOfOpponents int, numberOfSimulatedGames int) error {
+func argsPreFlopSim(playerHoleCards HoleCards, numOfOpponents int, numberOfSimulatedGames int) error {
 	if numOfOpponents < 1 {
-		return fmt.Errorf("there should be at least 1 opponent")
+		return newError(ErrInvalidArgument, "there should be at least 1 opponent")
 	}
 	if numberOfSimulatedGames < 100 {
-		return fmt.Errorf("number of simulated games is less than 100")
+		return newError(ErrInvalidArgument, "number of simulated games is less than 100")
 	}
 	return againstDuplicateHoleCards(playerHoleCards, "playerHoleCards")
 }
 
-func argsPreFlopLookUp(playerHoleCards Pair, numOfOpponents int) error {
+func argsPreFlopLookUp(playerHoleCards HoleCards, numOfOpponents int) error {
 	if numOfOpponents < 1 {
-		return fmt.Errorf("there should be at least 1 opponent")
+		return newError(ErrInvalidArgument, "there should be at least 1 opponent")
 	}
 	return againstDuplicateHoleCards(playerHoleCards, "playerHoleCards")
 }
 
-func againstDuplicateHoleCards(playerHoleCards Pair, paramName string) error {
+func againstDuplicateHoleCards(playerHoleCards HoleCards, paramName string) error {
 	if playerHoleCards.First.Equal(playerHoleCards.Second) {
 		return newError(ErrDuplicateCards, fmt.Sprintf("%s argument has duplicate cards", paramName))
 	}

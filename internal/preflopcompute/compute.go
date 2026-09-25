@@ -17,7 +17,7 @@ type Options struct {
 
 type StartingHand struct {
 	Notation string
-	Cards    pokeralgo.Pair
+	Cards    pokeralgo.HoleCards
 }
 
 var cardPrintLookUp = map[int]string{
@@ -52,7 +52,7 @@ func Run(options Options) error {
 				return err
 			}
 
-			if _, err := fmt.Fprintf(writer, "%s %v %v\n", hand.Notation, chance.WinChance, chance.TieChance); err != nil {
+			if _, err := fmt.Fprintf(writer, "%s %v %v\n", hand.Notation, chance.Win, chance.Tie); err != nil {
 				file.Close()
 				return err
 			}
@@ -84,7 +84,7 @@ func BuildStartingHands() []StartingHand {
 			second := pokeralgo.MustCard(j, pokeralgo.Hearts, true)
 			hands = append(hands, StartingHand{
 				Notation: cardPrintLookUp[first.Rank] + cardPrintLookUp[second.Rank] + "o",
-				Cards:    pokeralgo.Pair{First: first, Second: second},
+				Cards:    pokeralgo.HoleCards{First: first, Second: second},
 			})
 		}
 	}
@@ -99,7 +99,7 @@ func BuildStartingHands() []StartingHand {
 			second := pokeralgo.MustCard(j, pokeralgo.Hearts, true)
 			hands = append(hands, StartingHand{
 				Notation: cardPrintLookUp[first.Rank] + cardPrintLookUp[second.Rank] + "s",
-				Cards:    pokeralgo.Pair{First: first, Second: second},
+				Cards:    pokeralgo.HoleCards{First: first, Second: second},
 			})
 		}
 	}

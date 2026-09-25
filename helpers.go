@@ -2,7 +2,7 @@ package pokeralgo
 
 import "fmt"
 
-func GetPrettyHandName(hand WinningHand) string {
+func DescribeHand(hand Hand) string {
 	cardPrintLookUp := map[int]string{
 		14: "Ace",
 		13: "King",
@@ -39,7 +39,7 @@ func GetPrettyHandName(hand WinningHand) string {
 		return fmt.Sprintf("Two Pair, %ss and %ss", cardPrintLookUp[hand.Cards[4].Rank], cardPrintLookUp[hand.Cards[2].Rank])
 	case OnePair:
 		return fmt.Sprintf("Pair of %ss", cardPrintLookUp[hand.Cards[4].Rank])
-	case Nothing:
+	case HighCard:
 		return fmt.Sprintf("%s High Card", cardPrintLookUp[hand.Cards[4].Rank])
 	default:
 		return "Unknown Hand"

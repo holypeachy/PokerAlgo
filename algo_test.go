@@ -5,25 +5,25 @@ import "testing"
 func TestGetWinnersValidation(t *testing.T) {
 	deck := NewDeck()
 	players := []Player{
-		NewPlayer("Player 1", deck.MustNextCard(), deck.MustNextCard()),
+		NewPlayer("Player 1", deck.MustDraw(), deck.MustDraw()),
 	}
-	communityCards := deck.MustNextCards(5)
-	if _, err := GetWinners(players, communityCards); err == nil {
+	communityCards := deck.MustDrawN(5)
+	if _, err := DetermineWinners(players, communityCards); err == nil {
 		t.Fatal("expected error for less than two players")
 	}
 
 	deck = NewDeck()
 	players = []Player{
-		NewPlayer("Player 1", deck.MustNextCard(), deck.MustNextCard()),
-		NewPlayer("Player 2", deck.MustNextCard(), deck.MustNextCard()),
+		NewPlayer("Player 1", deck.MustDraw(), deck.MustDraw()),
+		NewPlayer("Player 2", deck.MustDraw(), deck.MustDraw()),
 	}
-	communityCards = deck.MustNextCards(2)
-	if _, err := GetWinners(players, communityCards); err == nil {
+	communityCards = deck.MustDrawN(2)
+	if _, err := DetermineWinners(players, communityCards); err == nil {
 		t.Fatal("expected error for less than five community cards")
 	}
 
-	communityCards = deck.MustNextCards(6)
-	if _, err := GetWinners(players, communityCards); err == nil {
+	communityCards = deck.MustDrawN(6)
+	if _, err := DetermineWinners(players, communityCards); err == nil {
 		t.Fatal("expected error for more than five community cards")
 	}
 }
@@ -31,12 +31,12 @@ func TestGetWinnersValidation(t *testing.T) {
 func TestGetWinnersReturnsForValidInput(t *testing.T) {
 	deck := NewDeck()
 	players := []Player{
-		NewPlayer("Player 1", deck.MustNextCard(), deck.MustNextCard()),
-		NewPlayer("Player 2", deck.MustNextCard(), deck.MustNextCard()),
+		NewPlayer("Player 1", deck.MustDraw(), deck.MustDraw()),
+		NewPlayer("Player 2", deck.MustDraw(), deck.MustDraw()),
 	}
-	communityCards := deck.MustNextCards(5)
+	communityCards := deck.MustDrawN(5)
 
-	if _, err := GetWinners(players, communityCards); err != nil {
+	if _, err := DetermineWinners(players, communityCards); err != nil {
 		t.Fatalf("expected valid winners, got %v", err)
 	}
 }
@@ -55,7 +55,7 @@ func TestGetWinnersThrowsWhenDuplicateCardsExist(t *testing.T) {
 		MustCard(3, Diamonds, false),
 	}
 
-	if _, err := GetWinners(players, communityCards); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := DetermineWinners(players, communityCards); !IsErrorKind(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
 }
@@ -74,7 +74,7 @@ func TestGetWinnersThrowsWhenLowAceInput(t *testing.T) {
 		MustCard(3, Diamonds, false),
 	}
 
-	if _, err := GetWinners(players, communityCards); !IsErrorKind(err, ErrLowAces) {
+	if _, err := DetermineWinners(players, communityCards); !IsErrorKind(err, ErrLowAces) {
 		t.Fatalf("expected low ace, got %v", err)
 	}
 }

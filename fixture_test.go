@@ -9,16 +9,16 @@ import (
 
 type handEvalFixture struct {
 	Description    string
-	PlayerCards    Pair
+	PlayerCards    HoleCards
 	CommunityCards []Card
-	ExpectedHand   WinningHand
+	ExpectedHand   Hand
 }
 
 type algoFixture struct {
 	Description      string
-	Player1          Pair
-	Player2          Pair
-	Player3          Pair
+	Player1          HoleCards
+	Player2          HoleCards
+	Player3          HoleCards
 	CommunityCards   []Card
 	IndicesOfWinners []int
 }
@@ -34,7 +34,7 @@ func TestHandEvaluatorFixtures(t *testing.T) {
 			cards = append(cards, fixture.CommunityCards...)
 			sortCardsByValue(cards)
 
-			actual, err := GetWinningHand(cards)
+			actual, err := Evaluate(cards)
 			if err != nil {
 				t.Fatalf("GetWinningHand: %v", err)
 			}
@@ -59,7 +59,7 @@ func TestAlgoFixtures(t *testing.T) {
 				NewPlayer("Test Player 3", fixture.Player3.First, fixture.Player3.Second),
 			}
 
-			winners, err := GetWinners(players, fixture.CommunityCards)
+			winners, err := DetermineWinners(players, fixture.CommunityCards)
 			if err != nil {
 				t.Fatalf("GetWinners: %v", err)
 			}

@@ -5,7 +5,7 @@ import "fmt"
 type HandType int
 
 const (
-	Nothing HandType = iota
+	HighCard HandType = iota
 	OnePair
 	TwoPair
 	ThreeKind
@@ -19,8 +19,8 @@ const (
 
 func (h HandType) String() string {
 	switch h {
-	case Nothing:
-		return "Nothing"
+	case HighCard:
+		return "HighCard"
 	case OnePair:
 		return "OnePair"
 	case TwoPair:
@@ -44,46 +44,46 @@ func (h HandType) String() string {
 	}
 }
 
-type Pair struct {
+type HoleCards struct {
 	First  Card
 	Second Card
 }
 
-func (p Pair) String() string {
+func (p HoleCards) String() string {
 	return fmt.Sprintf("%s %s", p.First, p.Second)
 }
 
-type WinningHand struct {
+type Hand struct {
 	Type  HandType
 	Cards []Card
 }
 
-func (h WinningHand) String() string {
+func (h Hand) String() string {
 	return fmt.Sprintf("WinningHand: %d - Cards: %v", h.Type, h.Cards)
 }
 
 type Player struct {
-	Name        string
-	HoleCards   Pair
-	WinningHand *WinningHand
+	Name      string
+	HoleCards HoleCards
+	BestHand  *Hand
 }
 
 func NewPlayer(name string, first Card, second Card) Player {
-	first.IsPlayerCard = true
-	second.IsPlayerCard = true
+	first.IsHoleCard = true
+	second.IsHoleCard = true
 
 	return Player{
-		Name:        name,
-		HoleCards:   Pair{First: first, Second: second},
-		WinningHand: nil,
+		Name:      name,
+		HoleCards: HoleCards{First: first, Second: second},
+		BestHand:  nil,
 	}
 }
 
-func (p *Player) NewHand(first Card, second Card) {
-	first.IsPlayerCard = true
-	second.IsPlayerCard = true
-	p.HoleCards = Pair{First: first, Second: second}
-	p.WinningHand = nil
+func (p *Player) SetHoleCards(first Card, second Card) {
+	first.IsHoleCard = true
+	second.IsHoleCard = true
+	p.HoleCards = HoleCards{First: first, Second: second}
+	p.BestHand = nil
 }
 
 func (p Player) String() string {

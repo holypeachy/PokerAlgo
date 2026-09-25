@@ -40,9 +40,9 @@ func debugLogPlayers(description string, players []Player) {
 		for _, player := range players {
 			handName := "<nil>"
 			cards := ""
-			if player.WinningHand != nil {
-				handName = GetPrettyHandName(*player.WinningHand)
-				cards = cardsToString(player.WinningHand.Cards)
+			if player.BestHand != nil {
+				handName = DescribeHand(*player.BestHand)
+				cards = cardsToString(player.BestHand.Cards)
 			}
 			fmt.Fprintf(debugOutput, "\t %s  %s  %s \n\n", player.Name, handName, cards)
 		}
@@ -55,9 +55,9 @@ func debugLogWinners(winners []Player) {
 		for _, player := range winners {
 			handName := "<nil>"
 			cards := ""
-			if player.WinningHand != nil {
-				handName = GetPrettyHandName(*player.WinningHand)
-				cards = cardsToString(player.WinningHand.Cards)
+			if player.BestHand != nil {
+				handName = DescribeHand(*player.BestHand)
+				cards = cardsToString(player.BestHand.Cards)
 			}
 			fmt.Fprintf(debugOutput, "\t %s  %s  %s \n", player.Name, handName, cards)
 		}

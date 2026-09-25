@@ -5,9 +5,9 @@ import (
 	"sort"
 )
 
-func GetWinningHand(combinedCards []Card) (WinningHand, error) {
+func Evaluate(combinedCards []Card) (Hand, error) {
 	if err := argsGetWinningHand(combinedCards); err != nil {
-		return WinningHand{}, err
+		return Hand{}, err
 	}
 
 	cardsCopy := slices.Clone(combinedCards)
@@ -18,13 +18,13 @@ func GetWinningHand(combinedCards []Card) (WinningHand, error) {
 	return evaluateHand(cardsCopy)
 }
 
-func GetWinningHandForPlayer(playerHoleCards Pair, communityCards []Card) (WinningHand, error) {
+func EvaluatePlayer(playerHoleCards HoleCards, communityCards []Card) (Hand, error) {
 	cards := []Card{playerHoleCards.First, playerHoleCards.Second}
 	cards = append(cards, communityCards...)
-	return GetWinningHand(cards)
+	return Evaluate(cards)
 }
 
-func evaluateHand(cards []Card) (WinningHand, error) {
+func evaluateHand(cards []Card) (Hand, error) {
 	flushCards := cardsBySuitCount(cards, 5)
 	fourKind := cardsByRankCount(cards, 4)
 	threeKinds := cardsByRankCount(cards, 3)
@@ -61,7 +61,7 @@ func evaluateHand(cards []Card) (WinningHand, error) {
 	if len(fourKind) == 4 {
 		completeHand, err := completeWinningHand(fourKind, cards)
 		if err != nil {
-			return WinningHand{}, err
+			return Hand{}, err
 		}
 		return newWinningHand(FourKind, completeHand), nil
 	}
@@ -72,11 +72,11 @@ func evaluateHand(cards []Card) (WinningHand, error) {
 		bottom3 := slices.Clone(threeKinds[0:3])
 		fullHouse := make([]Card, 0, 5)
 
-		if bottom3[0].IsPlayerCard && bottom3[1].IsPlayerCard {
+		if bottom3[0].IsHoleCard && bottom3[1].IsHoleCard {
 			fullHouse = append(fullHouse, bottom3[0:2]...)
-		} else if bottom3[1].IsPlayerCard && bottom3[2].IsPlayerCard {
+		} else if bottom3[1].IsHoleCard && bottom3[2].IsHoleCard {
 			fullHouse = append(fullHouse, bottom3[1:3]...)
-		} else if bottom3[0].IsPlayerCard && bottom3[2].IsPlayerCard {
+		} else if bottom3[0].IsHoleCard && bottom3[2].IsHoleCard {
 			fullHouse = append(fullHouse, bottom3[0], bottom3[2])
 		} else {
 			fullHouse = append(fullHouse, bottom3[1:3]...)
@@ -105,9 +105,9 @@ func evaluateHand(cards []Card) (WinningHand, error) {
 	// Removes duplicates
 	for i := len(tempCards) - 1; i > 0; i-- {
 		if tempCards[i].Rank == tempCards[i-1].Rank {
-			if (tempCards[i].IsPlayerCard && tempCards[i-1].IsPlayerCard) || (!tempCards[i].IsPlayerCard && !tempCards[i-1].IsPlayerCard) {
+			if (tempCards[i].IsHoleCard && tempCards[i-1].IsHoleCard) || (!tempCards[i].IsHoleCard && !tempCards[i-1].IsHoleCard) {
 				tempCards = removeAt(tempCards, i)
-			} else if tempCards[i].IsPlayerCard {
+			} else if tempCards[i].IsHoleCard {
 				tempCards = removeAt(tempCards, i-1)
 			} else {
 				tempCards = removeAt(tempCards, i)
@@ -128,7 +128,7 @@ func evaluateHand(cards []Card) (WinningHand, error) {
 	if len(threeKinds) == 3 {
 		completeHand, err := completeWinningHand(threeKinds, cards)
 		if err != nil {
-			return WinningHand{}, err
+			return Hand{}, err
 		}
 		return newWinningHand(ThreeKind, completeHand), nil
 	} else if len(pairs) >= 4 {
@@ -140,27 +140,27 @@ func evaluateHand(cards []Card) (WinningHand, error) {
 		twoPairs = append(twoPairs, topPair...)
 		completeHand, err := completeWinningHand(twoPairs, cards)
 		if err != nil {
-			return WinningHand{}, err
+			return Hand{}, err
 		}
 		return newWinningHand(TwoPair, completeHand), nil
 	} else if len(pairs) == 2 {
 		// ! 1 Pair
 		completeHand, err := completeWinningHand(pairs, cards)
 		if err != nil {
-			return WinningHand{}, err
+			return Hand{}, err
 		}
 		return newWinningHand(OnePair, completeHand), nil
 	}
 
 	completeHand, err := completeWinningHand(nil, cards)
 	if err != nil {
-		return WinningHand{}, err
+		return Hand{}, err
 	}
-	return newWinningHand(Nothing, completeHand), nil
+	return newWinningHand(HighCard, completeHand), nil
 }
 
 func cardsBySuitCount(cards []Card, count int) []Card {
-	groupCounts := make(map[CardSuit]int)
+	groupCounts := make(map[Suit]int)
 	for _, card := range cards {
 		groupCounts[card.Suit]++
 	}
@@ -213,9 +213,9 @@ func completeWinningHand(winningCards []Card, allCards []Card) ([]Card, error) {
 	return completeHand, nil
 }
 
-func newWinningHand(handType HandType, cards []Card) WinningHand {
+func newWinningHand(handType HandType, cards []Card) Hand {
 	debugLogWinningHand(handType, cards)
-	return WinningHand{Type: handType, Cards: cards}
+	return Hand{Type: handType, Cards: cards}
 }
 
 func getBestFiveCards(cards []Card) []Card {
@@ -226,7 +226,7 @@ func addLowAces(cards []Card) []Card {
 	acesToAdd := make([]Card, 0)
 	for _, card := range cards {
 		if card.Rank == 14 {
-			acesToAdd = append(acesToAdd, Card{Rank: 1, Suit: card.Suit, IsPlayerCard: card.IsPlayerCard})
+			acesToAdd = append(acesToAdd, Card{Rank: 1, Suit: card.Suit, IsHoleCard: card.IsHoleCard})
 		}
 	}
 

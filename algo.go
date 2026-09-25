@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-func GetWinners(players []Player, communityCards []Card) ([]Player, error) {
+func DetermineWinners(players []Player, communityCards []Card) ([]Player, error) {
 	if err := argsGetWinners(players, communityCards); err != nil {
 		return nil, err
 	}
@@ -22,11 +22,11 @@ func GetWinners(players []Player, communityCards []Card) ([]Player, error) {
 		}
 		combinedCards = append(combinedCards, communityCards...)
 
-		winningHand, err := GetWinningHand(combinedCards)
+		winningHand, err := Evaluate(combinedCards)
 		if err != nil {
 			return nil, err
 		}
-		playersWithHands[i].WinningHand = &winningHand
+		playersWithHands[i].BestHand = &winningHand
 	}
 
 	debugLog("\n--- 💭 Find Winners", debugProgress)
@@ -53,7 +53,7 @@ func determineWinners(allPlayers []Player) ([]Player, error) {
 
 func sortPlayersByWinningHandTypeDesc(players []Player) {
 	sort.SliceStable(players, func(i, j int) bool {
-		return players[i].WinningHand.Type > players[j].WinningHand.Type
+		return players[i].BestHand.Type > players[j].BestHand.Type
 	})
 }
 
@@ -65,7 +65,7 @@ func breakTies(players []Player) ([]Player, error) {
 	for hasChangesBeenMade && len(winners) > 1 {
 		hasChangesBeenMade = false
 		for playerIndex := 0; playerIndex < len(winners)-1; playerIndex++ {
-			result, err := compareWinningHands(winners[playerIndex].WinningHand, winners[playerIndex+1].WinningHand)
+			result, err := compareWinningHands(winners[playerIndex].BestHand, winners[playerIndex+1].BestHand)
 			if err != nil {
 				return nil, err
 			}
@@ -79,7 +79,7 @@ func breakTies(players []Player) ([]Player, error) {
 			debugLog("Algo.BreakTies() - "+message, debugEverything)
 
 			if result == -1 {
-				if winners[playerIndex].WinningHand.Type > winners[playerIndex+1].WinningHand.Type {
+				if winners[playerIndex].BestHand.Type > winners[playerIndex+1].BestHand.Type {
 					debugLog("Algo.BreakTies() - Winning hand type difference, early break\n", debugEverything)
 
 					for k := playerIndex + 1; k < len(winners); k++ {
@@ -104,7 +104,7 @@ func breakTies(players []Player) ([]Player, error) {
 }
 
 // -1 left wins, 0 tie, 1 right wins
-func compareWinningHands(left *WinningHand, right *WinningHand) (int, error) {
+func compareWinningHands(left *Hand, right *Hand) (int, error) {
 	if left == nil || right == nil {
 		return 0, newError(ErrInternalPokerAlgo, "invariant violated: a passed winning hand argument is nil")
 	}
@@ -175,7 +175,7 @@ func compareWinningHands(left *WinningHand, right *WinningHand) (int, error) {
 			return 1, nil
 		}
 		return compareKickers(leftCards[0:3], rightCards[0:3])
-	case Nothing:
+	case HighCard:
 		return compareKickers(leftCards, rightCards)
 	default:
 		return 0, newError(ErrInternalPokerAlgo, "invariant violated: switch defaulted")

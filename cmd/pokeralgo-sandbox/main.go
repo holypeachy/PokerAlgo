@@ -41,7 +41,7 @@ func main() {
 
 	deck := newDeck(*seed)
 	players := makePlayers(deck)
-	communityCards := deck.MustNextCards(numOfCommunityCards)
+	communityCards := deck.MustDrawN(numOfCommunityCards)
 
 	switch *mode {
 	case "main":
@@ -135,7 +135,7 @@ func newDeck(seed int64) *pokeralgo.Deck {
 func makePlayers(deck *pokeralgo.Deck) []pokeralgo.Player {
 	players := make([]pokeralgo.Player, 0, len(playerNames))
 	for _, name := range playerNames {
-		players = append(players, pokeralgo.NewPlayer(name, deck.MustNextCard(), deck.MustNextCard()))
+		players = append(players, pokeralgo.NewPlayer(name, deck.MustDraw(), deck.MustDraw()))
 	}
 	return players
 }
@@ -151,7 +151,7 @@ func printGameStart(players []pokeralgo.Player, communityCards []pokeralgo.Card,
 			fmt.Printf("\t??.??%% - %s\n", player)
 			continue
 		}
-		fmt.Printf("\t%0.2f%% - %s\n", chance.WinChance*100, player)
+		fmt.Printf("\t%0.2f%% - %s\n", chance.Win*100, player)
 	}
 
 	fmt.Print("\n--- 🃏 Community Cards:\n\t\t")
@@ -168,11 +168,11 @@ func monteCarloSim(players []pokeralgo.Player, communityCards []pokeralgo.Card, 
 	fmt.Println("-----------------------------")
 
 	for _, player := range players {
-		winningHand, err := pokeralgo.GetWinningHandForPlayer(player.HoleCards, communityCards)
+		winningHand, err := pokeralgo.EvaluatePlayer(player.HoleCards, communityCards)
 		if err != nil {
 			return err
 		}
-		player.WinningHand = &winningHand
+		player.BestHand = &winningHand
 
 		printPlayerHand(player)
 
@@ -181,8 +181,8 @@ func monteCarloSim(players []pokeralgo.Player, communityCards []pokeralgo.Card, 
 			return err
 		}
 
-		fmt.Printf("\tWin: %0.2f%%\n", chance.WinChance*100)
-		fmt.Printf("\tTie: %0.2f%%\n\n", chance.TieChance*100)
+		fmt.Printf("\tWin: %0.2f%%\n", chance.Win*100)
+		fmt.Printf("\tTie: %0.2f%%\n\n", chance.Tie*100)
 	}
 
 	return nil
@@ -208,11 +208,11 @@ func chenPreFlopChances(players []pokeralgo.Player) error {
 
 	samples := []struct {
 		name  string
-		cards pokeralgo.Pair
+		cards pokeralgo.HoleCards
 	}{
-		{"AAo", pokeralgo.Pair{First: pokeralgo.MustCard(14, pokeralgo.Spades, true), Second: pokeralgo.MustCard(14, pokeralgo.Diamonds, true)}},
-		{"KAs", pokeralgo.Pair{First: pokeralgo.MustCard(13, pokeralgo.Spades, true), Second: pokeralgo.MustCard(14, pokeralgo.Spades, true)}},
-		{"27o", pokeralgo.Pair{First: pokeralgo.MustCard(2, pokeralgo.Spades, true), Second: pokeralgo.MustCard(7, pokeralgo.Diamonds, true)}},
+		{"AAo", pokeralgo.HoleCards{First: pokeralgo.MustCard(14, pokeralgo.Spades, true), Second: pokeralgo.MustCard(14, pokeralgo.Diamonds, true)}},
+		{"KAs", pokeralgo.HoleCards{First: pokeralgo.MustCard(13, pokeralgo.Spades, true), Second: pokeralgo.MustCard(14, pokeralgo.Spades, true)}},
+		{"27o", pokeralgo.HoleCards{First: pokeralgo.MustCard(2, pokeralgo.Spades, true), Second: pokeralgo.MustCard(7, pokeralgo.Diamonds, true)}},
 	}
 
 	fmt.Println()
@@ -244,8 +244,8 @@ func lookupPreFlopChances(players []pokeralgo.Player, preflopDir string) error {
 		}
 
 		fmt.Println(player)
-		fmt.Printf("\tWin: %0.2f%%\n", chance.WinChance*100)
-		fmt.Printf("\tTie: %0.2f%%\n", chance.TieChance*100)
+		fmt.Printf("\tWin: %0.2f%%\n", chance.Win*100)
+		fmt.Printf("\tTie: %0.2f%%\n", chance.Tie*100)
 	}
 	fmt.Println()
 
@@ -268,7 +268,7 @@ func preFlopComputation(opponents int, sims int, outDir string) error {
 }
 
 func mainExecution(players []pokeralgo.Player, communityCards []pokeralgo.Card) error {
-	winners, err := pokeralgo.GetWinners(players, communityCards)
+	winners, err := pokeralgo.DetermineWinners(players, communityCards)
 	if err != nil {
 		return err
 	}
@@ -294,7 +294,7 @@ func manual(players []pokeralgo.Player, communityCards []pokeralgo.Card) error {
 	}
 	fmt.Println()
 
-	winningHand, err := pokeralgo.GetWinningHandForPlayer(players[0].HoleCards, communityCards)
+	winningHand, err := pokeralgo.EvaluatePlayer(players[0].HoleCards, communityCards)
 	if err != nil {
 		return err
 	}
@@ -309,14 +309,14 @@ func manual(players []pokeralgo.Player, communityCards []pokeralgo.Card) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Single-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.WinChance, result.TieChance, time.Since(started).Round(time.Millisecond))
+	fmt.Printf("Single-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.Win, result.Tie, time.Since(started).Round(time.Millisecond))
 
 	started = time.Now()
 	result, err = pokeralgo.GetWinningChanceSimParallel(players[0].HoleCards, communityCards, 4, 1_000_000)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Multi-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.WinChance, result.TieChance, time.Since(started).Round(time.Millisecond))
+	fmt.Printf("Multi-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.Win, result.Tie, time.Since(started).Round(time.Millisecond))
 
 	fmt.Println("\nPre-Flop")
 	fmt.Println("4 Opponents, 1 Million Sims")
@@ -326,20 +326,20 @@ func manual(players []pokeralgo.Player, communityCards []pokeralgo.Card) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Single-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.WinChance, result.TieChance, time.Since(started).Round(time.Millisecond))
+	fmt.Printf("Single-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.Win, result.Tie, time.Since(started).Round(time.Millisecond))
 
 	started = time.Now()
 	result, err = pokeralgo.GetWinningChancePreFlopSimParallel(players[0].HoleCards, 4, 1_000_000)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Multi-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.WinChance, result.TieChance, time.Since(started).Round(time.Millisecond))
+	fmt.Printf("Multi-Thread:\n\twin: %v\n\ttie: %v\n\ttime: %s\n", result.Win, result.Tie, time.Since(started).Round(time.Millisecond))
 
 	fmt.Printf("\nManual total time: %s\n", time.Since(timer).Round(time.Millisecond))
 	return nil
 }
 
-func winningChanceSim(cards pokeralgo.Pair, communityCards []pokeralgo.Card, opponents int, sims int, parallel bool) (pokeralgo.Chance, error) {
+func winningChanceSim(cards pokeralgo.HoleCards, communityCards []pokeralgo.Card, opponents int, sims int, parallel bool) (pokeralgo.Chance, error) {
 	if parallel {
 		return pokeralgo.GetWinningChanceSimParallel(cards, communityCards, opponents, sims)
 	}
@@ -349,9 +349,9 @@ func winningChanceSim(cards pokeralgo.Pair, communityCards []pokeralgo.Card, opp
 func printPlayerHand(player pokeralgo.Player) {
 	handName := "<nil>"
 	cards := ""
-	if player.WinningHand != nil {
-		handName = pokeralgo.GetPrettyHandName(*player.WinningHand)
-		cards = cardsToString(player.WinningHand.Cards)
+	if player.BestHand != nil {
+		handName = pokeralgo.DescribeHand(*player.BestHand)
+		cards = cardsToString(player.BestHand.Cards)
 	}
 	fmt.Printf("\t %s  %s  %s \n", player.Name, handName, cards)
 }
@@ -370,9 +370,9 @@ func cardsToString(cards []pokeralgo.Card) string {
 func makeTemplateHandEvalTestJSON(pathToTest string) error {
 	fmt.Printf("- Making Tests JSON file for: %q\n", pathToTest)
 	deck := pokeralgo.NewDeck()
-	community := deck.MustNextCards(5)
-	playerHand := pokeralgo.Pair{First: deck.MustNextCard(), Second: deck.MustNextCard()}
-	winning := pokeralgo.WinningHand{Type: pokeralgo.Nothing, Cards: community}
+	community := deck.MustDrawN(5)
+	playerHand := pokeralgo.HoleCards{First: deck.MustDraw(), Second: deck.MustDraw()}
+	winning := pokeralgo.Hand{Type: pokeralgo.HighCard, Cards: community}
 	test := handEvalTest{
 		Description:    "My Description",
 		CommunityCards: community,
@@ -386,7 +386,7 @@ func makeTemplateHandEvalTestJSON(pathToTest string) error {
 func makeTemplateAlgoTestJSON(pathToTest string) error {
 	fmt.Printf("- Making Tests JSON file for: %q\n", pathToTest)
 	deck := pokeralgo.NewDeck()
-	community := deck.MustNextCards(5)
+	community := deck.MustDrawN(5)
 	players := []pokeralgo.Player{
 		pokeralgo.NewPlayer("Test Player 1", pokeralgo.MustCard(14, pokeralgo.Spades, true), pokeralgo.MustCard(14, pokeralgo.Clubs, true)),
 		pokeralgo.NewPlayer("Test Player 2", pokeralgo.MustCard(14, pokeralgo.Diamonds, true), pokeralgo.MustCard(14, pokeralgo.Hearts, true)),
@@ -430,16 +430,16 @@ func exitErr(err error) {
 
 type handEvalTest struct {
 	Description    string
-	PlayerCards    pokeralgo.Pair
+	PlayerCards    pokeralgo.HoleCards
 	CommunityCards []pokeralgo.Card
-	ExpectedHand   pokeralgo.WinningHand
+	ExpectedHand   pokeralgo.Hand
 }
 
 type algoTest struct {
 	Description      string
-	Player1          pokeralgo.Pair
-	Player2          pokeralgo.Pair
-	Player3          pokeralgo.Pair
+	Player1          pokeralgo.HoleCards
+	Player2          pokeralgo.HoleCards
+	Player3          pokeralgo.HoleCards
 	CommunityCards   []pokeralgo.Card
 	IndicesOfWinners []int
 }
@@ -465,11 +465,16 @@ TODO:
 ? Add path to pre-flop to a single location, like an environmental variable
 
 * Notes
-* ResetDeck() THEN RemoveCards() together, always before using NextCard().
+* Reset() THEN Exclude() together, always before using Draw().
+* A Deck keeps one seed and one RNG for its entire lifetime. Reset() continues that deterministic RNG stream.
+* NewDeck() uses a time-based seed for convenience. Use GenerateSeed() and NewDeckWithSeed() for a real game and replay.
+* One game seed reproduces every shuffle. To reach a later hand, recreate the Deck and advance it with Reset().
 
 * Changes
-* Undo dumb stuff Codex did without my consent
-* Fix deck ResetWithSeed
-
-* God bless tests. Lots of thinking, I'm tired :(. This line by line translation might have been less worth it than I thought, ugh.
+* Renamed a lot of types, vars, and functions
+* Simplify the Deck API
+* Made the Deck cursor and seed unexported. Added Remaining() and Seed().
+* Reset() no longer creates or returns a new seed. create a new seeded Deck instead.
+* GenerateSeed() uses crypto/rand and returns a seed suitable for NewDeckWithSeed().
+* Generated architectural docs for future reference.
 */

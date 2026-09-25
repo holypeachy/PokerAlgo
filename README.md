@@ -47,19 +47,19 @@ The core API can be used to evaluate a completed round:
 deck := pokeralgo.NewDeck()
 
 players := []pokeralgo.Player{
-	pokeralgo.NewPlayer("Alice", deck.MustNextCard(), deck.MustNextCard()),
-	pokeralgo.NewPlayer("Bob", deck.MustNextCard(), deck.MustNextCard()),
+	pokeralgo.NewPlayer("Alice", deck.MustDraw(), deck.MustDraw()),
+	pokeralgo.NewPlayer("Bob", deck.MustDraw(), deck.MustDraw()),
 }
 
-community := deck.MustNextCards(5)
+community := deck.MustDrawN(5)
 
-winners, err := pokeralgo.GetWinners(players, community)
+winners, err := pokeralgo.DetermineWinners(players, community)
 if err != nil {
 	return err
 }
 
 for _, winner := range winners {
-	fmt.Printf("%s: %s\n", winner.Name, winner.WinningHand)
+	fmt.Printf("%s: %s\n", winner.Name, winner.BestHand)
 }
 ```
 
@@ -75,8 +75,8 @@ if err != nil {
 	return err
 }
 
-fmt.Printf("Win: %.2f%%\n", chance.WinChance*100)
-fmt.Printf("Tie: %.2f%%\n", chance.TieChance*100)
+fmt.Printf("Win: %.2f%%\n", chance.Win*100)
+fmt.Printf("Tie: %.2f%%\n", chance.Tie*100)
 ```
 
 ## Planned Work

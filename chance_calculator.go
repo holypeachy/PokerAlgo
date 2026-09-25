@@ -19,7 +19,7 @@ var compactCardPrintLookUp = map[int]string{
 }
 
 // Returns Win and Tie Values from 0 to 1.0
-func GetWinningChanceSimParallel(playerHoleCards Pair, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
+func GetWinningChanceSimParallel(playerHoleCards HoleCards, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
 	if err := argsWinningChanceSim(playerHoleCards, communityCards, numOfOpponents, numberOfSimulatedGames); err != nil {
 		return Chance{}, err
 	}
@@ -63,11 +63,11 @@ func GetWinningChanceSimParallel(playerHoleCards Pair, communityCards []Card, nu
 		totalTies += taskResult.ties
 	}
 
-	return Chance{WinChance: float64(totalWins) / float64(numberOfSimulatedGames), TieChance: float64(totalTies) / float64(numberOfSimulatedGames)}, nil
+	return Chance{Win: float64(totalWins) / float64(numberOfSimulatedGames), Tie: float64(totalTies) / float64(numberOfSimulatedGames)}, nil
 }
 
 // Returns Win and Tie Values from 0 to 1.0
-func GetWinningChancePreFlopSimParallel(playerHoleCards Pair, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
+func GetWinningChancePreFlopSimParallel(playerHoleCards HoleCards, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
 	if err := argsPreFlopSim(playerHoleCards, numOfOpponents, numberOfSimulatedGames); err != nil {
 		return Chance{}, err
 	}
@@ -111,11 +111,11 @@ func GetWinningChancePreFlopSimParallel(playerHoleCards Pair, numOfOpponents int
 		totalTies += taskResult.ties
 	}
 
-	return Chance{WinChance: float64(totalWins) / float64(numberOfSimulatedGames), TieChance: float64(totalTies) / float64(numberOfSimulatedGames)}, nil
+	return Chance{Win: float64(totalWins) / float64(numberOfSimulatedGames), Tie: float64(totalTies) / float64(numberOfSimulatedGames)}, nil
 }
 
 // Returns Win and Tie Values from 0 to 1.0
-func GetWinningChanceSim(playerHoleCards Pair, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
+func GetWinningChanceSim(playerHoleCards HoleCards, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
 	if err := argsWinningChanceSim(playerHoleCards, communityCards, numOfOpponents, numberOfSimulatedGames); err != nil {
 		return Chance{}, err
 	}
@@ -125,11 +125,11 @@ func GetWinningChanceSim(playerHoleCards Pair, communityCards []Card, numOfOppon
 		return Chance{}, err
 	}
 
-	return Chance{WinChance: float64(wins) / float64(numberOfSimulatedGames), TieChance: float64(ties) / float64(numberOfSimulatedGames)}, nil
+	return Chance{Win: float64(wins) / float64(numberOfSimulatedGames), Tie: float64(ties) / float64(numberOfSimulatedGames)}, nil
 }
 
 // Returns Win and Tie Values from 0 to 1.0
-func GetWinningChancePreFlopSim(playerHoleCards Pair, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
+func GetWinningChancePreFlopSim(playerHoleCards HoleCards, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
 	if err := argsPreFlopSim(playerHoleCards, numOfOpponents, numberOfSimulatedGames); err != nil {
 		return Chance{}, err
 	}
@@ -139,11 +139,11 @@ func GetWinningChancePreFlopSim(playerHoleCards Pair, numOfOpponents int, number
 		return Chance{}, err
 	}
 
-	return Chance{WinChance: float64(wins) / float64(numberOfSimulatedGames), TieChance: float64(ties) / float64(numberOfSimulatedGames)}, nil
+	return Chance{Win: float64(wins) / float64(numberOfSimulatedGames), Tie: float64(ties) / float64(numberOfSimulatedGames)}, nil
 }
 
 // Returns Value from 0 to 1.0 from pre-computed data
-func GetWinningChancePreFlopLookUp(playerHoleCards Pair, numOfOpponents int, preFlopDataLoader PreFlopDataLoader) (Chance, error) {
+func GetWinningChancePreFlopLookUp(playerHoleCards HoleCards, numOfOpponents int, preFlopDataLoader PreFlopDataLoader) (Chance, error) {
 	if err := argsPreFlopLookUp(playerHoleCards, numOfOpponents); err != nil {
 		return Chance{}, err
 	}
@@ -162,14 +162,14 @@ func GetWinningChancePreFlopLookUp(playerHoleCards Pair, numOfOpponents int, pre
 
 	result, ok := preFlopLookUpTable[PreFlopKey{HoleCardsInNotation: notation, OpponentCount: numOfOpponents}]
 	if !ok {
-		return Chance{}, fmt.Errorf("there is most likely no pre-computed data for numOfOpponents = %d", numOfOpponents)
+		return Chance{}, newError(ErrPreFlopDataNotFound, fmt.Sprintf("there is most likely no pre-computed data for numOfOpponents = %d", numOfOpponents))
 	}
 
 	return result, nil
 }
 
 // Returns Value from 0 to 1.0 | Realistically: 0.1166 to 0.8389
-func GetWinningChancePreFlopChen(playerHoleCards Pair) (float64, error) {
+func GetWinningChancePreFlopChen(playerHoleCards HoleCards) (float64, error) {
 	if err := againstDuplicateHoleCards(playerHoleCards, "playerHoleCards"); err != nil {
 		return 0, err
 	}
@@ -184,7 +184,7 @@ func GetWinningChancePreFlopChen(playerHoleCards Pair) (float64, error) {
 }
 
 // Returns -1 to 20
-func GetPreFlopChen(playerHoleCards Pair) (float64, error) {
+func GetPreFlopChen(playerHoleCards HoleCards) (float64, error) {
 	if err := againstDuplicateHoleCards(playerHoleCards, "playerHoleCards"); err != nil {
 		return 0, err
 	}
@@ -257,7 +257,7 @@ func GetPreFlopChen(playerHoleCards Pair) (float64, error) {
 	return points, nil
 }
 
-func winningChanceSimTask(holeCards Pair, communityCards []Card, numOfOpponents int, sims int) (int, int, error) {
+func winningChanceSimTask(holeCards HoleCards, communityCards []Card, numOfOpponents int, sims int) (int, int, error) {
 	testDeck := NewDeck()
 	timesWon := 0
 	timesTied := 0
@@ -269,27 +269,27 @@ func winningChanceSimTask(holeCards Pair, communityCards []Card, numOfOpponents 
 
 	allPlayers := []Player{player}
 	for k := 0; k < numOfOpponents; k++ {
-		allPlayers = append(allPlayers, NewPlayer("Simulated Opponent", testDeck.MustNextCard(), testDeck.MustNextCard()))
+		allPlayers = append(allPlayers, NewPlayer("Simulated Opponent", testDeck.MustDraw(), testDeck.MustDraw()))
 	}
 
 	for i := 0; i < sims; i++ {
-		testDeck.ResetDeck()
-		if err := testDeck.RemoveCards(cardsToRemove); err != nil {
+		testDeck.Reset()
+		if err := testDeck.Exclude(cardsToRemove); err != nil {
 			return 0, 0, err
 		}
 
 		for playerIndex := range allPlayers {
 			if allPlayers[playerIndex].Name != "Player" {
-				allPlayers[playerIndex].NewHand(testDeck.MustNextCard(), testDeck.MustNextCard())
+				allPlayers[playerIndex].SetHoleCards(testDeck.MustDraw(), testDeck.MustDraw())
 			}
 		}
 
 		fullCommunity := slices.Clone(communityCards)
 		if remainingCommunity > 0 {
-			fullCommunity = append(fullCommunity, testDeck.MustNextCards(remainingCommunity)...)
+			fullCommunity = append(fullCommunity, testDeck.MustDrawN(remainingCommunity)...)
 		}
 
-		winners, err := GetWinners(allPlayers, fullCommunity)
+		winners, err := DetermineWinners(allPlayers, fullCommunity)
 		if err != nil {
 			return 0, 0, err
 		}
@@ -304,7 +304,7 @@ func winningChanceSimTask(holeCards Pair, communityCards []Card, numOfOpponents 
 	return timesWon, timesTied, nil
 }
 
-func winningChancePreFlopSimTask(holeCards Pair, numOfOpponents int, sims int) (int, int, error) {
+func winningChancePreFlopSimTask(holeCards HoleCards, numOfOpponents int, sims int) (int, int, error) {
 	testDeck := NewDeck()
 	timesWon := 0
 	timesTied := 0
@@ -314,23 +314,23 @@ func winningChancePreFlopSimTask(holeCards Pair, numOfOpponents int, sims int) (
 
 	allPlayers := []Player{player}
 	for k := 0; k < numOfOpponents; k++ {
-		allPlayers = append(allPlayers, NewPlayer("Simulated Opponent", testDeck.MustNextCard(), testDeck.MustNextCard()))
+		allPlayers = append(allPlayers, NewPlayer("Simulated Opponent", testDeck.MustDraw(), testDeck.MustDraw()))
 	}
 
 	for i := 0; i < sims; i++ {
-		testDeck.ResetDeck()
-		if err := testDeck.RemoveCards(cardsToRemove); err != nil {
+		testDeck.Reset()
+		if err := testDeck.Exclude(cardsToRemove); err != nil {
 			return 0, 0, err
 		}
 
 		for playerIndex := range allPlayers {
 			if allPlayers[playerIndex].Name != "Player" {
-				allPlayers[playerIndex].NewHand(testDeck.MustNextCard(), testDeck.MustNextCard())
+				allPlayers[playerIndex].SetHoleCards(testDeck.MustDraw(), testDeck.MustDraw())
 			}
 		}
 
-		communityCards := testDeck.MustNextCards(5)
-		winners, err := GetWinners(allPlayers, communityCards)
+		communityCards := testDeck.MustDrawN(5)
+		winners, err := DetermineWinners(allPlayers, communityCards)
 		if err != nil {
 			return 0, 0, err
 		}
