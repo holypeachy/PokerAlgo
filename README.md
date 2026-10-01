@@ -2,7 +2,7 @@
 
 A Texas Hold'em hand evaluator and probability engine written in Go.
 
-**Status:** Active development, but slow. Will optimize heap allocs due to slices in the future.
+**Status:** Active development, but slow. Will optimize heap allocs due to slices in the future.  
 **Built with:** C# => Go
 
 ## Overview
