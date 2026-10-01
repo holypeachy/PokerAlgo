@@ -144,7 +144,11 @@ Preflop simulation is the same idea, except only the player's two hole cards are
 
 The simulation functions split work into one fixed job per logical CPU, run each job in a goroutine, and add the results together at the end.
 
-Bulk preflop generation creates large volumes of short-lived allocations. For the standalone compute workload, a larger `GOGC` target lets those jobs remain runnable instead of repeatedly stopping at Go's small default heap target. This is an execution-time tuning concern rather than part of the poker algorithm.
+The intended live workload is approximately 10,000 simulations for an AI decision. That currently takes roughly 50 ms on the development machine and can run asynchronously, so it does not block PokerGame work.
+
+Bulk preflop generation is a separate, optional stress workload. It creates large volumes of short-lived allocations because every simulated game passes through winner selection and evaluation. For the standalone compute command, a larger `GOGC` target improves CPU utilization by allowing a larger heap between collections. This is an implementation optimization opportunity, not a poker-algorithm correctness issue or a blocker for normal hand evaluation.
+
+Future optimization can remain behind the existing public API. The likely path is reusable per-job scratch storage and fixed arrays for bounded rank, suit, and card data, while public entry points retain validation and caller-safe behavior.
 
 ## Preflop Lookup
 

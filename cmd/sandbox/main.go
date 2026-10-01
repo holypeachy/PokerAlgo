@@ -434,7 +434,7 @@ type algoTest struct {
 !
 
 TODO
-TODO: Optimize performance
+TODO: Optimize performance. Update all algorithms, reduce heap allocations.
 
 ? Future Ideas
 ? Generate a ton of data on the Monte Carlo sims and find how many simulations give the most accurate prediction while minimizing compute time.

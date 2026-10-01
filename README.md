@@ -2,7 +2,7 @@
 
 A Texas Hold'em hand evaluator and probability engine written in Go.
 
-**Status:** Active development, but slow  
+**Status:** Active development, but slow. Will optimize heap allocs due to slices in the future.
 **Built with:** C# => Go
 
 ## Overview
@@ -83,7 +83,7 @@ Win and tie rates can be estimated at any point after the hole cards (a player's
 chance, err := pokeralgo.Simulate(players[0].HoleCards,
 	community[:3],
 	len(players)-1,
-	100_000,
+	10_000,
 )
 if err != nil {
 	return err
@@ -95,6 +95,6 @@ fmt.Printf("Tie: %.2f%%\n", chance.Tie*100)
 
 ## Planned Work
 
-- First I need to get it to where I want, because Codex did whatever it felt like doing when porting this.
+- Rework all the algorithms. Code is readable as I originally intended but the allocation heavy due to slice cloning. That's just something I'll do in the future if PokerAlgo ever becomes a bottleneck.
 - Add combined equity calculations for multiple known players from a single simulation (aka all player probabilities add to 100%).
 - Revisit post-flop lookup data if live simulation becomes a meaningful bottleneck.

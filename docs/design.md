@@ -8,7 +8,7 @@ This document is a maintainer memory aid for the Go version of PokerAlgo. It is 
 
 PokerAlgo is a Go module named `pokeralgo`. The root package exposes the reusable poker logic:
 
-- `card.go`, `types.go`: cards, suits, players, hand types, pairs, and winning-hand data structures.
+- `card.go`, `types.go`: cards, suits, players, hand types, hole cards, and winning-hand data structures.
 - `deck.go`: seeded/random deck construction, shuffle, draw, reset, and known-card removal.
 - `evaluator.go`: best five-card hand classification from 5-7 cards.
 - `algo.go`: showdown winner selection across players.
@@ -27,7 +27,7 @@ Repository data:
 - `resources/preflop_data`: generated lookup files for 1-4 opponents, currently named like `4_500000.preflop`.
 - `testdata`: JSON fixtures for hand evaluation and winner selection.
 
-Historical context from the attached C# README: the Go project is a port of a completed C# package. The C# notes describe the larger goal as a Texas Hold'em game/AI support library, with independent win/tie estimates meant to inform an AI rather than sum to 100% across all players. The current Go README and sandbox TODOs show that this remains true for the Go rewrite.
+Historical context from the attached C# README: the Go project is a port of a completed C# package. The C# notes describe the larger goal as a Texas Hold'em game/AI support library, with independent win/tie estimates meant to inform an AI rather than sum to 100% across all players. The core Go port is complete; allocation-focused simulation optimization is explicitly deferred and does not block PokerGame.
 
 ## Core Data Model
 
@@ -150,10 +150,27 @@ Monte Carlo facts:
 Performance facts measured during the Go port:
 
 - An allocation profile covering two million preflop simulations reported about 25.3 GB allocated across 288.8 million objects.
+- That profile corresponds to roughly 12.6 KB and 144 heap allocations per simulated game. These are cumulative allocation figures, not simultaneously resident memory.
 - The default collector performed 12,930 collections during one two-million-simulation sandbox run because the live heap repeatedly returned near zero and the heap goal stayed small.
 - In the same benchmark, `GOGC=1000` reduced execution from about 5.9 seconds to 1.8 seconds while increasing peak memory from roughly 32 MB to 190-237 MB and raising CPU use from about five to twelve logical cores.
 - An identical 325-hand, one-opponent, 10,000-simulation compute run took about 2.69 seconds in C# Release, 4.53 seconds in Go with default GC behavior, and 1.59 seconds in Go with `GOGC=1000`.
+- A same-machine full preflop generation run covering 325 starting-hand notations, opponent counts 1-4, and 500,000 simulations per notation (650 million simulated games total) completed in about 11m57s with default Go GC behavior, 8m51s with `GOGC=1000`, and 8m19s with `GOGC=100000 GOMEMLIMIT=10GiB`. The last configuration consumed several gigabytes for only about a 6% improvement over `GOGC=1000`.
+- The corresponding C# Debug run completed in about 14m07s. This is not a Release comparison, but it disproved the initial concern that the Go port was orders of magnitude slower on the full workload.
 - GC tuning is not currently embedded in the library. For offline computation, use `GOGC=1000` and optionally a soft `GOMEMLIMIT`, such as `1GiB`.
+
+Operational context:
+
+- Bulk preflop generation is an optional offline workload, originally added because the data could be generated and reused.
+- Monte Carlo simulation is primarily intended to inform PokerAI. The expected live request is around 10,000 simulations and was observed at roughly 50 ms on the development machine; even a moderately larger delay is acceptable for an asynchronous AI decision.
+- PokerGame itself primarily depends on hand evaluation and winner selection. Their bounded 5-7-card inputs do not make the measured simulation allocation volume a practical blocker.
+- Total allocation volume is an optimization signal, not the same measurement as peak resident memory. The C# run used about 88 MB resident memory in one observation, but cumulative C# allocations were not profiled.
+
+Likely future optimization boundary:
+
+- Preserve the exported API and current evaluator as the behavioral reference.
+- Optimize only trusted internal simulation paths rather than weakening validation or caller immutability at public boundaries.
+- Replace repeated maps and temporary slices with fixed rank/suit counters, fixed card arrays, and reusable job-owned scratch storage where profiling supports it.
+- Do not treat every value copy or `make` call as a heap allocation. Go's compiler escape analysis determines whether backing storage must escape; benchmarks and allocation profiles should guide changes.
 
 Validation facts:
 
@@ -235,7 +252,7 @@ Gaps worth remembering:
 
 Facts from README/TODOs/code:
 
-- The Go port is active but still being cleaned up after a C#-to-Go rewrite.
+- The core Go port is complete. Further simulation optimization is tracked as non-blocking future work.
 - Combined equity for multiple known players is not implemented; current probabilities are independent target-player estimates.
 - Post-flop lookup/precomputed tables are not implemented.
 - Preflop lookup data has no metadata beyond filename and row values.
@@ -243,7 +260,7 @@ Facts from README/TODOs/code:
 - Debug logging is package-global state and mostly aimed at local CLI/manual diagnosis. Configure it before starting concurrent work.
 - `FolderLoader` caches data but does not protect that cache with synchronization.
 - Preflop computation can be expensive because it runs Monte Carlo simulations for every generated starting-hand notation and opponent count.
-- The simulation hot path is allocation-heavy. A larger `GOGC` target is effective for offline generation, while reducing allocations remains the longer-term optimization path.
+- The simulation hot path is allocation-heavy. A larger `GOGC` target is effective for offline generation, while reducing allocations remains the longer-term optimization path. Current live latency is acceptable for the intended AI use.
 - The module declares `go 1.26`; that version requirement is higher than many installed Go toolchains.
 
 Reasonable inferences:
