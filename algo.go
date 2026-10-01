@@ -216,7 +216,7 @@ func compareKickers(left []Card, right []Card) (int, error) {
 func removePlayer(players []Player, target Player) []Player {
 	for i, player := range players {
 		if samePlayer(player, target) {
-			return append(players[:i], players[i+1:]...)
+			return slices.Delete(players, i, i+1)
 		}
 	}
 	return players

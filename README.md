@@ -45,10 +45,7 @@ Debug output defaults to `off`. The available levels are `off`, `summary`, and `
 Preflop data generation is allocation-heavy. Giving Go's garbage collector more room substantially improves CPU utilization during this offline workload:
 
 ```sh
-GOGC=1000 GOMEMLIMIT=1GiB go run ./cmd/compute \
-  -opponents 4 \
-  -sims 500000 \
-  -out ./resources/preflop_data
+GOGC=1000 GOMEMLIMIT=1GiB go run ./cmd/compute -opponents 4 -sims 500000 -out ./resources/preflop_data
 ```
 
 `GOMEMLIMIT` is a soft runtime limit. These settings are intended for bulk computation, not as package-wide defaults for applications using PokerAlgo.
