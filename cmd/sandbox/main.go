@@ -455,5 +455,6 @@ TODO: Optimize performance. Update all algorithms, reduce heap allocations.
 * For bulk compute, GOGC=1000 trades roughly 190-237 MB of memory for much higher CPU utilization and substantially lower execution time.
 
 * Changes
-*
+* Update readme
+* Replace codex's custom error implementation
 */

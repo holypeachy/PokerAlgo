@@ -59,7 +59,7 @@ func (d *Deck) resetOrder() {
 // Returns the first card, and then removes it from the deck
 func (d *Deck) Draw() (Card, error) {
 	if d.nextCardIndex >= len(d.cards) {
-		return Card{}, newError(ErrDeckEmpty, "no more cards in the deck")
+		return Card{}, fmt.Errorf("%w: no more cards in the deck", ErrDeckEmpty)
 	}
 
 	card := d.cards[d.nextCardIndex]
@@ -77,13 +77,13 @@ func (d *Deck) MustDraw() Card {
 
 func (d *Deck) DrawN(numberOfCards int) ([]Card, error) {
 	if numberOfCards < 1 {
-		return nil, newError(ErrInvalidArgument, "numberOfCards must be greater than 0")
+		return nil, fmt.Errorf("%w: numberOfCards must be greater than 0", ErrInvalidArgument)
 	}
 	if d.nextCardIndex >= len(d.cards) {
-		return nil, newError(ErrDeckEmpty, "no more cards in the deck")
+		return nil, fmt.Errorf("%w: no more cards in the deck", ErrDeckEmpty)
 	}
 	if d.nextCardIndex+numberOfCards > len(d.cards) {
-		return nil, newError(ErrNotEnoughCards, fmt.Sprintf("cards left: %d. Cards requested: %d", len(d.cards)-d.nextCardIndex, numberOfCards))
+		return nil, fmt.Errorf("%w: cards left: %d. Cards requested: %d", ErrNotEnoughCards, len(d.cards)-d.nextCardIndex, numberOfCards)
 	}
 
 	cards := slices.Clone(d.cards[d.nextCardIndex : d.nextCardIndex+numberOfCards])
@@ -103,7 +103,7 @@ func (d *Deck) Exclude(cardsToRemove []Card) error {
 	for _, card := range cardsToRemove {
 		index := d.indexOf(card)
 		if index == -1 {
-			return newError(ErrCardNotInDeck, fmt.Sprintf("invariant violated: card to remove %s was not found in deck", card))
+			return fmt.Errorf("%w: invariant violated: card to remove %s was not found in deck", ErrCardNotInDeck, card)
 		}
 
 		if index > d.nextCardIndex-1 {

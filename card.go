@@ -34,7 +34,7 @@ type Card struct {
 
 func NewCard(rank int, suit Suit, isPlayerCard bool) (Card, error) {
 	if rank < 1 || rank > 14 {
-		return Card{}, newError(ErrInvalidCardRank, fmt.Sprintf("rank value passed: %d. Values must be 1-14. Both 1 and 14 represent Ace.", rank))
+		return Card{}, fmt.Errorf("%w: rank value passed: %d. Values must be 1-14. Both 1 and 14 represent Ace.", ErrInvalidCardRank, rank)
 	}
 
 	return Card{Rank: rank, Suit: suit, IsHoleCard: isPlayerCard}, nil

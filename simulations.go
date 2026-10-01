@@ -140,7 +140,7 @@ func LookupPreflop(playerHoleCards HoleCards, numOfOpponents int, preFlopDataLoa
 
 	result, ok := preFlopLookUpTable[PreFlopKey{HoleCardsInNotation: notation, OpponentCount: numOfOpponents}]
 	if !ok {
-		return Chance{}, newError(ErrPreFlopDataNotFound, fmt.Sprintf("there is most likely no pre-computed data for numOfOpponents = %d", numOfOpponents))
+		return Chance{}, fmt.Errorf("%w: there is most likely no pre-computed data for numOfOpponents = %d", ErrPreFlopDataNotFound, numOfOpponents)
 	}
 
 	return result, nil
@@ -229,7 +229,7 @@ func ChenScore(playerHoleCards HoleCards) (float64, error) {
 	}
 
 	if points < -1 {
-		return 0, newError(ErrInternalPokerAlgo, "invariant violated: points should always be greater than -1 before returning")
+		return 0, fmt.Errorf("%w: invariant violated: points should always be greater than -1 before returning", ErrInternal)
 	}
 
 	return points, nil

@@ -14,7 +14,7 @@ PokerAlgo is a Go module named `pokeralgo`. The root package exposes the reusabl
 - `algo.go`: showdown winner selection across players.
 - `simulations.go`: Monte Carlo equity estimates, preflop Chen score, and preflop lookup entry points.
 - `preflop_loader.go`: file-backed preflop lookup table loading.
-- `guards.go`, `errors.go`: validation and typed error categories.
+- `guards.go`, `errors.go`: validation and exported sentinel errors.
 - `debug.go`, `helpers.go`: debug output and display names.
 
 There are two command packages:
@@ -62,6 +62,23 @@ Reasonable inference:
 - `validateEvaluationCards` protects direct evaluation input.
 - `validateSimulation`, `validatePreflopSimulation`, and `validatePreflopLookup` protect probability entry points.
 - `validateHoleCards`, `validateUniqueCards`, and `validateUniqueCardsAndNoLowAces` provide shared checks.
+
+## Errors
+
+`errors.go` declares exported sentinel errors using `errors.New`. Error returns wrap these values with `fmt.Errorf("%w: ...", sentinel)` to retain the category and include contextual details. Callers use the standard library's `errors.Is`:
+
+```go
+_, err := deck.Draw()
+if errors.Is(err, pokeralgo.ErrDeckEmpty) {
+	// No cards remain to draw.
+}
+```
+
+The available sentinels are `ErrInvalidCardRank`, `ErrInvalidArgument`, `ErrDuplicateCards`, `ErrLowAces`, `ErrDeckEmpty`, `ErrNotEnoughCards`, `ErrCardNotInDeck`, `ErrSeedGeneration`, `ErrInvalidPreFlopData`, `ErrPreFlopDataNotFound`, and `ErrInternal`.
+
+`GenerateSeed` wraps both `ErrSeedGeneration` and the underlying failure with `%w`. Loader filesystem and some parsing failures are returned directly; not every error belongs to a PokerAlgo category. Error messages now include the sentinel's text before the contextual detail.
+
+Migration from the original Go port: `ErrorKind`, `PokerAlgoError`, and `IsErrorKind` were removed, and `ErrInternalPokerAlgo` became `ErrInternal`. The exported `Err...` categories are now error values rather than string constants. Use `errors.Is(err, pokeralgo.ErrDuplicateCards)` in place of `pokeralgo.IsErrorKind(err, pokeralgo.ErrDuplicateCards)`; avoid comparing error messages or using direct equality on wrapped errors.
 
 ## Deck Behavior
 
@@ -228,7 +245,7 @@ Preflop data generation:
 
 Coverage demonstrated by tests:
 
-- Card rank validation and typed error checks.
+- Card rank validation and sentinel matching with `errors.Is`.
 - Deck boundary behavior, remove/reset invariants, uniqueness, and deterministic seeds.
 - `Evaluate` validation for 5-7 cards, duplicates, low ace input, and valid input.
 - Fixture coverage for every hand class: royal flush, straight flush including ace-low, quads, full house, flush, straight, trips, two pair, pair, and high card.
@@ -275,5 +292,5 @@ Reasonable inferences:
 - Keep rank `14` as the public ace representation; reserve rank `1` for internal wheel-straight handling.
 - Preserve `Hand.Cards` ordering unless all comparison code is updated together.
 - Preserve deck exclusion semantics for simulation: excluding known cards should advance the internal cursor only when an excluded card is still in the drawable suffix.
-- Preserve typed `PokerAlgoError.Kind` for cases where callers/tests need to distinguish validation failures.
+- Preserve sentinel error identity and wrap contextual details with `%w` so callers can classify failures with `errors.Is`.
 - Preserve deterministic seed support; it is important for reproducible failures and manual debugging.

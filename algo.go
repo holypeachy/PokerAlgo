@@ -1,6 +1,7 @@
 package pokeralgo
 
 import (
+	"fmt"
 	"slices"
 	"sort"
 )
@@ -44,7 +45,7 @@ func determineWinners(allPlayers []Player) ([]Player, error) {
 		return nil, err
 	}
 	if len(winners) < 1 {
-		return nil, newError(ErrInternalPokerAlgo, "invariant violated: winners count should never be less than 1")
+		return nil, fmt.Errorf("%w: invariant violated: winners count should never be less than 1", ErrInternal)
 	}
 	debugWinners(winners)
 
@@ -100,7 +101,7 @@ func breakTies(players []Player) ([]Player, error) {
 				tempPlayers = removePlayer(tempPlayers, winners[playerIndex])
 				hasChangesBeenMade = true
 			} else if result != 0 {
-				return nil, newError(ErrInternalPokerAlgo, "invariant violated: compareWinningHands returned unexpected result")
+				return nil, fmt.Errorf("%w: invariant violated: compareWinningHands returned unexpected result", ErrInternal)
 			}
 		}
 		winners = slices.Clone(tempPlayers)
@@ -112,7 +113,7 @@ func breakTies(players []Player) ([]Player, error) {
 // -1 left wins, 0 tie, 1 right wins
 func compareWinningHands(left *Hand, right *Hand) (int, error) {
 	if left == nil || right == nil {
-		return 0, newError(ErrInternalPokerAlgo, "invariant violated: a passed winning hand argument is nil")
+		return 0, fmt.Errorf("%w: invariant violated: a passed winning hand argument is nil", ErrInternal)
 	}
 
 	debugCards(debugTrace, "compare", "left hand", left.Cards)
@@ -184,7 +185,7 @@ func compareWinningHands(left *Hand, right *Hand) (int, error) {
 	case HighCard:
 		return compareKickers(leftCards, rightCards)
 	default:
-		return 0, newError(ErrInternalPokerAlgo, "invariant violated: switch defaulted")
+		return 0, fmt.Errorf("%w: invariant violated: switch defaulted", ErrInternal)
 	}
 }
 
@@ -194,7 +195,7 @@ func compareKickers(left []Card, right []Card) (int, error) {
 	debugCards(debugTrace, "compare", "right kickers", right)
 
 	if len(left) != len(right) {
-		return 0, newError(ErrInternalPokerAlgo, "invariant violated: left and right kicker counts differ")
+		return 0, fmt.Errorf("%w: invariant violated: left and right kicker counts differ", ErrInternal)
 	}
 
 	for i := len(left) - 1; i >= 0; i-- {

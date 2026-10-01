@@ -1,6 +1,9 @@
 package pokeralgo
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestEvaluateValidation(t *testing.T) {
 	deck := NewDeck()
@@ -23,7 +26,7 @@ func TestEvaluateValidation(t *testing.T) {
 		MustCard(9, Spades, false),
 		MustCard(10, Spades, false),
 	}
-	if _, err := Evaluate(cards); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := Evaluate(cards); !errors.Is(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
 
@@ -36,7 +39,7 @@ func TestEvaluateValidation(t *testing.T) {
 		MustCard(9, Spades, false),
 		MustCard(10, Spades, false),
 	}
-	if _, err := Evaluate(cards); !IsErrorKind(err, ErrLowAces) {
+	if _, err := Evaluate(cards); !errors.Is(err, ErrLowAces) {
 		t.Fatalf("expected low aces, got %v", err)
 	}
 }

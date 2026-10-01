@@ -1,6 +1,9 @@
 package pokeralgo
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestDeckShouldContainUniqueCardsAfterResetAndRemove(t *testing.T) {
 	deck := NewDeck()
@@ -29,7 +32,7 @@ func TestNextCardThrowsWhenDeckIsEmpty(t *testing.T) {
 		deck.MustDraw()
 	}
 
-	if _, err := deck.Draw(); !IsErrorKind(err, ErrDeckEmpty) {
+	if _, err := deck.Draw(); !errors.Is(err, ErrDeckEmpty) {
 		t.Fatalf("expected deck empty, got %v", err)
 	}
 }
@@ -38,7 +41,7 @@ func TestNextCardsThrowsWhenDeckIsEmpty(t *testing.T) {
 	deck := NewDeck()
 	deck.MustDrawN(52)
 
-	if _, err := deck.DrawN(1); !IsErrorKind(err, ErrDeckEmpty) {
+	if _, err := deck.DrawN(1); !errors.Is(err, ErrDeckEmpty) {
 		t.Fatalf("expected deck empty, got %v", err)
 	}
 }
@@ -59,7 +62,7 @@ func TestNextCardsThrowsWhenNotEnoughCardsLeft(t *testing.T) {
 	if deck.Remaining() != 2 {
 		t.Fatalf("expected 2 cards remaining, got %d", deck.Remaining())
 	}
-	if _, err := deck.DrawN(3); !IsErrorKind(err, ErrNotEnoughCards) {
+	if _, err := deck.DrawN(3); !errors.Is(err, ErrNotEnoughCards) {
 		t.Fatalf("expected not enough cards, got %v", err)
 	}
 }

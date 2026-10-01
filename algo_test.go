@@ -1,6 +1,9 @@
 package pokeralgo
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestGetWinnersValidation(t *testing.T) {
 	deck := NewDeck()
@@ -55,7 +58,7 @@ func TestGetWinnersThrowsWhenDuplicateCardsExist(t *testing.T) {
 		MustCard(3, Diamonds, false),
 	}
 
-	if _, err := DetermineWinners(players, communityCards); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := DetermineWinners(players, communityCards); !errors.Is(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
 }
@@ -74,7 +77,7 @@ func TestGetWinnersThrowsWhenLowAceInput(t *testing.T) {
 		MustCard(3, Diamonds, false),
 	}
 
-	if _, err := DetermineWinners(players, communityCards); !IsErrorKind(err, ErrLowAces) {
+	if _, err := DetermineWinners(players, communityCards); !errors.Is(err, ErrLowAces) {
 		t.Fatalf("expected low ace, got %v", err)
 	}
 }

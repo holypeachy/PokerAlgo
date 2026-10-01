@@ -27,7 +27,7 @@ func SetDebugLevel(level string) error {
 	case "trace":
 		currentDebugLevel = debugTrace
 	default:
-		return newError(ErrInvalidArgument, "debug level must be off, summary, or trace")
+		return fmt.Errorf("%w: debug level must be off, summary, or trace", ErrInvalidArgument)
 	}
 
 	return nil

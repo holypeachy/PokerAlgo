@@ -7,7 +7,7 @@ A Texas Hold'em hand evaluator and probability engine written in Go.
 
 ## Overview
 
-PokerAlgo is the evaluation and probability layer of my Texas Hold'em project. I wanted to do everything from scratch so this was the first thing that was necessary. It grew from hand classification and winner selection into simulation, starting-hand evaluation, and precomputed preflop data. I would love to precompute all possible hands but that's a pretty big endeavor, but for my purposes Monte Carlo sims will do for now.
+PokerAlgo is the evaluation and probability layer of my Texas Hold'em project. I wanted to do everything from scratch so this was the first thing that was necessary. It grew from hand classification and winner selection into simulation, starting-hand evaluation, and precomputed preflop data. I would love to precompute all possible hands but that's a pretty big endeavor. For my purposes Monte Carlo sims will do for now.
 
 Given a player's hole cards and the community cards, PokerAlgo can determine the best five-card hand, resolve winners and ties, and estimate win and tie rates from the information available to that player.
 

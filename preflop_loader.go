@@ -46,12 +46,12 @@ func (l *FolderLoader) Load() (map[PreFlopKey]Chance, error) {
 		fileName := filepath.Base(file)
 		splitFileName := strings.Split(fileName, "_")
 		if len(splitFileName) != 2 {
-			return nil, newError(ErrInvalidPreFlopData, fmt.Sprintf("unexpected file name format: %q", fileName))
+			return nil, fmt.Errorf("%w: unexpected file name format: %q", ErrInvalidPreFlopData, fileName)
 		}
 
 		numberOfOpponents, err := strconv.Atoi(splitFileName[0])
 		if err != nil {
-			return nil, newError(ErrInvalidPreFlopData, fmt.Sprintf("unexpected file name format: %q", fileName))
+			return nil, fmt.Errorf("%w: unexpected file name format: %q", ErrInvalidPreFlopData, fileName)
 		}
 
 		data, err := os.ReadFile(file)
@@ -66,7 +66,7 @@ func (l *FolderLoader) Load() (map[PreFlopKey]Chance, error) {
 
 			currentLine := strings.Fields(line)
 			if len(currentLine) != 3 {
-				return nil, newError(ErrInvalidPreFlopData, fmt.Sprintf("unexpected line format in %q: %q", fileName, line))
+				return nil, fmt.Errorf("%w: unexpected line format in %q: %q", ErrInvalidPreFlopData, fileName, line)
 			}
 
 			winChance, err := strconv.ParseFloat(currentLine[1], 64)
@@ -83,7 +83,7 @@ func (l *FolderLoader) Load() (map[PreFlopKey]Chance, error) {
 	}
 
 	if len(l.lookupTable) == 0 {
-		return nil, newError(ErrPreFlopDataNotFound, fmt.Sprintf("no data was read from %q", l.folderPath))
+		return nil, fmt.Errorf("%w: no data was read from %q", ErrPreFlopDataNotFound, l.folderPath)
 	}
 
 	return l.lookupTable, nil

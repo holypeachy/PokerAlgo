@@ -7,10 +7,10 @@ import (
 
 func validatePlayersAndBoard(players []Player, communityCards []Card) error {
 	if len(players) < 2 {
-		return newError(ErrInvalidArgument, "there must be at least 2 players")
+		return fmt.Errorf("%w: there must be at least 2 players", ErrInvalidArgument)
 	}
 	if len(communityCards) != 5 {
-		return newError(ErrInvalidArgument, "for the showdown, there must be all 5 community cards")
+		return fmt.Errorf("%w: for the showdown, there must be all 5 community cards", ErrInvalidArgument)
 	}
 
 	allCards := slices.Clone(communityCards)
@@ -23,7 +23,7 @@ func validatePlayersAndBoard(players []Player, communityCards []Card) error {
 
 func validateEvaluationCards(cards []Card) error {
 	if len(cards) < 5 || len(cards) > 7 {
-		return newError(ErrInvalidArgument, "the list must have 5-7 cards")
+		return fmt.Errorf("%w: the list must have 5-7 cards", ErrInvalidArgument)
 	}
 
 	return validateUniqueCardsAndNoLowAces(cards, "cards argument has duplicate cards")
@@ -31,16 +31,16 @@ func validateEvaluationCards(cards []Card) error {
 
 func validateSimulation(playerHoleCards HoleCards, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) error {
 	if len(communityCards) < 3 {
-		return newError(ErrInvalidArgument, "there should be no less than 3 community cards")
+		return fmt.Errorf("%w: there should be no less than 3 community cards", ErrInvalidArgument)
 	}
 	if len(communityCards) > 5 {
-		return newError(ErrInvalidArgument, "there should be no more than 5 community cards")
+		return fmt.Errorf("%w: there should be no more than 5 community cards", ErrInvalidArgument)
 	}
 	if numOfOpponents < 1 {
-		return newError(ErrInvalidArgument, "there should be at least 1 opponent")
+		return fmt.Errorf("%w: there should be at least 1 opponent", ErrInvalidArgument)
 	}
 	if numberOfSimulatedGames < 100 {
-		return newError(ErrInvalidArgument, "number of simulated games is less than 100")
+		return fmt.Errorf("%w: number of simulated games is less than 100", ErrInvalidArgument)
 	}
 
 	allCards := slices.Clone(communityCards)
@@ -50,24 +50,24 @@ func validateSimulation(playerHoleCards HoleCards, communityCards []Card, numOfO
 
 func validatePreflopSimulation(playerHoleCards HoleCards, numOfOpponents int, numberOfSimulatedGames int) error {
 	if numOfOpponents < 1 {
-		return newError(ErrInvalidArgument, "there should be at least 1 opponent")
+		return fmt.Errorf("%w: there should be at least 1 opponent", ErrInvalidArgument)
 	}
 	if numberOfSimulatedGames < 100 {
-		return newError(ErrInvalidArgument, "number of simulated games is less than 100")
+		return fmt.Errorf("%w: number of simulated games is less than 100", ErrInvalidArgument)
 	}
 	return validateHoleCards(playerHoleCards, "playerHoleCards")
 }
 
 func validatePreflopLookup(playerHoleCards HoleCards, numOfOpponents int) error {
 	if numOfOpponents < 1 {
-		return newError(ErrInvalidArgument, "there should be at least 1 opponent")
+		return fmt.Errorf("%w: there should be at least 1 opponent", ErrInvalidArgument)
 	}
 	return validateHoleCards(playerHoleCards, "playerHoleCards")
 }
 
 func validateHoleCards(playerHoleCards HoleCards, paramName string) error {
 	if playerHoleCards.First.Equal(playerHoleCards.Second) {
-		return newError(ErrDuplicateCards, fmt.Sprintf("%s argument has duplicate cards", paramName))
+		return fmt.Errorf("%w: %s argument has duplicate cards", ErrDuplicateCards, paramName)
 	}
 	return nil
 }
@@ -79,7 +79,7 @@ func validateUniqueCardsAndNoLowAces(cards []Card, duplicateMessage string) erro
 
 	for _, card := range cards {
 		if card.Rank == 1 {
-			return newError(ErrLowAces, "when instantiating Ace cards use rank 14 not 1")
+			return fmt.Errorf("%w: when instantiating Ace cards use rank 14 not 1", ErrLowAces)
 		}
 	}
 
@@ -91,7 +91,7 @@ func validateUniqueCards(cards []Card, duplicateMessage string) error {
 	for _, card := range cards {
 		key := [2]int{card.Rank, int(card.Suit)}
 		if _, ok := seen[key]; ok {
-			return newError(ErrDuplicateCards, duplicateMessage)
+			return fmt.Errorf("%w: %s", ErrDuplicateCards, duplicateMessage)
 		}
 		seen[key] = struct{}{}
 	}

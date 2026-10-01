@@ -1,6 +1,7 @@
 package pokeralgo
 
 import (
+	"errors"
 	"math"
 	"path/filepath"
 	"testing"
@@ -89,19 +90,19 @@ func TestChanceFunctionsReturnErrorForDuplicateCards(t *testing.T) {
 		MustCard(8, Spades, false),
 	}
 
-	if _, err := Simulate(holeCards, communityCards, 4, 500); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := Simulate(holeCards, communityCards, 4, 500); !errors.Is(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
-	if _, err := SimulatePreflop(holeCards, 4, 500); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := SimulatePreflop(holeCards, 4, 500); !errors.Is(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
-	if _, err := LookupPreflop(holeCards, 4, NewFolderLoader(preflopPath())); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := LookupPreflop(holeCards, 4, NewFolderLoader(preflopPath())); !errors.Is(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
-	if _, err := ChenEstimate(holeCards); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := ChenEstimate(holeCards); !errors.Is(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
-	if _, err := ChenScore(holeCards); !IsErrorKind(err, ErrDuplicateCards) {
+	if _, err := ChenScore(holeCards); !errors.Is(err, ErrDuplicateCards) {
 		t.Fatalf("expected duplicate cards, got %v", err)
 	}
 }

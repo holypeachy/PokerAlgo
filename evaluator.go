@@ -1,6 +1,7 @@
 package pokeralgo
 
 import (
+	"fmt"
 	"slices"
 	"sort"
 )
@@ -196,7 +197,7 @@ func completeWinningHand(winningCards []Card, allCards []Card) ([]Card, error) {
 	debugCards(debugTrace, "evaluate", "remaining kicker candidates", remainingCards)
 
 	if neededNumberOfCards < 1 {
-		return nil, newError(ErrInternalPokerAlgo, "invariant violation: neededNumberOfCards is less than 1")
+		return nil, fmt.Errorf("%w: invariant violation: neededNumberOfCards is less than 1", ErrInternal)
 	}
 
 	for neededNumberOfCards > 0 {
@@ -207,7 +208,7 @@ func completeWinningHand(winningCards []Card, allCards []Card) ([]Card, error) {
 	}
 
 	if len(completeHand) != 5 {
-		return nil, newError(ErrInternalPokerAlgo, "invariant violation: completeHand count must be 5")
+		return nil, fmt.Errorf("%w: invariant violation: completeHand count must be 5", ErrInternal)
 	}
 
 	return completeHand, nil

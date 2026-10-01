@@ -1,13 +1,16 @@
 package pokeralgo
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestNewCardValidation(t *testing.T) {
-	if _, err := NewCard(0, Spades, true); !IsErrorKind(err, ErrInvalidCardRank) {
+	if _, err := NewCard(0, Spades, true); !errors.Is(err, ErrInvalidCardRank) {
 		t.Fatalf("expected invalid card rank for 0, got %v", err)
 	}
 
-	if _, err := NewCard(15, Spades, true); !IsErrorKind(err, ErrInvalidCardRank) {
+	if _, err := NewCard(15, Spades, true); !errors.Is(err, ErrInvalidCardRank) {
 		t.Fatalf("expected invalid card rank for 15, got %v", err)
 	}
 
