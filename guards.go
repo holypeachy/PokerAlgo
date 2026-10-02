@@ -39,6 +39,9 @@ func validateSimulation(playerHoleCards HoleCards, communityCards []Card, numOfO
 	if numOfOpponents < 1 {
 		return fmt.Errorf("%w: there should be at least 1 opponent", ErrInvalidArgument)
 	}
+	if numOfOpponents > 5 {
+		return fmt.Errorf("%w: there should be no more than 5 opponents", ErrInvalidArgument)
+	}
 	if numberOfSimulatedGames < 100 {
 		return fmt.Errorf("%w: number of simulated games is less than 100", ErrInvalidArgument)
 	}
@@ -51,6 +54,9 @@ func validateSimulation(playerHoleCards HoleCards, communityCards []Card, numOfO
 func validatePreflopSimulation(playerHoleCards HoleCards, numOfOpponents int, numberOfSimulatedGames int) error {
 	if numOfOpponents < 1 {
 		return fmt.Errorf("%w: there should be at least 1 opponent", ErrInvalidArgument)
+	}
+	if numOfOpponents > 5 {
+		return fmt.Errorf("%w: there should be no more than 5 opponents", ErrInvalidArgument)
 	}
 	if numberOfSimulatedGames < 100 {
 		return fmt.Errorf("%w: number of simulated games is less than 100", ErrInvalidArgument)

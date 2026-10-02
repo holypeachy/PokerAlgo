@@ -25,7 +25,7 @@ func main() {
 	seed := flag.Int64("seed", 0, "deck seed; 0 uses a random seed")
 	preflopDir := flag.String("preflop-dir", "", "directory containing .preflop files")
 	outDir := flag.String("out", "", "output directory for compute/template modes")
-	opponents := flag.Int("opponents", 0, "number of opponents for compute mode")
+	opponents := flag.Int("opponents", 0, "maximum number of opponents for compute mode (1-5), starting at 1")
 	debug := flag.String("debug", "off", "debug level: off, summary, trace")
 	flag.Parse()
 
@@ -442,7 +442,6 @@ TODO: Optimize performance. Update all algorithms, reduce heap allocations.
 
 ? Simulate all players together for accurate chances of winning that add to 100%.
 ? Precompute post-flop chances of winning? ( Would probably take days of CPU time :< )
-? Modular Architecture: Make Player and Card an interface. Make Deck generic. (Is this necessary or useful?)
 ? Better IO handling: FolderLoader rejecting badly formatted lines and badly formatted file names.
 ? Add meta data to pre-flop calculations
 ? Add path to pre-flop to a single location, like an environmental variable
@@ -455,6 +454,7 @@ TODO: Optimize performance. Update all algorithms, reduce heap allocations.
 * For bulk compute, GOGC=1000 trades roughly 190-237 MB of memory for much higher CPU utilization and substantially lower execution time.
 
 * Changes
-* Update readme
-* Replace codex's custom error implementation
+* Fixed little look up table bug, map would get initialized still even if loading failed
+* Guards now make sure no more than 5 opponents can be simulated, same with CLI
+*
 */

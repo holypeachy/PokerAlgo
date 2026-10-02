@@ -25,6 +25,9 @@ func TestSimulateValidation(t *testing.T) {
 	if _, err := Simulate(playerCards, communityCards, 0, 500); err == nil {
 		t.Fatal("expected error for zero opponents")
 	}
+	if _, err := Simulate(playerCards, communityCards, 6, 500); !errors.Is(err, ErrInvalidArgument) {
+		t.Fatalf("expected invalid argument for six opponents, got %v", err)
+	}
 
 	if _, err := Simulate(playerCards, communityCards, 4, 10); err == nil {
 		t.Fatal("expected error for too few simulations")
@@ -48,9 +51,24 @@ func TestSimulatePreflopValidation(t *testing.T) {
 	if _, err := SimulatePreflop(playerCards, 0, 500); err == nil {
 		t.Fatal("expected error for zero opponents")
 	}
+	if _, err := SimulatePreflop(playerCards, 6, 500); !errors.Is(err, ErrInvalidArgument) {
+		t.Fatalf("expected invalid argument for six opponents, got %v", err)
+	}
 
 	if _, err := SimulatePreflop(playerCards, 4, 99); err == nil {
 		t.Fatal("expected error for too few simulations")
+	}
+}
+
+func TestSimulationsAcceptFiveOpponents(t *testing.T) {
+	deck := NewDeckWithSeed(1)
+	holeCards := HoleCards{First: deck.MustDraw(), Second: deck.MustDraw()}
+	board := deck.MustDrawN(3)
+	if _, err := Simulate(holeCards, board, 5, 100); err != nil {
+		t.Fatalf("expected five opponents to be accepted, got %v", err)
+	}
+	if _, err := SimulatePreflop(holeCards, 5, 100); err != nil {
+		t.Fatalf("expected five preflop opponents to be accepted, got %v", err)
 	}
 }
 

@@ -36,7 +36,7 @@ func (l *FolderLoader) Load() (map[PreFlopKey]Chance, error) {
 		return l.lookupTable, nil
 	}
 
-	l.lookupTable = make(map[PreFlopKey]Chance)
+	lookupTable := make(map[PreFlopKey]Chance)
 	files, err := filepath.Glob(filepath.Join(l.folderPath, "*.preflop"))
 	if err != nil {
 		return nil, err
@@ -78,13 +78,14 @@ func (l *FolderLoader) Load() (map[PreFlopKey]Chance, error) {
 				return nil, err
 			}
 
-			l.lookupTable[PreFlopKey{HoleCardsInNotation: currentLine[0], OpponentCount: numberOfOpponents}] = Chance{Win: winChance, Tie: tieChance}
+			lookupTable[PreFlopKey{HoleCardsInNotation: currentLine[0], OpponentCount: numberOfOpponents}] = Chance{Win: winChance, Tie: tieChance}
 		}
 	}
 
-	if len(l.lookupTable) == 0 {
+	if len(lookupTable) == 0 {
 		return nil, fmt.Errorf("%w: no data was read from %q", ErrPreFlopDataNotFound, l.folderPath)
 	}
 
+	l.lookupTable = lookupTable
 	return l.lookupTable, nil
 }

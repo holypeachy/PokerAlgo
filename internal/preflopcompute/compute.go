@@ -29,8 +29,8 @@ var cardPrintLookUp = map[int]string{
 var computeLogger = log.New(os.Stdout, "", 0)
 
 func Run(options Options) error {
-	if options.MaxOpponents < 1 || options.Sims < 100 {
-		return fmt.Errorf("please use opponents >= 1 and sims >= 100")
+	if options.MaxOpponents < 1 || options.MaxOpponents > 5 || options.Sims < 100 {
+		return fmt.Errorf("%w: please use opponents between 1 and 5 and sims >= 100", pokeralgo.ErrInvalidArgument)
 	}
 	if err := os.MkdirAll(options.OutDir, 0o755); err != nil {
 		return err

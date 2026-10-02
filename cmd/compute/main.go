@@ -13,7 +13,7 @@ import (
 var computeLogger = log.New(os.Stdout, "", 0)
 
 func main() {
-	opponents := flag.Int("opponents", 0, "maximum number of opponents to compute, starting at 1")
+	opponents := flag.Int("opponents", 0, "maximum number of opponents to compute (1-5), starting at 1")
 	sims := flag.Int("sims", 0, "number of Monte Carlo simulations per starting hand")
 	outDir := flag.String("out", "", "output directory for .preflop files")
 	flag.Parse()

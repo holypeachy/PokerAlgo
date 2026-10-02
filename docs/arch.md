@@ -1,26 +1,12 @@
-# PokerAlgo Architecture Flow
+# PokerAlgo Architecture
 
-_Prepared with Codex._
-
-This is the simple mental model for the project: PokerAlgo is a small poker engine with three main jobs.
+3 main jobs:
 
 1. Represent cards, players, and decks.
 2. Evaluate the best hand a player can make.
 3. Use that evaluator to either pick winners or estimate chances.
 
-Everything else mostly exists to support those three jobs.
-
 ## Big Picture
-
-The project is built around one central idea:
-
-`Evaluate` determines how strong one player's cards are.
-
-`DetermineWinners` uses `Evaluate` for every player, then compares the results.
-
-The simulation code repeatedly uses `DetermineWinners` inside simulated games.
-
-So the dependency flow is:
 
 ```text
 Cards / Deck / Player
@@ -35,11 +21,7 @@ DetermineWinners
 Simulations
 ```
 
-The evaluator is the base of the whole project. If it correctly identifies the best five-card hand, the winner logic and simulations can build on top of it.
-
-## Main Flow: Finding a Winner
-
-For a finished Texas Hold'em hand:
+## Finding Winners
 
 ```text
 players + 5 community cards
@@ -62,20 +44,18 @@ compare tied hand types with kickers
 return one winner or multiple tied winners
 ```
 
-The important thing is that `DetermineWinners` does not know how to discover a flush, straight, full house, etc. It delegates that to `Evaluate`. Its job is comparison.
+`Evaluate` identifies hands. `DetermineWinners` compares them.
 
 ## Hand Evaluation
 
-`Evaluate` takes 5 to 7 cards and returns one `Hand`.
-
-At a high level, it:
+`Evaluate`: 5-7 cards in, one five-card `Hand` out.
 
 1. Validates the cards.
 2. Sorts them by rank.
 3. Checks for hands from strongest to weakest.
 4. Returns the first matching hand.
 
-The order matters:
+Evaluation order:
 
 ```text
 Royal Flush
@@ -90,15 +70,11 @@ One Pair
 High Card
 ```
 
-This works because once a stronger hand is found, weaker hands no longer matter.
-
-The returned `Hand` always stores the best five cards. The rest of the code relies on those cards being ordered consistently so ties can be broken later.
+Invariant: `Hand.Cards` contains the best five cards in the order expected by comparison logic.
 
 ## Tie Breaking
 
-After every player has a `BestHand`, `DetermineWinners` compares them.
-
-First it compares the hand type:
+Compare hand type first:
 
 ```text
 Flush beats Straight
@@ -106,9 +82,7 @@ Full House beats Flush
 Pair loses to Two Pair
 ```
 
-If two players have the same hand type, it compares the important ranks and kickers.
-
-Examples:
+Same type: compare ranks, then kickers.
 
 - Pair vs pair: compare the pair rank, then the three kickers.
 - Two pair vs two pair: compare top pair, lower pair, then kicker.
@@ -116,13 +90,9 @@ Examples:
 - Flush vs flush: compare all five cards high-to-low.
 - Royal flush vs royal flush: always tied.
 
-This is why the evaluator's five-card output matters so much. The winner code trusts that shape.
-
 ## Simulation Flow
 
-The probability code is just winner selection repeated many times.
-
-For a post-flop simulation:
+Postflop:
 
 ```text
 known player cards + known community cards
@@ -140,21 +110,14 @@ repeat N times:
 return win chance and tie chance
 ```
 
-Preflop simulation is the same idea, except only the player's two hole cards are known, so the simulation deals all five community cards.
-
-The simulation functions split work into one fixed job per logical CPU, run each job in a goroutine, and add the results together at the end.
-
-The intended live workload is approximately 10,000 simulations for an AI decision. That currently takes roughly 50 ms on the development machine and can run asynchronously, so it does not block PokerGame work.
-
-Bulk preflop generation is a separate, optional stress workload. It creates large volumes of short-lived allocations because every simulated game passes through winner selection and evaluation. For the standalone compute command, a larger `GOGC` target improves CPU utilization by allowing a larger heap between collections. This is an implementation optimization opportunity, not a poker-algorithm correctness issue or a blocker for normal hand evaluation.
-
-Future optimization can remain behind the existing public API. The likely path is reusable per-job scratch storage and fixed arrays for bounded rank, suit, and card data, while public entry points retain validation and caller-safe behavior.
+- Preflop: same flow, but all five community cards are dealt.
+- Parallelism: one job per logical CPU, one goroutine per job, then combine results.
+- Intended live workload: approximately 10,000 simulations per AI decision.
+- Optimization TODO: bulk simulation runs allocate up to roughly 30 GB cumulatively, not all resident at once. Reduce heap allocations.
 
 ## Preflop Lookup
 
-Simulating preflop chances is expensive, so the repo includes generated `.preflop` files.
-
-The lookup path is:
+Precomputed win/tie chances in `.preflop` files:
 
 ```text
 hole cards
@@ -172,34 +135,18 @@ find matching notation + opponent count
 return stored win/tie chance
 ```
 
-The compute command generates those files by running lots of Monte Carlo simulations for every starting hand.
+`cmd/compute` generates these files using Monte Carlo simulations for each starting hand.
 
-## Deck Mental Model
+## Deck
 
-The deck keeps all 52 cards in memory and tracks the next drawable card with an internal cursor. `Remaining` reports how many cards can still be drawn.
+- 52 cards and an internal draw cursor.
+- Drawing advances the cursor; `Remaining` reports drawable cards.
+- Removing known cards moves them into the used portion of the deck.
 
-Drawing cards moves the index forward.
-
-Removing known cards for simulation moves those cards into the already-used part of the deck, so future draws cannot hit them.
-
-That means the simulation pattern is always:
+Simulation draw order:
 
 ```text
 reset deck
 remove known cards
 draw unknown cards
 ```
-
-## Short Version
-
-PokerAlgo is simple if you think of it in layers:
-
-```text
-Deck deals cards.
-Evaluator picks the best 5-card hand.
-Algo compares those hands to find winners.
-Simulations run many games by repeatedly calling Algo.
-Preflop lookup skips simulation by reading generated results from files.
-```
-
-The main invariant to remember is that `Hand` is not just a label. It is the exact five-card hand in the order that the comparison logic expects.
