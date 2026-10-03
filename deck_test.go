@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestDeckShouldContainUniqueCardsAfterResetAndRemove(t *testing.T) {
+func TestDeckCardsRemainUniqueAfterResetAndExclude(t *testing.T) {
 	deck := NewDeck()
 	cardsToRemove := deck.MustDrawN(20)
 
@@ -26,7 +26,7 @@ func TestDeckShouldContainUniqueCardsAfterResetAndRemove(t *testing.T) {
 	assertUniqueCards(t, deckCards)
 }
 
-func TestNextCardThrowsWhenDeckIsEmpty(t *testing.T) {
+func TestDeckDrawRejectsEmptyDeck(t *testing.T) {
 	deck := NewDeck()
 	for i := 0; i < 52; i++ {
 		deck.MustDraw()
@@ -37,7 +37,7 @@ func TestNextCardThrowsWhenDeckIsEmpty(t *testing.T) {
 	}
 }
 
-func TestNextCardsThrowsWhenDeckIsEmpty(t *testing.T) {
+func TestDeckDrawNRejectsEmptyDeck(t *testing.T) {
 	deck := NewDeck()
 	deck.MustDrawN(52)
 
@@ -46,7 +46,7 @@ func TestNextCardsThrowsWhenDeckIsEmpty(t *testing.T) {
 	}
 }
 
-func TestNextCardsSucceedsWhenExactlyOneCardLeft(t *testing.T) {
+func TestDeckDrawNAcceptsLastCard(t *testing.T) {
 	deck := NewDeck()
 	deck.MustDrawN(51)
 
@@ -55,7 +55,7 @@ func TestNextCardsSucceedsWhenExactlyOneCardLeft(t *testing.T) {
 	}
 }
 
-func TestNextCardsThrowsWhenNotEnoughCardsLeft(t *testing.T) {
+func TestDeckDrawNRejectsInsufficientCards(t *testing.T) {
 	deck := NewDeck()
 	deck.MustDrawN(50)
 
@@ -67,14 +67,14 @@ func TestNextCardsThrowsWhenNotEnoughCardsLeft(t *testing.T) {
 	}
 }
 
-func TestNextCardsThrowsWhenCountIsZeroOrNegative(t *testing.T) {
+func TestDeckDrawNRejectsZeroCount(t *testing.T) {
 	deck := NewDeck()
 	if _, err := deck.DrawN(0); err == nil {
 		t.Fatal("expected error for zero cards")
 	}
 }
 
-func TestRemoveCardsMovesIndexLikeCSharpDeck(t *testing.T) {
+func TestDeckExcludeUpdatesRemaining(t *testing.T) {
 	deck := NewDeck()
 	copyOfDeck := deck.Cards()
 
@@ -99,7 +99,7 @@ func TestRemoveCardsMovesIndexLikeCSharpDeck(t *testing.T) {
 	}
 }
 
-func TestNextCardsMovesIndexCorrectly(t *testing.T) {
+func TestDeckDrawNUpdatesRemaining(t *testing.T) {
 	deck := NewDeck()
 	deck.MustDrawN(15)
 
@@ -108,7 +108,7 @@ func TestNextCardsMovesIndexCorrectly(t *testing.T) {
 	}
 }
 
-func TestSeedGeneratesSameDeckOrder(t *testing.T) {
+func TestNewDeckWithSeedProducesSameOrder(t *testing.T) {
 	const seed int64 = 123456
 
 	deck1 := NewDeckWithSeed(seed)

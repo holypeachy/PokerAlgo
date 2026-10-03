@@ -34,7 +34,7 @@ func TestSimulateValidation(t *testing.T) {
 	}
 }
 
-func TestSimulateReturnsWhenValidInput(t *testing.T) {
+func TestSimulateAcceptsValidInput(t *testing.T) {
 	deck := NewDeck()
 	playerCards := HoleCards{First: deck.MustDraw(), Second: deck.MustDraw()}
 	communityCards := deck.MustDrawN(5)
@@ -98,7 +98,7 @@ func TestChenScoreKnownValues(t *testing.T) {
 	}
 }
 
-func TestChanceFunctionsReturnErrorForDuplicateCards(t *testing.T) {
+func TestSimulationsLookupAndChenRejectDuplicateCards(t *testing.T) {
 	holeCards := HoleCards{First: MustCard(2, Spades, true), Second: MustCard(2, Spades, true)}
 	communityCards := []Card{
 		MustCard(4, Spades, false),
@@ -269,7 +269,7 @@ func TestSimulatePreflopProbabilitiesInRange(t *testing.T) {
 	assertChanceInRange(t, chance)
 }
 
-func TestLookupPreflopReturnsErrorWhenTooManyOpponents(t *testing.T) {
+func TestLookupPreflopRejectsMissingOpponentData(t *testing.T) {
 	_, err := LookupPreflop(
 		HoleCards{First: MustCard(14, Spades, true), Second: MustCard(13, Spades, true)},
 		10,

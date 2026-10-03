@@ -23,7 +23,7 @@ type algoFixture struct {
 	IndicesOfWinners []int
 }
 
-func TestEvaluatorFixtures(t *testing.T) {
+func TestEvaluateFixtures(t *testing.T) {
 	var fixtures []handEvalFixture
 	readJSONFixture(t, filepath.Join("testdata", "HandEvalUnitTests.json"), &fixtures)
 
@@ -47,7 +47,7 @@ func TestEvaluatorFixtures(t *testing.T) {
 	}
 }
 
-func TestAlgoFixtures(t *testing.T) {
+func TestDetermineWinnersFixtures(t *testing.T) {
 	var fixtures []algoFixture
 	readJSONFixture(t, filepath.Join("testdata", "AlgoTests.json"), &fixtures)
 

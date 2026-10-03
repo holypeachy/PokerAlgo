@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestFolderLoaderLoadThrowsWhenDirectoryIsMissingOrInvalid(t *testing.T) {
+func TestFolderLoaderLoadRejectsDirectoryWithoutPreflopData(t *testing.T) {
 	loader := NewFolderLoader(filepath.Join("resources"))
 
 	if _, err := loader.Load(); err == nil {
@@ -15,7 +15,7 @@ func TestFolderLoaderLoadThrowsWhenDirectoryIsMissingOrInvalid(t *testing.T) {
 	}
 }
 
-func TestFolderLoaderCachesOnlySuccessfulLoad(t *testing.T) {
+func TestFolderLoaderLoadCachesOnlySuccessfulLoad(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "1_100.preflop")
 	if err := os.WriteFile(path, []byte("AKs 0.6 0.1\ninvalid\n"), 0600); err != nil {

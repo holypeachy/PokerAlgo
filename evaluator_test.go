@@ -44,7 +44,7 @@ func TestEvaluateValidation(t *testing.T) {
 	}
 }
 
-func TestEvaluateReturnsForValidInput(t *testing.T) {
+func TestEvaluateAcceptsValidInput(t *testing.T) {
 	deck := NewDeck()
 	cards := deck.MustDrawN(6)
 
@@ -53,7 +53,7 @@ func TestEvaluateReturnsForValidInput(t *testing.T) {
 	}
 }
 
-func TestEvaluatePlayerReturnsForValidInput(t *testing.T) {
+func TestEvaluatePlayerAcceptsValidInput(t *testing.T) {
 	community := []Card{
 		MustCard(7, Spades, false),
 		MustCard(5, Spades, false),

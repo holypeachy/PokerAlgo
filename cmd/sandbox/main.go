@@ -454,7 +454,6 @@ TODO: Optimize performance. Update all algorithms, reduce heap allocations.
 * For bulk compute, GOGC=1000 trades roughly 190-237 MB of memory for much higher CPU utilization and substantially lower execution time.
 
 * Changes
-* Fixed little look up table bug, map would get initialized still even if loading failed
-* Guards now make sure no more than 5 opponents can be simulated, same with CLI
+* Updated all test names
 *
 */

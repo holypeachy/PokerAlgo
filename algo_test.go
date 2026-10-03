@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestGetWinnersValidation(t *testing.T) {
+func TestDetermineWinnersValidation(t *testing.T) {
 	deck := NewDeck()
 	players := []Player{
 		NewPlayer("Player 1", deck.MustDraw(), deck.MustDraw()),
@@ -31,7 +31,7 @@ func TestGetWinnersValidation(t *testing.T) {
 	}
 }
 
-func TestGetWinnersReturnsForValidInput(t *testing.T) {
+func TestDetermineWinnersAcceptsValidInput(t *testing.T) {
 	deck := NewDeck()
 	players := []Player{
 		NewPlayer("Player 1", deck.MustDraw(), deck.MustDraw()),
@@ -44,7 +44,7 @@ func TestGetWinnersReturnsForValidInput(t *testing.T) {
 	}
 }
 
-func TestGetWinnersThrowsWhenDuplicateCardsExist(t *testing.T) {
+func TestDetermineWinnersRejectsDuplicateCards(t *testing.T) {
 	players := []Player{
 		NewPlayer("Player 1", MustCard(5, Spades, true), MustCard(5, Spades, true)),
 		NewPlayer("Player 2", MustCard(5, Diamonds, true), MustCard(8, Spades, true)),
@@ -63,7 +63,7 @@ func TestGetWinnersThrowsWhenDuplicateCardsExist(t *testing.T) {
 	}
 }
 
-func TestGetWinnersThrowsWhenLowAceInput(t *testing.T) {
+func TestDetermineWinnersRejectsLowAces(t *testing.T) {
 	players := []Player{
 		NewPlayer("Player 1", MustCard(1, Spades, true), MustCard(3, Spades, true)),
 		NewPlayer("Player 2", MustCard(5, Spades, true), MustCard(8, Spades, true)),
