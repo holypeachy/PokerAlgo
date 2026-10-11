@@ -11,6 +11,20 @@ const (
 	Diamonds
 )
 
+var RankToSymbol = map[int]string{
+	1: "A", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
+	8: "8", 9: "9", 10: "T", 11: "J", 12: "Q", 13: "K", 14: "A",
+}
+
+var SymbolToRank = map[string]int{
+	"2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7,
+	"8": 8, "9": 9, "T": 10, "J": 11, "Q": 12, "K": 13, "A": 14,
+}
+
+var SuitToSymbol = map[Suit]string{
+	Spades: "s", Clubs: "c", Hearts: "h", Diamonds: "d",
+}
+
 func (s Suit) String() string {
 	switch s {
 	case Spades:
@@ -53,15 +67,10 @@ func (c Card) Equal(other Card) bool {
 }
 
 func (c Card) String() string {
-	cardPrintLookUp := map[int]string{
-		1: "A", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
-		8: "8", 9: "9", 10: "T", 11: "J", 12: "Q", 13: "K", 14: "A",
-	}
-
 	playerMark := ""
 	if c.IsHoleCard {
 		playerMark = "*"
 	}
 
-	return fmt.Sprintf("[%s,%s]%s", cardPrintLookUp[c.Rank], c.Suit, playerMark)
+	return fmt.Sprintf("[%s,%s]%s", RankToSymbol[c.Rank], c.Suit, playerMark)
 }

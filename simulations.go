@@ -13,11 +13,6 @@ const (
 	baselineWinRate         = -1.85 // Logistic Shift of sigmoid
 )
 
-var compactCardPrintLookUp = map[int]string{
-	1: "A", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
-	8: "8", 9: "9", 10: "T", 11: "J", 12: "Q", 13: "K", 14: "A",
-}
-
 // Returns Win and Tie Values from 0 to 1.0
 func Simulate(playerHoleCards HoleCards, communityCards []Card, numOfOpponents int, numberOfSimulatedGames int) (Chance, error) {
 	if err := validateSimulation(playerHoleCards, communityCards, numOfOpponents, numberOfSimulatedGames); err != nil {
@@ -131,7 +126,7 @@ func LookupPreflop(playerHoleCards HoleCards, numOfOpponents int, preFlopDataLoa
 		return Chance{}, err
 	}
 
-	notation := compactCardPrintLookUp[playerHoleCards.First.Rank] + compactCardPrintLookUp[playerHoleCards.Second.Rank]
+	notation := RankToSymbol[playerHoleCards.First.Rank] + RankToSymbol[playerHoleCards.Second.Rank]
 	if playerHoleCards.First.Suit == playerHoleCards.Second.Suit {
 		notation += "s"
 	} else {

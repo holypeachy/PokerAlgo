@@ -21,11 +21,6 @@ type StartingHand struct {
 	Cards    pokeralgo.HoleCards
 }
 
-var cardPrintLookUp = map[int]string{
-	1: "A", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
-	8: "8", 9: "9", 10: "T", 11: "J", 12: "Q", 13: "K", 14: "A",
-}
-
 var computeLogger = log.New(os.Stdout, "", 0)
 
 func Run(options Options) error {
@@ -86,7 +81,7 @@ func BuildStartingHands() []StartingHand {
 			first := pokeralgo.MustCard(i, pokeralgo.Spades, true)
 			second := pokeralgo.MustCard(j, pokeralgo.Hearts, true)
 			hands = append(hands, StartingHand{
-				Notation: cardPrintLookUp[first.Rank] + cardPrintLookUp[second.Rank] + "o",
+				Notation: pokeralgo.RankToSymbol[first.Rank] + pokeralgo.RankToSymbol[second.Rank] + "o",
 				Cards:    pokeralgo.HoleCards{First: first, Second: second},
 			})
 		}
@@ -101,7 +96,7 @@ func BuildStartingHands() []StartingHand {
 			first := pokeralgo.MustCard(i, pokeralgo.Hearts, true)
 			second := pokeralgo.MustCard(j, pokeralgo.Hearts, true)
 			hands = append(hands, StartingHand{
-				Notation: cardPrintLookUp[first.Rank] + cardPrintLookUp[second.Rank] + "s",
+				Notation: pokeralgo.RankToSymbol[first.Rank] + pokeralgo.RankToSymbol[second.Rank] + "s",
 				Cards:    pokeralgo.HoleCards{First: first, Second: second},
 			})
 		}

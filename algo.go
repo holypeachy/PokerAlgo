@@ -11,7 +11,7 @@ func DetermineWinners(players []Player, communityCards []Card) ([]Player, error)
 		return nil, err
 	}
 
-	debugf(debugSummary, "🔎 [algo] evaluating %d players", len(players))
+	debugf(DebugSummary, "🔎 [algo] evaluating %d players", len(players))
 	playersWithHands := slices.Clone(players)
 	for i := range playersWithHands {
 		debugEvaluationStart(playersWithHands[i].Name)
@@ -29,7 +29,7 @@ func DetermineWinners(players []Player, communityCards []Card) ([]Player, error)
 		playersWithHands[i].BestHand = &winningHand
 	}
 
-	debugf(debugSummary, "\n🔎 [algo] comparing evaluated hands")
+	debugf(DebugSummary, "\n🔎 [algo] comparing evaluated hands")
 	return determineWinners(playersWithHands)
 }
 
@@ -38,7 +38,7 @@ func determineWinners(allPlayers []Player) ([]Player, error) {
 	players := slices.Clone(allPlayers)
 	sortPlayersByWinningHandTypeDesc(players)
 
-	debugPlayers(debugSummary, "players after sorting", players)
+	debugPlayers(DebugSummary, "players after sorting", players)
 
 	winners, err := breakTies(players)
 	if err != nil {
@@ -78,7 +78,7 @@ func breakTies(players []Player) ([]Player, error) {
 				message = winners[playerIndex+1].Name + " wins"
 			}
 			debugf(
-				debugTrace,
+				DebugTrace,
 				"⚖️ [compare] %s vs %s: %s",
 				winners[playerIndex].Name,
 				winners[playerIndex+1].Name,
@@ -87,7 +87,7 @@ func breakTies(players []Player) ([]Player, error) {
 
 			if result == -1 {
 				if winners[playerIndex].BestHand.Type > winners[playerIndex+1].BestHand.Type {
-					debugf(debugTrace, "⚖️ [compare] different hand types: remaining players cannot win")
+					debugf(DebugTrace, "⚖️ [compare] different hand types: remaining players cannot win")
 
 					for k := playerIndex + 1; k < len(winners); k++ {
 						tempPlayers = removePlayer(tempPlayers, winners[k])
@@ -116,8 +116,8 @@ func compareWinningHands(left *Hand, right *Hand) (int, error) {
 		return 0, fmt.Errorf("%w: invariant violated: a passed winning hand argument is nil", ErrInternal)
 	}
 
-	debugCards(debugTrace, "compare", "left hand", left.Cards)
-	debugCards(debugTrace, "compare", "right hand", right.Cards)
+	debugCards(DebugTrace, "compare", "left hand", left.Cards)
+	debugCards(DebugTrace, "compare", "right hand", right.Cards)
 
 	if left.Type > right.Type {
 		return -1, nil
@@ -191,8 +191,8 @@ func compareWinningHands(left *Hand, right *Hand) (int, error) {
 
 // -1 left wins, 0 tie, 1 right wins
 func compareKickers(left []Card, right []Card) (int, error) {
-	debugCards(debugTrace, "compare", "left kickers", left)
-	debugCards(debugTrace, "compare", "right kickers", right)
+	debugCards(DebugTrace, "compare", "left kickers", left)
+	debugCards(DebugTrace, "compare", "right kickers", right)
 
 	if len(left) != len(right) {
 		return 0, fmt.Errorf("%w: invariant violated: left and right kicker counts differ", ErrInternal)
@@ -200,15 +200,15 @@ func compareKickers(left []Card, right []Card) (int, error) {
 
 	for i := len(left) - 1; i >= 0; i-- {
 		if left[i].Rank > right[i].Rank {
-			debugf(debugTrace, "⚖️ [compare] kicker result: left wins")
+			debugf(DebugTrace, "⚖️ [compare] kicker result: left wins")
 			return -1, nil
 		} else if right[i].Rank > left[i].Rank {
-			debugf(debugTrace, "⚖️ [compare] kicker result: right wins")
+			debugf(DebugTrace, "⚖️ [compare] kicker result: right wins")
 			return 1, nil
 		}
 	}
 
-	debugf(debugTrace, "⚖️ [compare] kicker result: tie")
+	debugf(DebugTrace, "⚖️ [compare] kicker result: tie")
 
 	return 0, nil
 }

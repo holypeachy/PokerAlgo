@@ -14,7 +14,7 @@ func Evaluate(combinedCards []Card) (Hand, error) {
 	cardsCopy := slices.Clone(combinedCards)
 	sortCardsByValue(cardsCopy)
 
-	debugCards(debugTrace, "evaluate", "input", cardsCopy)
+	debugCards(DebugTrace, "evaluate", "input", cardsCopy)
 
 	return evaluateHand(cardsCopy)
 }
@@ -33,10 +33,10 @@ func evaluateHand(cards []Card) (Hand, error) {
 	pairs := cardsByRankCount(cards, 2)
 	sortCardsByValue(pairs)
 
-	debugCards(debugTrace, "evaluate", "flush candidates", flushCards)
-	debugCards(debugTrace, "evaluate", "four-kind candidates", fourKind)
-	debugCards(debugTrace, "evaluate", "three-kind candidates", threeKinds)
-	debugCards(debugTrace, "evaluate", "pair candidates", pairs)
+	debugCards(DebugTrace, "evaluate", "flush candidates", flushCards)
+	debugCards(DebugTrace, "evaluate", "four-kind candidates", fourKind)
+	debugCards(DebugTrace, "evaluate", "three-kind candidates", threeKinds)
+	debugCards(DebugTrace, "evaluate", "pair candidates", pairs)
 
 	var bestFive []Card
 
@@ -116,7 +116,7 @@ func evaluateHand(cards []Card) (Hand, error) {
 		}
 	}
 
-	debugCards(debugTrace, "evaluate", "straight candidates without duplicate ranks", tempCards)
+	debugCards(DebugTrace, "evaluate", "straight candidates without duplicate ranks", tempCards)
 
 	for i := len(tempCards) - 5; i >= 0; i-- {
 		bestFive = slices.Clone(tempCards[i : i+5])
@@ -194,7 +194,7 @@ func completeWinningHand(winningCards []Card, allCards []Card) ([]Card, error) {
 	completeHand := slices.Clone(winningCards)
 	neededNumberOfCards := 5 - len(winningCards)
 	remainingCards := exceptCards(allCards, winningCards)
-	debugCards(debugTrace, "evaluate", "remaining kicker candidates", remainingCards)
+	debugCards(DebugTrace, "evaluate", "remaining kicker candidates", remainingCards)
 
 	if neededNumberOfCards < 1 {
 		return nil, fmt.Errorf("%w: invariant violation: neededNumberOfCards is less than 1", ErrInternal)

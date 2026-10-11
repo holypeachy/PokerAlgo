@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -29,7 +30,19 @@ func main() {
 	debug := flag.String("debug", "off", "debug level: off, summary, trace")
 	flag.Parse()
 
-	if err := pokeralgo.SetDebugLevel(*debug); err != nil {
+	var err error = nil
+	switch *debug {
+	case "off":
+		pokeralgo.SetDebugLevel(pokeralgo.DebugOff)
+	case "summary":
+		pokeralgo.SetDebugLevel(pokeralgo.DebugSummary)
+	case "trace":
+		pokeralgo.SetDebugLevel(pokeralgo.DebugTrace)
+	default:
+		err = errors.New("debug level must be off, summary, or trace")
+	}
+
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "⚠️ [sandbox] %v\n", err)
 		flag.Usage()
 		os.Exit(1)
@@ -431,9 +444,11 @@ type algoTest struct {
 
 /*
 ! ISSUES:
+! two trips omits hole card preference
 !
 
 TODO
+TODO: Clean up errors
 TODO: Optimize performance. Update all algorithms, reduce heap allocations.
 
 ? Future Ideas
@@ -454,6 +469,7 @@ TODO: Optimize performance. Update all algorithms, reduce heap allocations.
 * For bulk compute, GOGC=1000 trades roughly 190-237 MB of memory for much higher CPU utilization and substantially lower execution time.
 
 * Changes
-* Updated all test names
-*
+* Made debug verbosity levels public
+* Made rank and look up tables public and removed duplicates
+* Added suit to symbol table
 */

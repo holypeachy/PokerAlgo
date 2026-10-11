@@ -7,39 +7,28 @@ import (
 	"strings"
 )
 
-type debugLevel int
+type DebugLevel int
 
 const (
-	debugOff debugLevel = iota
-	debugSummary
-	debugTrace
+	DebugOff DebugLevel = iota
+	DebugSummary
+	DebugTrace
 )
 
-var currentDebugLevel = debugOff
+var currentDebugLevel = DebugOff
 var debugLogger = log.New(os.Stderr, "", 0)
 
-func SetDebugLevel(level string) error {
-	switch level {
-	case "off":
-		currentDebugLevel = debugOff
-	case "summary":
-		currentDebugLevel = debugSummary
-	case "trace":
-		currentDebugLevel = debugTrace
-	default:
-		return fmt.Errorf("%w: debug level must be off, summary, or trace", ErrInvalidArgument)
-	}
-
-	return nil
+func SetDebugLevel(lvl DebugLevel) {
+	currentDebugLevel = lvl
 }
 
-func debugf(level debugLevel, format string, args ...any) {
+func debugf(level DebugLevel, format string, args ...any) {
 	if currentDebugLevel >= level {
 		debugLogger.Printf(format, args...)
 	}
 }
 
-func debugCards(level debugLevel, component string, description string, cards []Card) {
+func debugCards(level DebugLevel, component string, description string, cards []Card) {
 	if currentDebugLevel < level {
 		return
 	}
@@ -52,7 +41,7 @@ func debugCards(level debugLevel, component string, description string, cards []
 	debugLogger.Printf("   [%s] %s\n      %s", component, description, formattedCards)
 }
 
-func debugPlayers(level debugLevel, description string, players []Player) {
+func debugPlayers(level DebugLevel, description string, players []Player) {
 	if currentDebugLevel < level {
 		return
 	}
@@ -73,7 +62,7 @@ func debugPlayers(level debugLevel, description string, players []Player) {
 }
 
 func debugWinners(winners []Player) {
-	if currentDebugLevel < debugSummary {
+	if currentDebugLevel < DebugSummary {
 		return
 	}
 
@@ -98,13 +87,13 @@ func debugWinners(winners []Player) {
 }
 
 func debugEvaluationStart(playerName string) {
-	if currentDebugLevel >= debugSummary {
+	if currentDebugLevel >= DebugSummary {
 		debugLogger.Printf("\n💭 [evaluate] player %q", playerName)
 	}
 }
 
 func debugEvaluationResult(handType HandType, cards []Card) {
-	if currentDebugLevel >= debugSummary {
+	if currentDebugLevel >= DebugSummary {
 		handName := DescribeHand(Hand{Type: handType, Cards: cards})
 		debugLogger.Printf("✅ [evaluate] %s\n   %s", handName, formatCards(cards))
 	}
